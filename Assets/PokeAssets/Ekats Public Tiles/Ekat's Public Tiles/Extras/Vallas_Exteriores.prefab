@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7567129953613546272}
   - component: {fileID: 8625087740647915258}
   m_Layer: 0
-  m_Name: Vayas_Exteriores
+  m_Name: Vallas_Exteriores
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
