@@ -56,11 +56,11 @@ public class Movimiento : MonoBehaviour
         // Dirección vertical
         if (vertical > 0)
         {
-            animacion.SetFloat("DireccionY", 1);   // hacia atrás (arriba)
+            animacion.SetFloat("DireccionY", 1);   // arriba
         }
         else if (vertical < 0)
         {
-            animacion.SetFloat("DireccionY", -1);  // hacia delante (abajo)
+            animacion.SetFloat("DireccionY", -1);  // abajo
         }
         else
         {
