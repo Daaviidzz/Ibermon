@@ -12,6 +12,9 @@ public class Movimiento : MonoBehaviour
     //Variable para la animación
     private Animator animacion; // Cambiado a Animator
 
+    //creamos una variable tipo vector2 que es la que nos permitirá el movimiento
+    private Vector2 entradaMovimiento;
+
 
     //Metodo que se ejecuta nada más iniciar
     private void Awake()
@@ -23,49 +26,27 @@ public class Movimiento : MonoBehaviour
     }
 
     //Este método es el que se usa para hacer el movimiento del personaje
-    private void FixedUpdate()
+    private void Update()
     {
-        //Variables que hacen las llamadas a los ejes del personaje
-        float horizontal = Input.GetAxis("Horizontal");//Horizontal   
-        float vertical = Input.GetAxis("Vertical");//Vertical
+        //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
+        entradaMovimiento.x = Input.GetAxis("Horizontal");//Horizontal   
+        entradaMovimiento.y = Input.GetAxis("Vertical");//Vertical
 
-        //Para mover el personaje en sus ejes a la velocidad adecuada
-        rigidbody2D.linearVelocity = new Vector2(horizontal, vertical) * velocidad;
+        //para normalizarlo
+        entradaMovimiento = entradaMovimiento.normalized;
 
-        //llamo a mi animación, muy importante ponerle el mismo nombre que le pusimos en la animación
-        //Con Math.Abs lo que haces es que te devuelva un número absoluto
-        //Y dento le ponemos el valor final de la velocidad osea su Magnitud
-        animacion.SetFloat("Camina", Mathf.Abs(rigidbody2D.linearVelocity.magnitude));
-
-        //Horientación del personaje
-
-        // Dirección horizontal
-        if (horizontal > 0)
-        {
-            animacion.SetFloat("Direccion", 1);   // derecha
-        }
-        else if (horizontal < 0)
-        {
-            animacion.SetFloat("Direccion", -1);  // izquierda
-        }
-        else
-        {
-            animacion.SetFloat("Direccion", 0);   // sin dirección horizontal
-        }
-
-        // Dirección vertical
-        if (vertical > 0)
-        {
-            animacion.SetFloat("DireccionY", 1);   // arriba
-        }
-        else if (vertical < 0)
-        {
-            animacion.SetFloat("DireccionY", -1);  // abajo
-        }
-        else
-        {
-            animacion.SetFloat("DireccionY", 0);   // sin dirección vertical
-        }
+        //para que salten las distintas animaciones 
+        animacion.SetFloat("Horizontal",entradaMovimiento.x);
+        animacion.SetFloat("Vertical",entradaMovimiento.y);
+        animacion.SetFloat("Velocidad",entradaMovimiento.magnitude);
 
     }
+
+
+    private void FixedUpdate()
+    {
+        //para la velocidad del movimiento del personaje
+        rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
+    }
+
 }
