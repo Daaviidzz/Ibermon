@@ -4,7 +4,9 @@ using UnityEngine;
 public class Movimiento : MonoBehaviour
 {
     //Variable para la velocidad del personaje
-    public float velocidad = 1;
+    private float velocidad;
+    private float velocidadMinima = 3f;
+    private float velocidadMaxima = 6f;
 
     //Variable para hacer referencia al RigidBody
     private Rigidbody2D rigidbody2D;
@@ -23,11 +25,27 @@ public class Movimiento : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         //lo mismo pero como la animación no está en el padre y está en el hijo haré
         animacion = GetComponentInChildren<Animator>();
+
+        //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+        Cursor.lockState = CursorLockMode.Locked;
+        //Y ahora le quitamos la visibilidad
+        Cursor.visible = false;
+
     }
 
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
+        //si pulsa shift irá más rapido y sino irá a la velocidad normal
+        if(Input.GetKey(KeyCode.LeftShift))
+        {
+            velocidad = velocidadMaxima;
+        }
+        else
+        {
+            velocidad = velocidadMinima;
+        }
+
         //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
         entradaMovimiento.x = Input.GetAxis("Horizontal");//Horizontal   
         entradaMovimiento.y = Input.GetAxis("Vertical");//Vertical
