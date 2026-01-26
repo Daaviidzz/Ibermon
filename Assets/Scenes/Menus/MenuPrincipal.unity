@@ -525,6 +525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5615ee188a149b3448beebfd4b9d3925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlMenuPrincipal
+  personaje: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,0 +1,13 @@
+CASA PERSONAJE
+posición salida casa personaje 
+x: -10.45 y: -4.24
+posición entrada casa personaje 
+x: -9.93 y: -2.14
+-------------------------------
+
+CASA PROFESOR
+posición salida casa profesor 
+x: -54.43233 y: -4.29
+posición entrada casa profesor
+x: 1.665176 y: -6.847164
+

@@ -888,39 +888,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6e24bec2d20c0428fe229589f09923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Terreno
-  puntoSpawn: {fileID: 872659970}
+  puntoSpawn: {fileID: 0}
   puntoSalida: {fileID: 921904871}
---- !u!1 &872659969
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 872659970}
-  m_Layer: 0
-  m_Name: PuntoSpawn
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &872659970
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 872659969}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.93, y: -2.14, z: 0}
-  m_LocalScale: {x: 4.5, y: 5, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &921904871
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,9 +978,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 921904871}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4cc6c533dd82364facf5d8728c800eb, type: 3}
+  m_Script: {fileID: 11500000, guid: 39171df7ef3c05a409b31fe146d1f953, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PuntoSalida
+  m_EditorClassIdentifier: Assembly-CSharp::CambioDeEscena
+  escenaDestino: 2
+  posicionSpawn: {x: -10.45, y: -4.24}
 --- !u!1 &1378150101
 GameObject:
   m_ObjectHideFlags: 0
@@ -5609,5 +5580,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 538586074}
   - {fileID: 1935864111}
-  - {fileID: 872659970}
   - {fileID: 921904872}
