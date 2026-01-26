@@ -9,7 +9,7 @@ public class ControlMenuPrincipal : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             //Como esta escena sería la 0 la del menú principal y queremos acceder a la del juego que sería la siguiente
-            //la escena a la que queremos acceder será la 1
+            //la escena a la que queremos acceder será la 1 (la de la casa del personaje)
             SceneManager.LoadScene(1);
         }
 

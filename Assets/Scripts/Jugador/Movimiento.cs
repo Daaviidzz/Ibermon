@@ -1,5 +1,6 @@
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Movimiento : MonoBehaviour
 {
@@ -16,7 +17,6 @@ public class Movimiento : MonoBehaviour
 
     //creamos una variable tipo vector2 que es la que nos permitirá el movimiento
     private Vector2 entradaMovimiento;
-
 
     //Metodo que se ejecuta nada más iniciar
     private void Awake()
@@ -59,7 +59,6 @@ public class Movimiento : MonoBehaviour
         animacion.SetFloat("Velocidad",entradaMovimiento.magnitude);
 
     }
-
 
     private void FixedUpdate()
     {

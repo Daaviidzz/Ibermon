@@ -9,8 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Menus/MenuPrincipal.unity
     guid: 3f4db0a11369d6c49b8cc8b808ee3964
   - enabled: 1
+    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/CasaPersonaje.unity
+    guid: e478738c5e35e2849968c17b43ae9511
+  - enabled: 1
     path: Assets/Scenes/Pueblos/Fuenlabrada/PuebloFuenlabrada.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/CasaProfesor.unity
+    guid: 3a83eace0875b8c429c6bd4b56cf610f
+  - enabled: 1
+    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/Gimnasio.unity
+    guid: 8fcc1a407484cc74a9d852221aa05845
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
