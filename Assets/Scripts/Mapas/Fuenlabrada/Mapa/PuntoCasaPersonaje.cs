@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PuntoSalidaMapaFuenlabrada : MonoBehaviour
+public class PuntoCasaPersonaje : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D collision)
     {
