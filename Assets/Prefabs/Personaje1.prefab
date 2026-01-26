@@ -196,8 +196,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.00038719177, y: 0.044055223}
-  m_Size: {x: 0.33519363, y: 0.945086}
+  m_Offset: {x: -0.008401871, y: 0.042452097}
+  m_Size: {x: 0.31916428, y: 0.6853576}
   m_Direction: 0
 --- !u!50 &8662402556250563169
 Rigidbody2D:
@@ -269,8 +269,8 @@ Camera:
   m_GameObject: {fileID: 7430362879569147850}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 4
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
