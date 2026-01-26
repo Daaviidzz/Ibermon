@@ -1,0 +1,546 @@
+fileFormatVersion: 2
+guid: 7b1054dbc4d19ea40b99e1c18b4fad93
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2378706634531018713
+    second: Torrente_0
+  - first:
+      213: -1722202067190000534
+    second: Torrente_1
+  - first:
+      213: 8814452046440817556
+    second: Torrente_2
+  - first:
+      213: -320199865450483820
+    second: Torrente_3
+  - first:
+      213: -1336906351572379119
+    second: Torrente_4
+  - first:
+      213: -4801352385122076128
+    second: Torrente_5
+  - first:
+      213: 1947085171796001032
+    second: Torrente_6
+  - first:
+      213: -3550891658195725661
+    second: Torrente_7
+  - first:
+      213: -6517126647063873968
+    second: Torrente_8
+  - first:
+      213: 8326826002052864001
+    second: Torrente_9
+  - first:
+      213: 73404355434167374
+    second: Torrente_10
+  - first:
+      213: -8341633939042741338
+    second: Torrente_11
+  - first:
+      213: 1570390323858658695
+    second: Torrente_12
+  - first:
+      213: -949015688677578687
+    second: Torrente_13
+  - first:
+      213: -3053888678220314598
+    second: Torrente_14
+  - first:
+      213: 8635036657041085698
+    second: Torrente_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Torrente_0
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 762
+        width: 145
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d71618c41dd20120800000000000000
+      internalID: 2378706634531018713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_1
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 762
+        width: 138
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6452b138528918e0800000000000000
+      internalID: -1722202067190000534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_2
+      rect:
+        serializedVersion: 2
+        x: 569
+        y: 767
+        width: 145
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 493e1dd6f69335a70800000000000000
+      internalID: 8814452046440817556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_3
+      rect:
+        serializedVersion: 2
+        x: 827
+        y: 762
+        width: 138
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49f22ba3beb6e8bf0800000000000000
+      internalID: -320199865450483820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_4
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 517
+        width: 117
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11a9098a1ca527de0800000000000000
+      internalID: -1336906351572379119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_5
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 517
+        width: 118
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02af253c17b2e5db0800000000000000
+      internalID: -4801352385122076128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_6
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 517
+        width: 118
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801c45cc5af650b10800000000000000
+      internalID: 1947085171796001032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_7
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 517
+        width: 118
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a2985da9d2b8bec0800000000000000
+      internalID: -3550891658195725661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_8
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 261
+        width: 117
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 056768df7d38e85a0800000000000000
+      internalID: -6517126647063873968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_9
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 261
+        width: 117
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 108d8d6a124de8370800000000000000
+      internalID: 8326826002052864001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_10
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 261
+        width: 117
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4cbe925fd8c40100800000000000000
+      internalID: 73404355434167374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_11
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 260
+        width: 117
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a3d309d0209c3c80800000000000000
+      internalID: -8341633939042741338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_12
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 14
+        width: 141
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7855e44eda52bc510800000000000000
+      internalID: 1570390323858658695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_13
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 0
+        width: 133
+        height: 219
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 148a91e524b64d2f0800000000000000
+      internalID: -949015688677578687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_14
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 14
+        width: 142
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1847176d686e95d0800000000000000
+      internalID: -3053888678220314598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Torrente_15
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 0
+        width: 133
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2051965d610d5d770800000000000000
+      internalID: 8635036657041085698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Torrente_0: 2378706634531018713
+      Torrente_1: -1722202067190000534
+      Torrente_10: 73404355434167374
+      Torrente_11: -8341633939042741338
+      Torrente_12: 1570390323858658695
+      Torrente_13: -949015688677578687
+      Torrente_14: -3053888678220314598
+      Torrente_15: 8635036657041085698
+      Torrente_2: 8814452046440817556
+      Torrente_3: -320199865450483820
+      Torrente_4: -1336906351572379119
+      Torrente_5: -4801352385122076128
+      Torrente_6: 1947085171796001032
+      Torrente_7: -3550891658195725661
+      Torrente_8: -6517126647063873968
+      Torrente_9: 8326826002052864001
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
