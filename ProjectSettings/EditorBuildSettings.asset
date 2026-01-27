@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menus/MenuPrincipal.unity
+    path: Assets/Scenes/Menus/PortadaInicio.unity
     guid: 3f4db0a11369d6c49b8cc8b808ee3964
   - enabled: 1
     path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/CasaPersonaje.unity

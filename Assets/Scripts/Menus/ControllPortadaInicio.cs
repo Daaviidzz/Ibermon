@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ControlMenuPrincipal : MonoBehaviour
+public class ControllPortadaInicio : MonoBehaviour
 {
     //Voy a cargar en esta primera escena el personaje y posicionarlo en la primera escena
 
