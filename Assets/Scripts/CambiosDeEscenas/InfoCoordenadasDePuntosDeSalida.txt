@@ -3,6 +3,9 @@ posición salida casa personaje
 x: -10.45 y: -4.24
 posición entrada casa personaje 
 x: -9.93 y: -2.14
+
+cuarto del peronaje
+x: -7.008884 y: 6.872112
 -------------------------------
 
 CASA PROFESOR
