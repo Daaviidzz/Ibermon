@@ -67,7 +67,7 @@ Camera:
     height: 1
   near clip plane: 4
   far clip plane: 5000
-  field of view: 93.9
+  field of view: 60
   orthographic: 0
   orthographic size: 9
   m_Depth: -1
@@ -263,8 +263,7 @@ GameObject:
   - component: {fileID: 8379822680907425786}
   - component: {fileID: 1494706064288278466}
   - component: {fileID: 2955331787653251127}
-  - component: {fileID: 441174011488632487}
-  - component: {fileID: 231141856731810856}
+  - component: {fileID: 548257311670409370}
   m_Layer: 0
   m_Name: Torrente
   m_TagString: Player
@@ -365,19 +364,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &441174011488632487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4358655981738566930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1de482e8e7f2a54f99b0930ae6bc8ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::JugadorSpawn
---- !u!114 &231141856731810856
+--- !u!114 &548257311670409370
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
