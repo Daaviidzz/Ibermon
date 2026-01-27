@@ -3484,6 +3484,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39171df7ef3c05a409b31fe146d1f953, type: 3}
+  m_Script: {fileID: 11500000, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f9915ba757966a489bcfffae8b8aab4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CambioDeEscena
   escenaDestino: 2
