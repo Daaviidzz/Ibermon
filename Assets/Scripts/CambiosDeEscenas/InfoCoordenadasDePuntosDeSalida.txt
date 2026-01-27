@@ -13,4 +13,10 @@ posición salida casa profesor
 x: -54.43233 y: -4.29
 posición entrada casa profesor
 x: 1.665176 y: -6.847164
+-------------------------------
 
+GIMNASIO DE COMBATE PALOMA (FUENLABRADA)
+posición salida gimnasio
+x: -60.48 y: 52.89
+posición entrada gimnasio
+x: -2.401203 y: -10.8795
