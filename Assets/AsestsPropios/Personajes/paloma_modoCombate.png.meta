@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 2bece0ef3cf44a842a66ff067926387e
+guid: 9a56d8ebd70abb3488036739f23f0970
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2469412612235184715
-    second: sprite9_0
-  - first:
-      213: -3475189607133929760
-    second: sprite9_1
+      213: -8931346497835571434
+    second: paloma_modoCombate_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -129,45 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sprite9_0
+      name: paloma_modoCombate_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 3
-        width: 95
-        height: 93
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b4ac524ffad154220800000000000000
-      internalID: 2469412612235184715
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: sprite9_1
-      rect:
-        serializedVersion: 2
-        x: 96
         y: 0
-        width: 95
-        height: 80
+        width: 1088
+        height: 960
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0ee17a3f675a5cfc0800000000000000
-      internalID: -3475189607133929760
+      spriteID: 617e4963eab7d0480800000000000000
+      internalID: -8931346497835571434
       vertices: []
       indices: 
       edges: []
@@ -176,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c6d8a9b13a096fe49b871e68188b18cb
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -184,12 +159,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      sprite9_0: 2469412612235184715
-      sprite9_1: -3475189607133929760
+      paloma_modoCombate_0: -8931346497835571434
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
