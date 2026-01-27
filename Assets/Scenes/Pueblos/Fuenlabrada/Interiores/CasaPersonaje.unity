@@ -900,7 +900,7 @@ GameObject:
   m_Component:
   - component: {fileID: 921904872}
   - component: {fileID: 921904873}
-  - component: {fileID: 921904875}
+  - component: {fileID: 921904876}
   m_Layer: 0
   m_Name: PuntoSalida
   m_TagString: SalidaCasaPersonaje
@@ -969,7 +969,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.44920433, y: 0.21200785}
   m_EdgeRadius: 0
---- !u!114 &921904875
+--- !u!114 &921904876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
