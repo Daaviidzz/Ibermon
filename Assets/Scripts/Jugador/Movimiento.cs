@@ -1,6 +1,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Movimiento : MonoBehaviour
 {
@@ -8,6 +9,12 @@ public class Movimiento : MonoBehaviour
     private float velocidad;
     private float velocidadMinima = 3f;
     private float velocidadMaxima = 6f;
+
+    // --- Variables de enfrentamientos en hierba ---
+    public LayerMask grassLayer;         // Capa de la hierba
+    public float probabilidad = 10f;    // 10% de probabilidad
+    private float cronometroPasos;      // Tiempo acumulado caminando
+    public float tiempoEntreChequeos = 0.5f; // Cada cuánto tiempo tira el dado
 
     //Variable para hacer referencia al RigidBody
     private Rigidbody2D rigidbody2D;
@@ -58,12 +65,40 @@ public class Movimiento : MonoBehaviour
         animacion.SetFloat("Vertical",entradaMovimiento.y);
         animacion.SetFloat("Velocidad",entradaMovimiento.magnitude);
 
+        // --- Llamada a la función de chequeo de hierba ---
+        // Solo chequeamos si el jugador se está moviendo realmente
+        if (entradaMovimiento.magnitude > 0.1f)
+        {
+            ChequearHierba();
+        }
+
     }
 
     private void FixedUpdate()
     {
         //para la velocidad del movimiento del personaje
         rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
+    }
+
+    private void ChequearHierba()
+    {
+        // Detecta si hay algo de la capa "grassLayer" en la posición del jugador
+        if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer))
+        {
+            cronometroPasos += Time.deltaTime;
+
+            if (cronometroPasos >= tiempoEntreChequeos)
+            {
+                cronometroPasos = 0; // Reiniciamos el tiempo
+
+                // Si el número aleatorio es menor que la probabilidad, entramos en combate
+                if (Random.Range(0f, 100f) < probabilidad)
+                {
+                    Debug.Log("¡Encuentro!");
+                    // SceneManager.LoadScene("Batalla"); // Quita las // cuando tengas la escena lista
+                }
+            }
+        }
     }
 
 }
