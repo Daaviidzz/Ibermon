@@ -15,7 +15,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - LongGrass
   - 
   - 
   - 
@@ -41,6 +41,21 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Suelo
+    uniqueID: 2418993197
+    locked: 0
+  - name: Vegetacion_Baja
+    uniqueID: 144544643
+    locked: 0
+  - name: Entidades
+    uniqueID: 1322852105
+    locked: 0
+  - name: Estructuras_Colisionables
+    uniqueID: 380906165
+    locked: 0
+  - name: Estructuras_No_Colisionables
+    uniqueID: 3454944337
     locked: 0
   m_RenderingLayers:
   - Default
