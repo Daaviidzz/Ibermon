@@ -1,9 +1,17 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BattleHud : MonoBehaviour
 {
-    [SerializeField] Text NameText;
-    [SerializeField] Text LevelText;
+    [SerializeField] TextMeshProUGUI NameText;
+    [SerializeField] TextMeshProUGUI LevelText;
     [SerializeField] HPBar hpBar;
+
+    public void SetData(Pokemons pokemons)
+    {
+        
+        NameText.text = pokemons.Base.Name;
+        LevelText.text = "Lvl " + pokemons.Level;
+        hpBar.SetHP((float)pokemons.HP / pokemons.MaxHp);
+    }
 }

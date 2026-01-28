@@ -1,48 +1,47 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Para crear un nuevo asset de tipo PokemonBase desde el menu de Unity
 [CreateAssetMenu(fileName = "Pokemon", menuName = "Pokemons/New Pokemon")]
 public class PokemonBase : ScriptableObject
 {
-    //Datos basicos del pokemon
+    // Datos básicos
     [SerializeField] string name;
     [TextArea]
     [SerializeField] string description;
 
+    // Sprites
     [SerializeField] Sprite frontSprite;
-    [SerializeField] Sprite backSprite;  
+    [SerializeField] Sprite backSprite;
 
+    // Tipos
     [SerializeField] PokemonType type1;
     [SerializeField] PokemonType type2;
 
-    //Base stats
+    // Stats base
     [SerializeField] int maxHp;
     [SerializeField] int attack;
     [SerializeField] int defense;
-    //sp=special
     [SerializeField] int spAttack;
     [SerializeField] int spDefense;
     [SerializeField] int speed;
 
+    // Movimientos aprendibles
     [SerializeField] List<LearnableMove> learnableMoves;
 
-    //Property getters
-    public string Name { get; set;}
-    public string Description { get; }
-    public Sprite FrontSprite { get; }
-    public Sprite BackSprite { get; }
-    public PokemonType Type1 { get; }
-    public PokemonType Type2 { get; }
-    public int MaxHp { get; }
-    public int Attack { get; }
-    public int Defense { get; }
-    public int SpAttack { get; }
-    public int SpDefense { get; }
-    public int Speed { get; }
-    public List<LearnableMove> LearnableMoves { get { return learnableMoves; } }
-
+    // Getters correctos (conectados a los campos serializados)
+    public string Name => name;
+    public string Description => description;
+    public Sprite FrontSprite => frontSprite;
+    public Sprite BackSprite => backSprite;
+    public PokemonType Type1 => type1;
+    public PokemonType Type2 => type2;
+    public int MaxHp => maxHp;
+    public int Attack => attack;
+    public int Defense => defense;
+    public int SpAttack => spAttack;
+    public int SpDefense => spDefense;
+    public int Speed => speed;
+    public List<LearnableMove> LearnableMoves => learnableMoves;
 }
 [System.Serializable]
 public class LearnableMove

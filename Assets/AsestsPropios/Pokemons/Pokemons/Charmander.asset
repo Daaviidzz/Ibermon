@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd6d3f625a7bbcd48a3d6304d09365e5, type: 3}
-  m_Name: Kotlin
+  m_Name: Charmander
   m_EditorClassIdentifier: Assembly-CSharp::PokemonBase
-  name: Kotlin
-  description: Alomejor ataca
-  frontSprite: {fileID: -2076478232369486772, guid: d8bcb064b90f9a5468833a1a4b24e451, type: 3}
-  backSprite: {fileID: 1400125362315367025, guid: 7f77472b9be26af489a1bee5bcc363eb, type: 3}
-  type1: 4
+  name: Charmander
+  description: Un dragon calvo
+  frontSprite: {fileID: 21300000, guid: cd259d9d4f8ba2749a16d1cc64d46bec, type: 3}
+  backSprite: {fileID: 21300000, guid: ed8e1d9976a1fd94d961840d8f6e7764, type: 3}
+  type1: 2
   type2: 15
-  maxHp: 100
-  attack: 300
-  defense: 70
-  spAttack: 65
-  spDefense: 65
-  speed: 65
+  maxHp: 30
+  attack: 15
+  defense: 26
+  spAttack: 56
+  spDefense: 25
+  speed: 46
   learnableMoves:
-  - moveBase: {fileID: 11400000, guid: 0145f095de48958419c34196ec7b5c4d, type: 2}
-    level: 30
+  - moveBase: {fileID: 11400000, guid: 5fd3ffa8d84229d4a853688415634604, type: 2}
+    level: 5
   - moveBase: {fileID: 11400000, guid: 4041b3e28b79aa74e90ccadbf86f4813, type: 2}
-    level: 10
+    level: 2
