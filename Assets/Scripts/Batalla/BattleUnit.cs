@@ -7,14 +7,14 @@ public class BattleUnit : MonoBehaviour
     [SerializeField] int level;
     [SerializeField] bool isPlayerUnit;
 
-    public Pokemons Pokemons { get; set; }
+    public Pokemon Pokemon { get; set; }
     public void Setup()
     {
        
-        Pokemons = new Pokemons(_base, level);
+        Pokemon = new Pokemon(_base, level);
         if(isPlayerUnit)
-            GetComponentInChildren<Image>().sprite = Pokemons.Base.BackSprite;
+            GetComponentInChildren<Image>().sprite = Pokemon.Base.BackSprite;
         else
-            GetComponent<Image>().sprite = Pokemons.Base.FrontSprite;
+            GetComponent<Image>().sprite = Pokemon.Base.FrontSprite;
     }
 }

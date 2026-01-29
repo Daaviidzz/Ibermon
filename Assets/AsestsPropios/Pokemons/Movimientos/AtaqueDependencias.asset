@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c351f44638adf3443b40e4578d899df3, type: 3}
   m_Name: AtaqueDependencias
   m_EditorClassIdentifier: Assembly-CSharp::MoveBase
-  name: Ataque Dependencias
+  name: AtaqueDependencias
   description: Ataque muy eficaz pero dificil de acertar
   type: 4
   power: 100

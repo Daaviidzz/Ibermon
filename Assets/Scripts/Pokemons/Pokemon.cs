@@ -2,14 +2,14 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pokemons
+public class Pokemon
 {
   public PokemonBase Base { get; set; }
     public int Level { get; set; }
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
 
-    public Pokemons(PokemonBase pBase, int pLevel)
+    public Pokemon(PokemonBase pBase, int pLevel)
     {
         Base = pBase;
         Level = pLevel;
@@ -55,5 +55,49 @@ public class Pokemons
     {
         //Formula para calcular el stat de vida(en el juego real es exactamente esta)
         get { return Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10; }
+    }
+
+    public bool TakeDamage(Move move, Pokemon attacker)
+    {
+        /*
+        float critical = 1f;
+        //Calculo de golpe critico
+        if (Random.value * 100f <= 6.25f)
+        {
+            critical = 2f;
+        }
+        //Calculo de modificador aleatorio entre 0.85 y 1
+        float random = Random.Range(0.85f, 1f);
+        //Calculo de efectividad
+        float effectiveness = TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type1) * TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type2);
+        //Calculo de daño
+        float modifier = critical * random * effectiveness;
+        float a = (2 * attacker.Level + 10) / 250f;
+        float d = a * move.Base.Power * ((float)attacker.Attack / Defense) + 2;
+        int damage = Mathf.FloorToInt(d * modifier);
+        HP -= damage;
+        if (HP < 0)
+            HP = 0;
+        return critical > 1f;
+        */
+        float modifiers=Random.Range(0.85f, 1f);
+        float a = (2 * attacker.Level + 10) / 250f;
+        float d = a * move.Base.Power * ((float)attacker.Attack / Defense) + 2;
+        int damage = Mathf.FloorToInt(d * modifiers);
+
+        HP -= damage;
+        if(HP <= 0) 
+        {  
+            HP = 0;
+             return true; 
+        }
+        return false;
+
+    }
+    public Move GetRandomMove()
+    {
+        int r = Random.Range(0, Moves.Count);
+
+        return Moves[r];
     }
 }

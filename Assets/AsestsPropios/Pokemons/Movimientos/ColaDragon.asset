@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ColaDragon
   m_EditorClassIdentifier: Assembly-CSharp::MoveBase
   name: Cola Dragon
-  description: 
+  description: ataque efectivo
   type: 15
   power: 14
   accuracy: 78
