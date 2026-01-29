@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f9915ba757966a489bcfffae8b8aab4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CambioDeEscena
-  escenaDestino: 2
+  escenaDestino: PuebloFuenlabrada
   posicionSpawn: {x: -60.48, y: 52.89}
 --- !u!61 &107734379
 BoxCollider2D:

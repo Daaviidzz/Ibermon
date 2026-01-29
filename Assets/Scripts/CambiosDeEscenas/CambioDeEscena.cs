@@ -5,7 +5,7 @@ public class CambioDeEscena : MonoBehaviour
 {
     //Variable que almacena el número de la escena de destino
     //también podría ser un String y poner el nombre de la escena
-    public int escenaDestino;
+    public string escenaDestino;//cambiado a string 
     //Variable que guarda donde aparecerá el personaje
     public Vector2 posicionSpawn;
 
