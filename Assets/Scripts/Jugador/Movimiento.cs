@@ -94,8 +94,17 @@ public class Movimiento : MonoBehaviour
                 // Si el número aleatorio es menor que la probabilidad, entramos en combate
                 if (Random.Range(0f, 100f) < probabilidad)
                 {
-                    Debug.Log("¡Encuentro!");
-                    // SceneManager.LoadScene("Batalla"); // Quita las // cuando tengas la escena lista
+                    
+
+                    // 1. IMPORTANTE: Guardamos la posición actual EXACTA antes de irnos
+                    JugadorSpawn.posicion = transform.position;
+
+                    // 2. Guardamos el nombre de la escena actual para saber a cual volver luego
+                    
+                    JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
+
+                    // 3. Cargamos la batalla
+                    SceneManager.LoadScene("Combate");
                 }
             }
         }

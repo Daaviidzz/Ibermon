@@ -7,11 +7,25 @@ public class JugadorSpawn : MonoBehaviour
     //pongo la variable estatica para poder acceder luego desde el script CambioDeEscena
     public static Vector2 posicion = Vector2.zero;
 
+    //cambiado
+    // Nueva variable para recordar en qué mapa estábamos antes de pelear
+    public static string escenaAnterior = "";
+    //cambiado
+    private Movimiento scriptMovimiento;
+    private Renderer renderizador;
+    private Collider2D colisionador;
+
     private void Awake()
-    {
+    {//cambiado
         //para que el personaje no se destruya entre escenas
         //que tenga persistencia basicamente
         DontDestroyOnLoad(gameObject);
+        // Obtenemos referencias a los componentes que queremos apagar/encender
+        scriptMovimiento = GetComponent<Movimiento>();
+        renderizador = GetComponentInChildren<Renderer>(); // En hijo si el sprite está ahí
+                                                           
+
+        colisionador = GetComponent<Collider2D>();
     }
 
     //Estos 2 métodos no son estrictmente necesarios
@@ -36,15 +50,31 @@ public class JugadorSpawn : MonoBehaviour
     // "scene" es la escena que se acaba de cargar.
     // "mode" indica cómo se ha cargado (normalmente Single).
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        // Comprobamos si tenemos guardada una posición de spawn.
-        // Vector2.zero es (0,0). Lo usamos como "valor por defecto" para saber
-        // si NO hemos guardado ninguna posición.
-        if (posicion != Vector2.zero)
+    {//cambiado
+        // CASO 1: Estamos en la escena de COMBATE
+        if (scene.name == "Combate")
         {
-            // Si sí tenemos una posición guardada, movemos al personaje a ese punto.
-            // Básicamente: "aparece aquí cuando entres en esta escena".
-            transform.position = posicion;
+            // Desactivamos el movimiento y la imagen del personaje de mapa
+            if (scriptMovimiento) scriptMovimiento.enabled = false;
+            if (renderizador) renderizador.enabled = false;
+            if (colisionador) colisionador.enabled = false;
+        }
+        // CASO 2: Estamos en un MAPA normal (mundo, casa, etc)
+        else
+        {
+            // Reactivamos todo
+            if (scriptMovimiento) scriptMovimiento.enabled = true;
+            if (renderizador) renderizador.enabled = true;
+            if (colisionador) colisionador.enabled = true;
+            // Comprobamos si tenemos guardada una posición de spawn.
+            // Vector2.zero es (0,0). Lo usamos como "valor por defecto" para saber
+            // si NO hemos guardado ninguna posición.
+            if (posicion != Vector2.zero)
+            {
+                // Si sí tenemos una posición guardada, movemos al personaje a ese punto.
+                // Básicamente: "aparece aquí cuando entres en esta escena".
+                transform.position = posicion;
+            }
         }
     }
 

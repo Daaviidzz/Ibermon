@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //Define los posibles estados de la batalla
 public enum BattleState { START, PLAYERACTION,PLAYERMOVE,ENEMYMOVE,BUSY }
@@ -71,6 +72,11 @@ public class BattleSystem : MonoBehaviour
         {
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} se ha debilitado!");
             enemyUnit.PlayFaintAnimation();
+
+            yield return new WaitForSeconds(2f); // Esperamos 2 segundos para ver la animación
+
+            // AQUÍ LLAMAMOS AL FIN DE LA BATALLA (VICTORIA)
+            yield return EndBattle(true);
         }
         else
         {
@@ -101,6 +107,11 @@ public class BattleSystem : MonoBehaviour
         {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} se ha debilitado!");
             playerUnit.PlayFaintAnimation();
+
+            yield return new WaitForSeconds(2f); // Tiempo para ver la animación de derrota
+
+            // LLAMAMOS AL FIN DE BATALLA (DERROTA)
+            yield return EndBattle(false);
         }
         else
         {
@@ -108,6 +119,30 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    // true si ganamos, false si perdemos
+    IEnumerator EndBattle(bool won)
+    {
+        if (won)
+        {
+            yield return dialogBox.TypeDialog("¡Has ganado la batalla!");
+        }
+        else
+        {
+            yield return dialogBox.TypeDialog("Has sido derrotado...");
+        }
+
+        yield return new WaitForSeconds(1.5f); // Pausa dramática antes de salir
+
+        // Cargamos la escena de vuelta (PuebloFuenlabrada o la anterior)
+        if (!string.IsNullOrEmpty(JugadorSpawn.escenaAnterior))
+        {
+            SceneManager.LoadScene(JugadorSpawn.escenaAnterior);
+        }
+        else
+        {
+            SceneManager.LoadScene("PuebloFuenlabrada");
+        }
+    }
     //Cuando el jugador selecciona "Luchar", muestra la selección de movimientos
     void PlayerMove()
     {
