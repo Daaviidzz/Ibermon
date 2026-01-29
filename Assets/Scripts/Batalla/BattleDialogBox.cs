@@ -31,6 +31,7 @@ public class BattleDialogBox : MonoBehaviour
             dialogText.text += letter;
             yield return new WaitForSeconds(1f / lettersPerSecond);
         }
+        yield return new WaitForSeconds(1f);
     }
     //Muestra u oculta el selector de acciones
     public void EnableDialogText(bool enabled)

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c351f44638adf3443b40e4578d899df3, type: 3}
-  m_Name: Follaje
+  m_Name: GolpeCola
   m_EditorClassIdentifier: Assembly-CSharp::MoveBase
-  name: Follaje
-  description: "ataque de conjunto de hojas de los \xE1rboles y de otras plantas."
-  type: 5
-  power: 30
-  accuracy: 90
-  pp: 20
+  name: Golpe Cola
+  description: 
+  type: 1
+  power: 40
+  accuracy: 100
+  pp: 10

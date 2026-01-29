@@ -73,3 +73,37 @@ public enum PokemonType
     Fantasma,
     Dragon
 }
+
+public class TypeChart
+{
+    //Matriz de efectividades
+    static float[][] chart =
+    {
+        /*                      normal fuego agua electrico planta hielo lucha veneno tierra volador psiquico bicho roca fantasma dragon */
+        /*Normal*/  new float[] {1f,   1f,   1f,  1f,       1f,    1f,   1f,   1f,    1f,    1f,     1f,       1f,  0.5f, 0f,     1f },
+        /*Fuego*/   new float[] {1f,  0.5f, 0.5f, 1f,      2f,    2f,   1f,   1f,    1f,    1f,     1f,      2f,  0.5f, 1f,     0.5f},
+        /*Agua*/    new float[] {1f,   2f,  0.5f, 1f,     0.5f,   1f,   1f,   1f,    2f,    1f,     1f,      1f,   2f, 1f,     0.5f},
+        /*Electrico*/new float[] {1f,   1f,   2f, 0.5f,    0.5f,   1f,   1f,   1f,    0f,    2f,     1f,      1f,   1f, 1f,     0.5f},
+        /*Planta*/  new float[] {1f,  0.5f,  2f, 1f,      0.5f,   1f,   1f,  0.5f,   2f,   0.5f,    1f,     0.5f, 2f, 1f,     0.5f},
+        /*Hielo*/   new float[] {1f,  0.5f, 0.5f, 1f,      2f,    0.5f,  1f,   1f,    2f,    2f,     1f,      1f,   1f, 1f,     2f },
+        /*Lucha*/   new float[] {2f,   1f,   1f, 1f,      1f,    2f,   1f,  0.5f,   1f,   0.5f,    2f,      0.5f, 2f, 0f,     1f },
+        /*Veneno*/  new float[] {1f,   1f,   1f, 1f,      2f,    1f,   1f,  0.5f,  0.5f,   1f,     1f,      1f,  0.5f, 0.5f,   1f },
+        /*Tierra*/  new float[] {1f,   2f,   1f, 2f,      0.5f,   1f,   1f,   2f,    1f,    0f,     1f,      2f,   1f, 1f,     1f },
+        /*Volador*/ new float[] {1f,   1f,   1f, 0.5f,    2f,    1f,   2f,   1f,    1f,    1f,     1f,     0.5f, 1f, 1f,     1f },
+        /*Psiquico*/new float[] {1f,   1f,   1f, 1f,      1f,    1f,   2f,   2f,    1f,    1f,    0.5f,     0.5f,   1f, 1f,     1f },
+        /*Bicho*/   new float[] {1f,   0.5f, 1f, 1f,      1f,    1f,   0.5f, 0.5f,   1f,    2f,     2f,      1f,   1f, 0.5f,   1f },
+        /*Roca*/    new float[] {1f,   2f,   1f, 1f,      1f,    2f,   0.5f, 1f,    0.5f,   2f,     1f,      2f,   1f, 1f,     1f },
+        /*Fantasma*/new float[] {0f,   1f,   1f, 1f,      1f,    1f,   1f,   1f,    1f,    1f,     2f,      1f,   1f,  2f,     1f },
+        /*Dragon*/  new float[] {1f,   1f,   1f, 1f,      1f,    1f,   1f,   1f,    1f,    1f,     1f,      1f,   1f,  1f,     2f }
+    };
+
+    public static float GetEffectiveness(PokemonType attackType, PokemonType defenseType)
+    {
+        if (attackType == PokemonType.None || defenseType == PokemonType.None)
+            return 1f;
+        // Ajustar índices para que coincidan con la matriz (restar 1)
+        int row = (int)attackType - 1;
+        int col = (int)defenseType - 1;
+        return chart[row][col];
+    }
+}

@@ -35,8 +35,7 @@ public class BattleSystem : MonoBehaviour
 
         //Muestra el mensaje de inicio de batalla
         yield return dialogBox.TypeDialog($"Un {enemyUnit.Pokemon.Base.Name} salvaje ha aparecido!");
-        //Espera un segundo antes de proceder
-        yield return new WaitForSeconds(1f);
+    
 
         PlayerAction();
     }
@@ -57,19 +56,20 @@ public class BattleSystem : MonoBehaviour
         var move = playerUnit.Pokemon.Moves[currentMove];
         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
 
-        yield return new WaitForSeconds(1f);
+       
 
         //Aplica el daño al enemigo y verifica si se ha debilitado
-        bool isFainted = enemyUnit.Pokemon.TakeDamage(move,playerUnit.Pokemon);
+        var damageDetails = enemyUnit.Pokemon.TakeDamage(move,playerUnit.Pokemon);
        yield return enemyHud.UpdateHP();
+        yield return ShowDamageDetails(damageDetails);
 
-        if (isFainted)
+        if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} se ha debilitado!");
         }
         else
         {
-            StartCoroutine(EnemyMove());
+           yield return EnemyMove();
         }
 
     }
@@ -81,13 +81,14 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("Movimientos del enemigo: " + enemyUnit.Pokemon.Moves.Count);
 
         yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
-        yield return new WaitForSeconds(1f);
+      
         
         //Aplica el daño al jugador y verifica si se ha debilitado
-        bool isFainted = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
+        var damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
        yield return playerHud.UpdateHP();
+        yield return ShowDamageDetails(damageDetails);
 
-        if (isFainted)
+        if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} se ha debilitado!");
         }
@@ -97,7 +98,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-
+    //Cuando el jugador selecciona "Luchar", muestra la selección de movimientos
     void PlayerMove()
     {
         state = BattleState.PLAYERMOVE;
@@ -106,6 +107,7 @@ public class BattleSystem : MonoBehaviour
         dialogBox.EneableMoveSelector(true);
     }
 
+    //Actualiza el estado de la batalla y maneja la entrada del jugador
     private void Update()
     {
         if (state == BattleState.PLAYERACTION)
@@ -117,6 +119,24 @@ public class BattleSystem : MonoBehaviour
             HandleMoveSelection();
         }
     }
+
+    //Muestra los detalles del daño como crítico y efectividad
+    IEnumerator ShowDamageDetails(DamageDetails damageDetails)
+    {
+        if (damageDetails.Critical > 1f)
+        {
+            yield return dialogBox.TypeDialog("¡Un golpe crítico!");
+        }
+        if (damageDetails.TypeEffectiveness > 1f)
+        {
+            yield return dialogBox.TypeDialog("¡Es muy efectivo!");
+        }
+        else if (damageDetails.TypeEffectiveness < 1f)
+        {
+            yield return dialogBox.TypeDialog("No es muy efectivo...");
+        }
+    }
+
 
     //Maneja la selección de movimientos del jugador
     void HandleMoveSelection()

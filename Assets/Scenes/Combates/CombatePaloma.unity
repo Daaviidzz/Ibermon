@@ -1756,7 +1756,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -80.8, y: -12.2}
+  m_AnchoredPosition: {x: -80.8, y: -18.5}
   m_SizeDelta: {x: 182.998, y: 172.847}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &745004352
@@ -1810,7 +1810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
   _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
-  level: 34
+  level: 7
   isPlayerUnit: 1
 --- !u!1 &833901915
 GameObject:
@@ -2196,8 +2196,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 120.6, y: 74.6}
-  m_SizeDelta: {x: 127.248, y: 129.316}
+  m_AnchoredPosition: {x: 150.3, y: 55.2}
+  m_SizeDelta: {x: 98.438, y: 96.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &996686787
 MonoBehaviour:
@@ -2211,8 +2211,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0d499443ad0081469a21ac75fcabd54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
-  _base: {fileID: 11400000, guid: 84d2b52ed2b4af140b71657eb02debae, type: 2}
-  level: 15
+  _base: {fileID: 11400000, guid: 8658a2babeb6dfe459ba4fcad656ae4b, type: 2}
+  level: 6
   isPlayerUnit: 0
 --- !u!114 &996686788
 MonoBehaviour:
@@ -2234,7 +2234,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 179bd38ab997c7440844309bc52e708a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
