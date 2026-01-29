@@ -6,6 +6,9 @@ public class MenuPrincipalManager : MonoBehaviour
 {
     public GameObject primerBoton;
 
+    //variable que hace referencia al script
+    public CrearYPosicionarPlayer posicionarPlayer;
+
     void Start()
     {
         // Selecciona el primer botón al iniciar el menú
@@ -15,7 +18,8 @@ public class MenuPrincipalManager : MonoBehaviour
     // 1. Botón JUGAR
     public void BotonJugar()
     {
-        SceneManager.LoadScene("PuebloFuenlabrada");
+        //creamos el personaje y lo posicionamos
+        posicionarPlayer.crearEInstanciarPersonaje();
     }
 
     // 2. Botón OPCIONES

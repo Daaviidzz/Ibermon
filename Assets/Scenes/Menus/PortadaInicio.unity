@@ -281,12 +281,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 260127933}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 473196960}
+  m_Father: {fileID: 1142878417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -489,7 +489,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1142878417}
-  - {fileID: 260127934}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -655,7 +654,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 260127934}
   m_Father: {fileID: 473196960}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -713,9 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5615ee188a149b3448beebfd4b9d3925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlMenuPrincipal
-  escenaDestino: 1
-  posicionSpawn: {x: -7.008884, y: 6.872112}
-  personaje: {fileID: 4358655981738566930, guid: b1b2157ce9be1ce4083ae40ac94ff25b, type: 3}
+  escenaDestino: MenuPrincipal
   textoPulsarEnter: {fileID: 260127935}
   velocidadParpadeo: 2
 --- !u!1660057539 &9223372036854775807

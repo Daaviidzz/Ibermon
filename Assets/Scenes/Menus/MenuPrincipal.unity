@@ -370,6 +370,7 @@ GameObject:
   - component: {fileID: 387140787}
   - component: {fileID: 387140786}
   - component: {fileID: 387140788}
+  - component: {fileID: 387140789}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -451,6 +452,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuPrincipalManager
   primerBoton: {fileID: 1177732684}
+  posicionarPlayer: {fileID: 387140789}
+--- !u!114 &387140789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 387140784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb33afd0626346746931359a923df066, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CrearYPosicionarPlayer
+  escenaDestino: CasaPersonaje
+  posicionSpawn: {x: -7.008884, y: 6.872112}
+  personaje: {fileID: 4358655981738566930, guid: b1b2157ce9be1ce4083ae40ac94ff25b, type: 3}
 --- !u!1 &434836737
 GameObject:
   m_ObjectHideFlags: 0
