@@ -53,10 +53,14 @@ public class BattleSystem : MonoBehaviour
     {
         //Cambia el estado a ocupado
         state = BattleState.BUSY;
+
         var move = playerUnit.Pokemon.Moves[currentMove];
         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
 
-       
+        playerUnit.PlayAttackAnimation();
+        yield return new WaitForSeconds(1f);
+
+        enemyUnit.PlayHitAnimation();
 
         //Aplica el daño al enemigo y verifica si se ha debilitado
         var damageDetails = enemyUnit.Pokemon.TakeDamage(move,playerUnit.Pokemon);
@@ -66,6 +70,7 @@ public class BattleSystem : MonoBehaviour
         if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} se ha debilitado!");
+            enemyUnit.PlayFaintAnimation();
         }
         else
         {
@@ -82,7 +87,11 @@ public class BattleSystem : MonoBehaviour
 
         yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
       
-        
+        enemyUnit.PlayAttackAnimation();
+        yield return new WaitForSeconds(1f);
+
+        playerUnit.PlayHitAnimation();
+
         //Aplica el daño al jugador y verifica si se ha debilitado
         var damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
        yield return playerHud.UpdateHP();
@@ -91,6 +100,7 @@ public class BattleSystem : MonoBehaviour
         if (damageDetails.Fainted)
         {
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} se ha debilitado!");
+            playerUnit.PlayFaintAnimation();
         }
         else
         {
