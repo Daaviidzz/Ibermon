@@ -15,6 +15,6 @@ MonoBehaviour:
   name: LatigoCepa
   description: 
   type: 5
-  power: 30
-  accuracy: 67
-  pp: 19
+  power: 45
+  accuracy: 100
+  pp: 25

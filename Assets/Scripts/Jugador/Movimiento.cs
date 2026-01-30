@@ -1,3 +1,4 @@
+using Assets.Scripts.Batalla;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -80,31 +81,43 @@ public class Movimiento : MonoBehaviour
         rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
     }
 
+    // --- Método para chequear encuentros en hierba ---
     private void ChequearHierba()
     {
-        // Detecta si hay algo de la capa "grassLayer" en la posición del jugador
+        // Verificamos si estamos en hierba
         if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer))
         {
+            // Acumulamos tiempo caminando
             cronometroPasos += Time.deltaTime;
 
             if (cronometroPasos >= tiempoEntreChequeos)
             {
-                cronometroPasos = 0; // Reiniciamos el tiempo
+                cronometroPasos = 0;
 
-                // Si el número aleatorio es menor que la probabilidad, entramos en combate
+                // 1. Verificamos si tenemos Pokémon vivos para pelear
+                var party = GetComponent<PokemonParty>();
+                if (party.GetHealtyPokemon() == null) return; // Si todos están debilitados, no hay pelea
+
                 if (Random.Range(0f, 100f) < probabilidad)
                 {
-                    
+                    // 2. Buscamos el Pokémon salvaje del área
+                    var area = Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer).GetComponent<MapArea>();
+                    if (area != null)
+                    {
+                        var wildPokemon = area.GetRandomWildPokemon();
 
-                    // 1. IMPORTANTE: Guardamos la posición actual EXACTA antes de irnos
-                    JugadorSpawn.posicion = transform.position;
+                        // 3. Guardamos datos y cargamos escena
+                        JugadorSpawn.posicion = transform.position;
+                        JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
 
-                    // 2. Guardamos el nombre de la escena actual para saber a cual volver luego
-                    
-                    JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
+                        // Necesitamos pasar estos datos al BattleSystem. 
+                        // La forma más fácil con tu estructura actual es usar una clase estática temporal 
+                        // o que el BattleSystem los busque al cargar.
+                        BattleData.Party = party;
+                        BattleData.WildPokemon = wildPokemon;
 
-                    // 3. Cargamos la batalla
-                    SceneManager.LoadScene("Combate");
+                        SceneManager.LoadScene("Combate");
+                    }
                 }
             }
         }

@@ -15,6 +15,6 @@ MonoBehaviour:
   name: Follaje
   description: "ataque de conjunto de hojas de los \xE1rboles y de otras plantas."
   type: 5
-  power: 30
+  power: 80
   accuracy: 90
   pp: 20

@@ -2,17 +2,25 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Clase principal de Pokemon que contiene los datos y metodos necesarios para el funcionamiento del mismo
+//System.Serializable para que pueda ser serializado por Unity y guardado en archivos
+[System.Serializable]
 public class Pokemon
 {
-  public PokemonBase Base { get; set; }
-    public int Level { get; set; }
+   [SerializeField] PokemonBase _base;
+   [SerializeField] int level;
+
+    public PokemonBase Base { get { 
+            return _base;
+        } }
+    public int Level {
+        get {  return level; }
+            }
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
 
-    public Pokemon(PokemonBase pBase, int pLevel)
+    public void Init()
     {
-        Base = pBase;
-        Level = pLevel;
         HP = MaxHp;
 
         Moves = new List<Move>();
@@ -77,10 +85,14 @@ public class Pokemon
             Fainted = false
         };
 
+        //calculo de ataque y defensa especial o fisico
+        float attack = (move.Base.IsSpecial)? attacker.SpAttack : attacker.Attack;
+         float defense = (move.Base.IsSpecial)? this.SpDefense : this.Defense;
+
         //formulacion de daño
         float modifiers =Random.Range(0.85f, 1f) * type * critical;
         float a = (2 * attacker.Level + 10) / 250f;
-        float d = a * move.Base.Power * ((float)attacker.Attack / Defense) + 2;
+        float d = a * move.Base.Power * ((float)attack / defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
         HP -= damage;

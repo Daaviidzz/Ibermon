@@ -1,3 +1,4 @@
+using Assets.Scripts.Batalla;
 using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
@@ -20,15 +21,43 @@ public class BattleSystem : MonoBehaviour
 
     BattleState state;
 
+    PokemonParty playerParty;
+    Pokemon wildPokemon;
+
+
+
+    // Se ejecuta al cargar la escena de combate
     private void Start()
     {
+        // Buscamos al jugador en la escena para obtener su equipo
+        // (Como usamos DontDestroyOnLoad, el jugador está ahí aunque esté invisible)
+        var playerParty = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
+
+        // BattleData.WildPokemon fue asignado en Movimiento.cs antes de cargar esta escena
+        if (playerParty != null && BattleData.WildPokemon != null)
+        {
+            StartBattle(playerParty, BattleData.WildPokemon);
+        }
+        else
+        {
+            Debug.LogError("Error: No se encontró la Party del jugador o el Pokemon salvaje.");
+        }
+    }
+
+
+    //Inicia la batalla entre el jugador y un pokemon salvaje
+    private void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
+    {
+        this.playerParty = playerParty;
+        this.wildPokemon = wildPokemon;
         StartCoroutine(SetupBattle());
     }
     //Configura la batalla inicializando las unidades y la interfaz de usuario
     public IEnumerator SetupBattle()
     {
-        playerUnit.Setup();
-        enemyUnit.Setup();
+
+        playerUnit.Setup(playerParty.GetHealtyPokemon());
+        enemyUnit.Setup(wildPokemon);
         playerHud.SetData(playerUnit.Pokemon);
         enemyHud.SetData(enemyUnit.Pokemon);
 
@@ -56,6 +85,9 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.BUSY;
 
         var move = playerUnit.Pokemon.Moves[currentMove];
+        //Resta 1 PP al movimiento usado
+        move.Pp--;
+
         yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
 
         playerUnit.PlayAttackAnimation();
@@ -89,6 +121,8 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.ENEMYMOVE;
         var move = enemyUnit.Pokemon.GetRandomMove();
+        //Resta 1 PP al movimiento usado
+        move.Pp--;
         Debug.Log("Movimientos del enemigo: " + enemyUnit.Pokemon.Moves.Count);
 
         yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
@@ -110,8 +144,26 @@ public class BattleSystem : MonoBehaviour
 
             yield return new WaitForSeconds(2f); // Tiempo para ver la animación de derrota
 
-            // LLAMAMOS AL FIN DE BATALLA (DERROTA)
-            yield return EndBattle(false);
+            //comprobamos si el jugador tiene mas pkemons
+            var nextPokemon = playerParty.GetHealtyPokemon();
+            if (nextPokemon != null) 
+            {
+                playerUnit.Setup(nextPokemon);
+                playerHud.SetData(nextPokemon);
+
+                dialogBox.SetMoveNames(nextPokemon.Moves);
+
+                //Muestra el mensaje de inicio de batalla
+                yield return dialogBox.TypeDialog($"Tu turno {nextPokemon.Base.Name }!");
+
+
+                PlayerAction();
+            }
+            else
+            { // LLAMAMOS AL FIN DE BATALLA (DERROTA)
+                yield return EndBattle(false);
+            }
+                
         }
         else
         {

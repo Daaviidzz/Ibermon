@@ -3,8 +3,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 public class BattleUnit : MonoBehaviour
 {
-    [SerializeField] PokemonBase _base;
-    [SerializeField] int level;
+    
     [SerializeField] bool isPlayerUnit;
 
     public Pokemon Pokemon { get; set; }
@@ -12,24 +11,46 @@ public class BattleUnit : MonoBehaviour
     Image image;
     Vector3 originalPosition;
     Color originalColor;
+
+    
     private void Awake()
     {
         image = GetComponent<Image>();
         originalPosition = image.transform.localPosition;
         originalColor = image.color;
+
+        
     }
 
 
-    public void Setup()
+    public void Setup(Pokemon pokemon)
     {
+        Pokemon = pokemon;
+
+        // Obtenemos el componente de imagen (SpriteRenderer)
+        var image = GetComponent<UnityEngine.UI.Image>(); // Si usas UI
+                                                         
+
+        if (image != null)
+        {
+            // Forzamos que el color sea blanco (opaco) y no transparente
+            image.color = Color.white;
+
+            // Si es el jugador, usa el BackSprite (espalda)
+            // Si NO es el jugador (es enemigo), usa el FrontSprite (frente)
+            if (isPlayerUnit)
+            {
+                image.sprite = Pokemon.Base.BackSprite;
+            }
+            else
+            {
+                image.sprite = Pokemon.Base.FrontSprite;
+            }
+            // Ejecutamos la animación de entrada
+            PlayEnterAnimation();
+        }
+
        
-        Pokemon = new Pokemon(_base, level);
-        if(isPlayerUnit)
-           image.sprite = Pokemon.Base.BackSprite;
-        else
-           image.sprite = Pokemon.Base.FrontSprite;
-        
-        PlayEnterAnimation();
     }
 
     //Animacion de entrada de la  batalla
@@ -76,4 +97,6 @@ public class BattleUnit : MonoBehaviour
         sequence.Append(image.transform.DOLocalMoveY(originalPosition.y -150f, 0.5f));
         sequence.Join(image.DOFade(0f, 0.5f));
     }
+
+
 }

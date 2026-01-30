@@ -22,4 +22,23 @@ public class MoveBase : ScriptableObject
     public int Accuracy { get { return accuracy; } }
     public int Pp { get { return pp; } }
 
+    public bool IsSpecial
+    {
+        get
+        {
+            //Ejemplo simple: movimientos de tipo Fuego, Agua, Planta son especiales
+            if(type == PokemonType.Fuego || type == PokemonType.Agua || type == PokemonType.Planta
+                || type == PokemonType.Electrico || type == PokemonType.Hielo || type == PokemonType.Psiquico || type == PokemonType.Dragon
+                || type==PokemonType.Lucha || type==PokemonType.Roca|| type==PokemonType.Tierra || type == PokemonType.Volador || type == PokemonType.Bicho || type == PokemonType.Fantasma || 
+                type==PokemonType.Veneno)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
 }

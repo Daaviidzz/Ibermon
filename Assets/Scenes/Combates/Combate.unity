@@ -1810,7 +1810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
   _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
-  level: 7
+  level: 10
   isPlayerUnit: 1
 --- !u!1 &833901915
 GameObject:
@@ -2212,7 +2212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
   _base: {fileID: 11400000, guid: 8658a2babeb6dfe459ba4fcad656ae4b, type: 2}
-  level: 6
+  level: 9
   isPlayerUnit: 0
 --- !u!114 &996686788
 MonoBehaviour:
