@@ -14,6 +14,7 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] BattleUnit enemyUnit;
     [SerializeField] BattleHud playerHud;
     [SerializeField] BattleHud enemyHud;
+    [SerializeField] PartyScreen partyScreen;
 
     [SerializeField] BattleDialogBox dialogBox;
     int currentAction;
@@ -61,6 +62,8 @@ public class BattleSystem : MonoBehaviour
         playerHud.SetData(playerUnit.Pokemon);
         enemyHud.SetData(enemyUnit.Pokemon);
 
+        partyScreen.Init();
+
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
 
         //Muestra el mensaje de inicio de batalla
@@ -73,11 +76,20 @@ public class BattleSystem : MonoBehaviour
     void PlayerAction()
     {
        state = BattleState.PLAYERACTION;
-       StartCoroutine(dialogBox.TypeDialog("Elije una opción"));
-        //Hanbilita huir o luchar
+       dialogBox.SetDialog("Elije una opción");
+        //habilitar huir o luchar
         dialogBox.EnableActionSelector(true);
 
     }
+
+     void OpenPartyScreen()
+    {
+        partyScreen.SetPartyData(playerParty.Pokemons);
+        partyScreen.gameObject.SetActive(true);
+    }
+
+
+
     //Realiza el movimiento seleccionado por el jugador
     IEnumerator PerformPlayerMove() 
     {
@@ -238,42 +250,33 @@ public class BattleSystem : MonoBehaviour
     //Maneja la selección de movimientos del jugador
     void HandleMoveSelection()
     {
-      if(Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            if(currentMove < playerUnit.Pokemon.Moves.Count -1)
-            {
-                ++currentMove;
-            }
-        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            ++currentMove;
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if(currentMove > 0)
-            {
-                --currentMove;
-            }
-        }
+            --currentMove;
         else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if(currentMove < playerUnit.Pokemon.Moves.Count -2)
-            {
-                currentMove += 2;
-            }
-        }
+            currentMove += 2;
         else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if(currentMove > 1)
-            {
-                currentMove -= 2;
-            }
-        }
+            currentMove -= 2;
+
+
+        currentMove = Math.Clamp(currentMove, 0, playerUnit.Pokemon.Moves.Count-1);
         //Actualiza la selección de movimiento en la interfaz
         dialogBox.UpdateMoveSelection(currentMove, playerUnit.Pokemon.Moves[currentMove]);
-        
-        if(Input.GetKeyDown(KeyCode.Return))
+
+        //Return(Enter) para realizar el movimiento
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             dialogBox.EneableMoveSelector(false);
             dialogBox.EnableDialogText(true);
             StartCoroutine(PerformPlayerMove());
+        }
+        //Escape(esc) para volver al menu de acciones
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            dialogBox.EneableMoveSelector(false);
+            dialogBox.EnableDialogText(true);
+            PlayerAction();
         }
 
     }
@@ -281,20 +284,19 @@ public class BattleSystem : MonoBehaviour
     //Maneja la selección de acciones del jugador
     void HandleActionSelection()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if(currentAction < 1)
-            {
-                ++currentAction;
-            }
-        }
+        
+       if(Input.GetKeyDown(KeyCode.RightArrow))
+            ++currentAction;
+       else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            --currentAction;
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+            currentAction+=2;
         else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if(currentAction > 0)
-            {
-                --currentAction;
-            }
-        }
+            currentAction-=2;
+
+       
+       currentAction=Math.Clamp(currentAction, 0, 3);
+
         dialogBox.UpdateActionSelection(currentAction);
         if (Input.GetKeyDown(KeyCode.Return)) 
         {
@@ -305,6 +307,15 @@ public class BattleSystem : MonoBehaviour
             else if (currentAction == 1) //Huir
             {
                 StartCoroutine(dialogBox.TypeDialog("No puedes huir de una batalla salvaje!"));
+            }
+            else if (currentAction == 2) 
+            {
+                //Pokemon
+                OpenPartyScreen();
+            }
+            else if (currentAction == 3 )
+            {
+                //Mochila
             }
         }
     }
