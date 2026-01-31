@@ -505,19 +505,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 176375651}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1573565060}
-        m_TargetAssemblyTypeName: MenuNavegacion, Assembly-CSharp
-        m_MethodName: IrAMenuPrincipal
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &176375651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1429,6 +1417,7 @@ GameObject:
   - component: {fileID: 798538452}
   - component: {fileID: 798538454}
   - component: {fileID: 798538453}
+  - component: {fileID: 798538455}
   m_Layer: 5
   m_Name: PanelOpciones
   m_TagString: Untagged
@@ -1499,6 +1488,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 798538451}
   m_CullTransparentMesh: 1
+--- !u!114 &798538455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798538451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2059f30e39cdec6408cbc1517dca689c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MenuOpciones
+  botonVolver: {fileID: 176375650}
 --- !u!1 &894811626
 GameObject:
   m_ObjectHideFlags: 0

@@ -44,34 +44,47 @@ public class Movimiento : MonoBehaviour
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
-        //si pulsa shift irá más rapido y sino irá a la velocidad normal
-        if(Input.GetKey(KeyCode.LeftShift))
-        {
-            velocidad = velocidadMaxima;
-        }
-        else
-        {
-            velocidad = velocidadMinima;
-        }
+            //si pulsa shift irá más rapido y sino irá a la velocidad normal
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                velocidad = velocidadMaxima;
+            }
+            else
+            {
+                velocidad = velocidadMinima;
+            }
 
-        //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
-        entradaMovimiento.x = Input.GetAxis("Horizontal");//Horizontal   
-        entradaMovimiento.y = Input.GetAxis("Vertical");//Vertical
+            //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
+            entradaMovimiento.x = Input.GetAxis("Horizontal");//Horizontal   
+            entradaMovimiento.y = Input.GetAxis("Vertical");//Vertical
 
-        //para normalizarlo
-        entradaMovimiento = entradaMovimiento.normalized;
+            //para normalizarlo
+            entradaMovimiento = entradaMovimiento.normalized;
 
-        //para que salten las distintas animaciones 
-        animacion.SetFloat("Horizontal",entradaMovimiento.x);
-        animacion.SetFloat("Vertical",entradaMovimiento.y);
-        animacion.SetFloat("Velocidad",entradaMovimiento.magnitude);
+            //para que salten las distintas animaciones 
+            animacion.SetFloat("Horizontal", entradaMovimiento.x);
+            animacion.SetFloat("Vertical", entradaMovimiento.y);
+            animacion.SetFloat("Velocidad", entradaMovimiento.magnitude);
 
-        // --- Llamada a la función de chequeo de hierba ---
-        // Solo chequeamos si el jugador se está moviendo realmente
-        if (entradaMovimiento.magnitude > 0.1f)
-        {
-            ChequearHierba();
-        }
+            // --- Llamada a la función de chequeo de hierba ---
+            // Solo chequeamos si el jugador se está moviendo realmente
+            if (entradaMovimiento.magnitude > 0.1f)
+            {
+                ChequearHierba();
+            }
+
+            // --- Detectar ENTER para abrir menú ---
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                // Guardamos la escena actual
+                GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+
+                // Guardamos la posición actual del jugador
+                GuardarPosicionAnterior.posicionAnterior = transform.position;
+
+                // Cargamos la escena del menú
+                SceneManager.LoadScene("Opciones");
+            }
 
     }
 

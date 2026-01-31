@@ -25,6 +25,8 @@ public class MenuPrincipalManager : MonoBehaviour
     // 2. Botón OPCIONES
     public void BotonOpciones()
     {
+        //Guardar esta escena
+        GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene("Opciones");
     }
 
