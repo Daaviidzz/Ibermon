@@ -407,8 +407,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 50ec7756935b0c34d9f5cdf1d9fdf73d, type: 3}
   - {fileID: 8300000, guid: 106d0ee3a083a3b46aeb06a401e724ab, type: 3}
   - {fileID: 8300000, guid: 2d8a33245a86cbe4b9ebfaa8d6f5a115, type: 3}
-  - {fileID: 8300000, guid: 511c5bf65b21339478251386ae1efacc, type: 3}
-  tiempoEntreFrases: 10
+  tiempoEntreFrases: 100
 --- !u!82 &6805159972644760388
 AudioSource:
   m_ObjectHideFlags: 0
