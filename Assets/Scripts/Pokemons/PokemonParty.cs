@@ -1,15 +1,18 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; // Necesario para el Where y FirstOrDefault
 using UnityEngine;
 
 public class PokemonParty : MonoBehaviour
 {
     [SerializeField] List<Pokemon> pokemons;
 
-   public List<Pokemon> Pokemons { get; set; }
+    //  Hacemos que la propiedad devuelva la lista del inspector
+    public List<Pokemon> Pokemons
+    {
+        get { return pokemons; }
+    }
 
-    private  void Start()
+    private void Start()
     {
         foreach (var pokemon in pokemons)
         {
@@ -20,7 +23,9 @@ public class PokemonParty : MonoBehaviour
     // Retorna el primer pokemon con HP > 0
     public Pokemon GetHealtyPokemon()
     {
-      return pokemons.Where(p => p.HP > 0).FirstOrDefault();
+        // Aseguramos que la lista no sea nula para evitar otro error
+        if (pokemons == null) return null;
 
+        return pokemons.Where(p => p.HP > 0).FirstOrDefault();
     }
 }

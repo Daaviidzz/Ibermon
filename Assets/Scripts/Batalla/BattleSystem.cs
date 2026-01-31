@@ -1,323 +1,278 @@
 using Assets.Scripts.Batalla;
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//Define los posibles estados de la batalla
-public enum BattleState { START, PLAYERACTION,PLAYERMOVE,ENEMYMOVE,BUSY }
+// Estados posibles para controlar el flujo de la máquina de estados del combate
+public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, PERFORMMOVE, BUSY, PARTYSCREEN, BATTLEOVER }
 
 public class BattleSystem : MonoBehaviour
 {
+    [Header("Referencias de Unidades")]
     [SerializeField] BattleUnit playerUnit;
     [SerializeField] BattleUnit enemyUnit;
-    [SerializeField] BattleHud playerHud;
-    [SerializeField] BattleHud enemyHud;
     [SerializeField] PartyScreen partyScreen;
-
     [SerializeField] BattleDialogBox dialogBox;
+
+    // Índices para la navegación en los menús
     int currentAction;
     int currentMove;
+    int currentMember;
 
     BattleState state;
-
     PokemonParty playerParty;
     Pokemon wildPokemon;
 
-
-
-    // Se ejecuta al cargar la escena de combate
     private void Start()
     {
-        // Buscamos al jugador en la escena para obtener su equipo
-        // (Como usamos DontDestroyOnLoad, el jugador está ahí aunque esté invisible)
+        // Recuperamos el equipo del jugador mediante el Tag "Player"
         var playerParty = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
 
-        // BattleData.WildPokemon fue asignado en Movimiento.cs antes de cargar esta escena
         if (playerParty != null && BattleData.WildPokemon != null)
         {
             StartBattle(playerParty, BattleData.WildPokemon);
         }
         else
         {
-            Debug.LogError("Error: No se encontró la Party del jugador o el Pokemon salvaje.");
+            Debug.LogError("Error: Faltan datos para iniciar la batalla.");
         }
     }
 
-
-    //Inicia la batalla entre el jugador y un pokemon salvaje
     private void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
     {
         this.playerParty = playerParty;
         this.wildPokemon = wildPokemon;
         StartCoroutine(SetupBattle());
     }
-    //Configura la batalla inicializando las unidades y la interfaz de usuario
+
     public IEnumerator SetupBattle()
     {
-
+        // Inicializa unidades: saca al primer Pokémon sano y al enemigo
         playerUnit.Setup(playerParty.GetHealtyPokemon());
         enemyUnit.Setup(wildPokemon);
-        playerHud.SetData(playerUnit.Pokemon);
-        enemyHud.SetData(enemyUnit.Pokemon);
-
         partyScreen.Init();
-
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
 
-        //Muestra el mensaje de inicio de batalla
         yield return dialogBox.TypeDialog($"Un {enemyUnit.Pokemon.Base.Name} salvaje ha aparecido!");
-    
 
-        PlayerAction();
+        ActionSelection(); // Comienza el turno del jugador
     }
-    //Maneja la acción del jugador mostrando las opciones disponibles
-    void PlayerAction()
+
+    // Cambia al estado de elegir Luchar, Mochila, etc.
+    void ActionSelection()
     {
-       state = BattleState.PLAYERACTION;
-       dialogBox.SetDialog("Elije una opción");
-        //habilitar huir o luchar
+        state = BattleState.ACTIONSELECTION;
+        dialogBox.SetDialog("Elije una opción");
         dialogBox.EnableActionSelector(true);
-
     }
 
-     void OpenPartyScreen()
+    // Abre el menú de cambio de Pokémon
+    void OpenPartyScreen()
     {
+        state = BattleState.PARTYSCREEN;
         partyScreen.SetPartyData(playerParty.Pokemons);
         partyScreen.gameObject.SetActive(true);
     }
 
-
-
-    //Realiza el movimiento seleccionado por el jugador
-    IEnumerator PerformPlayerMove() 
+    // Ejecuta el movimiento elegido por el jugador y luego cede el turno al enemigo
+    IEnumerator PlayerMove()
     {
-        //Cambia el estado a ocupado
-        state = BattleState.BUSY;
-
+        state = BattleState.PERFORMMOVE;
         var move = playerUnit.Pokemon.Moves[currentMove];
-        //Resta 1 PP al movimiento usado
-        move.Pp--;
+        yield return RunMove(playerUnit, enemyUnit, move);
 
-        yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
-
-        playerUnit.PlayAttackAnimation();
-        yield return new WaitForSeconds(1f);
-
-        enemyUnit.PlayHitAnimation();
-
-        //Aplica el daño al enemigo y verifica si se ha debilitado
-        var damageDetails = enemyUnit.Pokemon.TakeDamage(move,playerUnit.Pokemon);
-       yield return enemyHud.UpdateHP();
-        yield return ShowDamageDetails(damageDetails);
-
-        if (damageDetails.Fainted)
-        {
-            yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} se ha debilitado!");
-            enemyUnit.PlayFaintAnimation();
-
-            yield return new WaitForSeconds(2f); // Esperamos 2 segundos para ver la animación
-
-            // AQUÍ LLAMAMOS AL FIN DE LA BATALLA (VICTORIA)
-            yield return EndBattle(true);
-        }
-        else
-        {
-           yield return EnemyMove();
-        }
-
+        if (state == BattleState.PERFORMMOVE)
+            StartCoroutine(EnemyMove());
     }
-    //Realiza el movimiento del enemigo
+
+    // IA básica: El enemigo elige un movimiento al azar y lo ejecuta
     IEnumerator EnemyMove()
     {
-        state = BattleState.ENEMYMOVE;
+        state = BattleState.PERFORMMOVE;
         var move = enemyUnit.Pokemon.GetRandomMove();
-        //Resta 1 PP al movimiento usado
-        move.Pp--;
-        Debug.Log("Movimientos del enemigo: " + enemyUnit.Pokemon.Moves.Count);
+        yield return RunMove(enemyUnit, playerUnit, move);
 
-        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
-      
-        enemyUnit.PlayAttackAnimation();
+        if (state == BattleState.PERFORMMOVE)
+            ActionSelection();
+    }
+
+    // Finaliza la lógica de batalla
+    void BattleOver(bool won)
+    {
+        state = BattleState.BATTLEOVER;
+        // ERROR ANTERIOR: EndBattle(won); 
+        StartCoroutine(EndBattle(won)); // SOLUCIÓN: Usar StartCoroutine
+    }
+
+    // Método core: Maneja la animación, el daño y la reducción de PP de cualquier movimiento
+    IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move)
+    {
+        move.Pp--;
+        yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
+
+        sourceUnit.PlayAttackAnimation();
         yield return new WaitForSeconds(1f);
 
-        playerUnit.PlayHitAnimation();
+        targetUnit.PlayHitAnimation();
 
-        //Aplica el daño al jugador y verifica si se ha debilitado
-        var damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
-       yield return playerHud.UpdateHP();
+        var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
+        yield return targetUnit.Hud.UpdateHP();
         yield return ShowDamageDetails(damageDetails);
 
         if (damageDetails.Fainted)
         {
-            yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} se ha debilitado!");
-            playerUnit.PlayFaintAnimation();
-
-            yield return new WaitForSeconds(2f); // Tiempo para ver la animación de derrota
-
-            //comprobamos si el jugador tiene mas pkemons
-            var nextPokemon = playerParty.GetHealtyPokemon();
-            if (nextPokemon != null) 
-            {
-                playerUnit.Setup(nextPokemon);
-                playerHud.SetData(nextPokemon);
-
-                dialogBox.SetMoveNames(nextPokemon.Moves);
-
-                //Muestra el mensaje de inicio de batalla
-                yield return dialogBox.TypeDialog($"Tu turno {nextPokemon.Base.Name }!");
-
-
-                PlayerAction();
-            }
-            else
-            { // LLAMAMOS AL FIN DE BATALLA (DERROTA)
-                yield return EndBattle(false);
-            }
-                
-        }
-        else
-        {
-            PlayerAction();
+            yield return dialogBox.TypeDialog($"{targetUnit.Pokemon.Base.Name} se ha debilitado!");
+            targetUnit.PlayFaintAnimation();
+            yield return new WaitForSeconds(2f);
+            CheckBattleOver(targetUnit);
         }
     }
 
-    // true si ganamos, false si perdemos
+    // Verifica si alguien se quedó sin Pokémon para seguir luchando
+    void CheckBattleOver(BattleUnit faintedUnit)
+    {
+        if (faintedUnit.IsPlayerUnit)
+        {
+            var nextPokemon = playerParty.GetHealtyPokemon();
+            if (nextPokemon != null) OpenPartyScreen();
+            else BattleOver(false); // Derrota
+        }
+        else BattleOver(true); // Victoria
+    }
+
+    // Gestiona la salida de la escena de combate
     IEnumerator EndBattle(bool won)
     {
-        if (won)
-        {
-            yield return dialogBox.TypeDialog("¡Has ganado la batalla!");
-        }
-        else
-        {
-            yield return dialogBox.TypeDialog("Has sido derrotado...");
-        }
+        if (won) yield return dialogBox.TypeDialog("¡Has ganado la batalla!");
+        else yield return dialogBox.TypeDialog("Has sido derrotado...");
 
-        yield return new WaitForSeconds(1.5f); // Pausa dramática antes de salir
+        yield return new WaitForSeconds(1.5f);
 
-        // Cargamos la escena de vuelta (PuebloFuenlabrada o la anterior)
-        if (!string.IsNullOrEmpty(JugadorSpawn.escenaAnterior))
-        {
-            SceneManager.LoadScene(JugadorSpawn.escenaAnterior);
-        }
-        else
-        {
-            SceneManager.LoadScene("PuebloFuenlabrada");
-        }
+        // Retorno a la escena previa o por defecto
+        string sceneToLoad = !string.IsNullOrEmpty(JugadorSpawn.escenaAnterior) ? JugadorSpawn.escenaAnterior : "PuebloFuenlabrada";
+        SceneManager.LoadScene(sceneToLoad);
     }
-    //Cuando el jugador selecciona "Luchar", muestra la selección de movimientos
-    void PlayerMove()
+
+    // Pasa del menú principal al menú de ataques
+    void MoveSelection()
     {
-        state = BattleState.PLAYERMOVE;
+        state = BattleState.MOVESELECTION;
         dialogBox.EnableActionSelector(false);
         dialogBox.EnableDialogText(false);
         dialogBox.EneableMoveSelector(true);
     }
 
-    //Actualiza el estado de la batalla y maneja la entrada del jugador
     private void Update()
     {
-        if (state == BattleState.PLAYERACTION)
-        {
-            HandleActionSelection();
-        }
-        else if (state == BattleState.PLAYERMOVE)
-        {
-            HandleMoveSelection();
-        }
+        // Delegamos el input según el estado actual
+        if (state == BattleState.ACTIONSELECTION) HandleActionSelection();
+        else if (state == BattleState.MOVESELECTION) HandleMoveSelection();
+        else if (state == BattleState.PARTYSCREEN) HandlePartyScreenSelection();
     }
 
-    //Muestra los detalles del daño como crítico y efectividad
     IEnumerator ShowDamageDetails(DamageDetails damageDetails)
     {
-        if (damageDetails.Critical > 1f)
-        {
-            yield return dialogBox.TypeDialog("¡Un golpe crítico!");
-        }
-        if (damageDetails.TypeEffectiveness > 1f)
-        {
-            yield return dialogBox.TypeDialog("¡Es muy efectivo!");
-        }
-        else if (damageDetails.TypeEffectiveness < 1f)
-        {
-            yield return dialogBox.TypeDialog("No es muy efectivo...");
-        }
+        if (damageDetails.Critical > 1f) yield return dialogBox.TypeDialog("¡Un golpe crítico!");
+
+        if (damageDetails.TypeEffectiveness > 1f) yield return dialogBox.TypeDialog("¡Es muy efectivo!");
+        else if (damageDetails.TypeEffectiveness < 1f) yield return dialogBox.TypeDialog("No es muy efectivo...");
     }
 
-
-    //Maneja la selección de movimientos del jugador
+    // Control de navegación en el menú de ataques
     void HandleMoveSelection()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-            ++currentMove;
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            --currentMove;
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-            currentMove += 2;
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-            currentMove -= 2;
+        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentMove;
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentMove;
+        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentMove += 2;
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentMove -= 2;
 
-
-        currentMove = Math.Clamp(currentMove, 0, playerUnit.Pokemon.Moves.Count-1);
-        //Actualiza la selección de movimiento en la interfaz
+        currentMove = Math.Clamp(currentMove, 0, playerUnit.Pokemon.Moves.Count - 1);
         dialogBox.UpdateMoveSelection(currentMove, playerUnit.Pokemon.Moves[currentMove]);
 
-        //Return(Enter) para realizar el movimiento
         if (Input.GetKeyDown(KeyCode.Return))
         {
             dialogBox.EneableMoveSelector(false);
             dialogBox.EnableDialogText(true);
-            StartCoroutine(PerformPlayerMove());
+            StartCoroutine(PlayerMove());
         }
-        //Escape(esc) para volver al menu de acciones
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
             dialogBox.EneableMoveSelector(false);
             dialogBox.EnableDialogText(true);
-            PlayerAction();
+            ActionSelection();
         }
-
     }
 
-    //Maneja la selección de acciones del jugador
+    // Control de navegación en el menú de acciones principales
     void HandleActionSelection()
     {
-        
-       if(Input.GetKeyDown(KeyCode.RightArrow))
-            ++currentAction;
-       else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            --currentAction;
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-            currentAction+=2;
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-            currentAction-=2;
+        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentAction;
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentAction;
+        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentAction += 2;
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentAction -= 2;
 
-       
-       currentAction=Math.Clamp(currentAction, 0, 3);
-
+        currentAction = Math.Clamp(currentAction, 0, 3);
         dialogBox.UpdateActionSelection(currentAction);
-        if (Input.GetKeyDown(KeyCode.Return)) 
+
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (currentAction == 0) //Luchar
-            {
-                PlayerMove();
-            }
-            else if (currentAction == 1) //Huir
-            {
-                StartCoroutine(dialogBox.TypeDialog("No puedes huir de una batalla salvaje!"));
-            }
-            else if (currentAction == 2) 
-            {
-                //Pokemon
-                OpenPartyScreen();
-            }
-            else if (currentAction == 3 )
-            {
-                //Mochila
-            }
+            if (currentAction == 0) MoveSelection(); // Luchar
+            else if (currentAction == 1) { /* Mochila */ }
+            else if (currentAction == 2) OpenPartyScreen(); // Pokémon
+            else if (currentAction == 3) StartCoroutine(dialogBox.TypeDialog("No puedes huir de una batalla salvaje!")); // Huir
         }
     }
+
+    // Control de selección en la pantalla de equipo
+    void HandlePartyScreenSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentMember;
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentMember;
+        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentMember += 2;
+        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentMember -= 2;
+
+        currentMember = Math.Clamp(currentMember, 0, playerParty.Pokemons.Count - 1);
+        partyScreen.UpdateMemberSelection(currentMember);
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            var selectedMember = playerParty.Pokemons[currentMember];
+            if (selectedMember.HP <= 0)
+            {
+                partyScreen.SetMessageText("No puedes elegir un pokemon derrotado");
+                return;
+            }
+            if (selectedMember == playerUnit.Pokemon)
+            {
+                partyScreen.SetMessageText("No puedes elegir al mismo pokemon");
+                return;
+            }
+            partyScreen.gameObject.SetActive(false);
+            state = BattleState.BUSY;
+            StartCoroutine(SwitchPokemon(selectedMember));
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            partyScreen.gameObject.SetActive(false);
+            ActionSelection();
+        }
+    }
+
+    // Intercambia el Pokémon actual por uno nuevo
+    IEnumerator SwitchPokemon(Pokemon newPokemon)
+    {
+        if (playerUnit.Pokemon.HP > 0)
+        {
+            yield return dialogBox.TypeDialog($"Vuelve {playerUnit.Pokemon.Base.Name}");
+            playerUnit.PlayFaintAnimation();
+            yield return new WaitForSeconds(2f);
+        }
+
+        playerUnit.Setup(newPokemon);
+        dialogBox.SetMoveNames(newPokemon.Moves);
+        yield return dialogBox.TypeDialog($"Tu turno {newPokemon.Base.Name}!");
+
+        StartCoroutine(EnemyMove()); // Tras cambiar, el enemigo ataca
+    }
 }
- 

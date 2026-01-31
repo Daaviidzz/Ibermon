@@ -1585,8 +1585,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BattleSystem
   playerUnit: {fileID: 745004354}
   enemyUnit: {fileID: 996686787}
-  playerHud: {fileID: 1224927643}
-  enemyHud: {fileID: 28684841}
   partyScreen: {fileID: 1451336895}
   dialogBox: {fileID: 163808555}
 --- !u!4 &496714905
@@ -2181,6 +2179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
   isPlayerUnit: 1
+  hud: {fileID: 1224927643}
 --- !u!1 &833901915
 GameObject:
   m_ObjectHideFlags: 0
@@ -2581,6 +2580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleUnit
   isPlayerUnit: 0
+  hud: {fileID: 28684841}
 --- !u!114 &996686788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3567,7 +3567,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2.7513428, y: 9.584396}
+  m_AnchoredPosition: {x: 2.7513428, y: 9.584381}
   m_SizeDelta: {x: -121.9, y: 229.46}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1451336893
@@ -3621,6 +3621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PartyScreen
   messageText: {fileID: 1576900223}
+  partyList: {fileID: 135846025}
 --- !u!1001 &1491985010
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3757,7 +3758,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 4.324, y: 51.272}
+  m_AnchoredPosition: {x: -7, y: 141}
   m_SizeDelta: {x: 608.644, y: 52.162}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1576900223
@@ -3780,7 +3781,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Text Message
+  m_text: Mensage
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3789,8 +3790,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294901774
+  m_fontColor: {r: 0.053719044, g: 0, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3807,8 +3808,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3824,7 +3825,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
