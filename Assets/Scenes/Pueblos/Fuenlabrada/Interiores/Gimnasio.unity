@@ -15645,7 +15645,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1447289379}
   - component: {fileID: 1447289378}
-  - component: {fileID: 1447289377}
+  - component: {fileID: 1447289380}
   m_Layer: 0
   m_Name: MusicaGym
   m_TagString: Untagged
@@ -15653,18 +15653,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1447289377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1447289376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6363efea1004f1e4391c4bb647156315, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interruptor
 --- !u!82 &1447289378
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15777,6 +15765,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1447289380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447289376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc750c157a895349a8cacfb1b67acde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicaEscena
 --- !u!1 &1563007885
 GameObject:
   m_ObjectHideFlags: 0

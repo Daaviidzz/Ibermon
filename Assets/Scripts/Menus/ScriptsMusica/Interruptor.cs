@@ -2,12 +2,15 @@ using UnityEngine;
 
 public class Interruptor : MonoBehaviour
 {
+    private static bool musicaMenuParada = false;
+
     void Start()
     {
-        // Llamamos al script que YA TIENES para que pare la música vieja
-        if (ControlMusica.instance != null)
+        // Solo para la música del menú UNA VEZ
+        if (!musicaMenuParada && ControlMusica.instance != null)
         {
             ControlMusica.instance.PararMusicaMenu();
+            musicaMenuParada = true;
         }
     }
 }

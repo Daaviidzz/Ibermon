@@ -73,18 +73,18 @@ public class Movimiento : MonoBehaviour
                 ChequearHierba();
             }
 
-            // --- Detectar ENTER para abrir menú ---
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                // Guardamos la escena actual
-                GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+        // --- Detectar ENTER para abrir menú ---
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+            GuardarPosicionAnterior.posicionAnterior = transform.position;
 
-                // Guardamos la posición actual del jugador
-                GuardarPosicionAnterior.posicionAnterior = transform.position;
+            // Deshabilitar AudioListener del Player ANTES de cargar la escena
+            var listener = GetComponentInChildren<AudioListener>();
+            if (listener) listener.enabled = false;
 
-                // Cargamos la escena del menú
-                SceneManager.LoadScene("Opciones");
-            }
+            SceneManager.LoadScene("Opciones");
+        }
 
     }
 
