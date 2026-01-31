@@ -346,51 +346,6 @@ RectTransform:
   m_AnchoredPosition: {x: 5, y: -0.5}
   m_SizeDelta: {x: -30, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &120633742
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 120633744}
-  - component: {fileID: 120633743}
-  m_Layer: 0
-  m_Name: musica
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &120633743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 120633742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: feb8e1e734886ac45b60e2d2e7a6740c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlMusica
-  audioMixer: {fileID: 24100000, guid: 547e08f995b3fc945abf2d03088579a6, type: 2}
---- !u!4 &120633744
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 120633742}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 547.5, y: 300.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &176375646
 GameObject:
   m_ObjectHideFlags: 0
@@ -940,6 +895,7 @@ GameObject:
   - component: {fileID: 464840115}
   - component: {fileID: 464840114}
   - component: {fileID: 464840119}
+  - component: {fileID: 464840120}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1043,6 +999,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConfiguracionVideo
   dropdownResoluciones: {fileID: 208831010}
+--- !u!114 &464840120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464840113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fb17ebcaaff3cb4aa0d23c2facd1d00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OpcionesUI
+  sliderMusica: {fileID: 629369929}
 --- !u!1 &492851584
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,14 +1206,14 @@ MonoBehaviour:
   m_FillRect: {fileID: 629556649}
   m_HandleRect: {fileID: 1793951088}
   m_Direction: 0
-  m_MinValue: 0.0001
+  m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 120633743}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: ControlMusica, Assembly-CSharp
         m_MethodName: ControlMusicaVolumen
         m_Mode: 0
@@ -2808,4 +2777,3 @@ SceneRoots:
   - {fileID: 996607325}
   - {fileID: 464840117}
   - {fileID: 988131813}
-  - {fileID: 120633744}

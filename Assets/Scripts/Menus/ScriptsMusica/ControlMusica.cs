@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.Audio; 
+using UnityEngine.Audio;
 
 public class ControlMusica : MonoBehaviour
 {
@@ -7,13 +7,11 @@ public class ControlMusica : MonoBehaviour
 
     [Header("Configuracion de Audio")]
     [SerializeField] private AudioMixer audioMixer;
+
     private AudioSource audioSource;
 
-
-    //Para que no se destruya al cambiar de escena
     void Awake()
     {
-     
         if (instance == null)
         {
             instance = this;
@@ -25,10 +23,10 @@ public class ControlMusica : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     public void ControlMusicaVolumen(float sliderValue)
     {
-        
-        float volume = sliderValue > 0.0001f ? Mathf.Log10(sliderValue) * 20 : -80f;
+        float volume = sliderValue <= 0f ? -80f : Mathf.Log10(sliderValue) * 20f;
         audioMixer.SetFloat("ControlMusica", volume);
     }
 
