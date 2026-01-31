@@ -1090,7 +1090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuOpciones
   panelOpciones: {fileID: 798538451}
-  panelControles: {fileID: 0}
+  panelControles: {fileID: 798538451}
   sliderVolumen: {fileID: 0}
   dropdownResoluciones: {fileID: 0}
 --- !u!114 &464840119
