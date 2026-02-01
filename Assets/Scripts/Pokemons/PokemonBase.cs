@@ -107,3 +107,12 @@ public class TypeChart
         return chart[row][col];
     }
 }
+public enum Stat
+{
+    Ataque,
+    Defensa,
+    AtaqueEspecial,
+    DefensaEspecial,
+    Velocidad
+
+}

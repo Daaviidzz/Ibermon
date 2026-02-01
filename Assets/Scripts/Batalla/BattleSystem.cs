@@ -56,7 +56,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return dialogBox.TypeDialog($"Un {enemyUnit.Pokemon.Base.Name} salvaje ha aparecido!");
 
-        ActionSelection(); // Comienza el turno del jugador
+        ChooseFirstTurn();
     }
 
     // Cambia al estado de elegir Luchar, Mochila, etc.
@@ -96,13 +96,23 @@ public class BattleSystem : MonoBehaviour
         if (state == BattleState.PERFORMMOVE)
             ActionSelection();
     }
+    //Elegir quien ataca primero
+    void ChooseFirstTurn()
+    {
+        if (playerUnit.Pokemon.Speed >= enemyUnit.Pokemon.Speed)
+            ActionSelection();
+        else
+            StartCoroutine(EnemyMove());
+    }
+
 
     // Finaliza la lógica de batalla
     void BattleOver(bool won)
     {
         state = BattleState.BATTLEOVER;
-        // ERROR ANTERIOR: EndBattle(won); 
-        StartCoroutine(EndBattle(won)); // SOLUCIÓN: Usar StartCoroutine
+        //Resetear estados al acabar la batalla
+        playerParty.Pokemons.ForEach(p => p.OnBattleOver());
+        StartCoroutine(EndBattle(won)); // Usar StartCoroutine para evitar errores
     }
 
     // Método core: Maneja la animación, el daño y la reducción de PP de cualquier movimiento
@@ -116,11 +126,18 @@ public class BattleSystem : MonoBehaviour
 
         targetUnit.PlayHitAnimation();
 
-        var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
-        yield return targetUnit.Hud.UpdateHP();
-        yield return ShowDamageDetails(damageDetails);
+        if (move.Base.Category == MoveCategory.Estado)
+        {
+          yield return RunMoveEffects(move,sourceUnit.Pokemon, targetUnit.Pokemon);
+        }
+        else {
+            var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
+            yield return targetUnit.Hud.UpdateHP();
+            yield return ShowDamageDetails(damageDetails);
+        }
 
-        if (damageDetails.Fainted)
+
+        if (targetUnit.Pokemon.HP<=0)
         {
             yield return dialogBox.TypeDialog($"{targetUnit.Pokemon.Base.Name} se ha debilitado!");
             targetUnit.PlayFaintAnimation();
@@ -128,6 +145,30 @@ public class BattleSystem : MonoBehaviour
             CheckBattleOver(targetUnit);
         }
     }
+    IEnumerator RunMoveEffects(Move move,Pokemon source,Pokemon target)
+    {
+        var effects = move.Base.Effects;
+        if (effects.Boosts != null)
+        {
+            if (move.Base.Target == MoveTarget.Self)
+                source.ApplyBoosts(effects.Boosts);
+            else
+                target.ApplyBoosts(effects.Boosts);
+
+        }
+        yield return ShowStatusChanges(source);
+        yield return ShowStatusChanges(target);
+    }
+
+    IEnumerator ShowStatusChanges(Pokemon pokemon)
+    {
+        while (pokemon.StatusChanges.Count > 0)
+        {
+            var message=pokemon.StatusChanges.Dequeue();
+            yield return dialogBox.TypeDialog(message);
+        }
+    }
+
 
     // Verifica si alguien se quedó sin Pokémon para seguir luchando
     void CheckBattleOver(BattleUnit faintedUnit)
@@ -160,7 +201,7 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.MOVESELECTION;
         dialogBox.EnableActionSelector(false);
         dialogBox.EnableDialogText(false);
-        dialogBox.EneableMoveSelector(true);
+        dialogBox.EnableMoveSelector(true);
     }
 
     private void Update()
@@ -192,13 +233,13 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            dialogBox.EneableMoveSelector(false);
+            dialogBox.EnableMoveSelector(false);
             dialogBox.EnableDialogText(true);
             StartCoroutine(PlayerMove());
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
-            dialogBox.EneableMoveSelector(false);
+            dialogBox.EnableMoveSelector(false);
             dialogBox.EnableDialogText(true);
             ActionSelection();
         }
@@ -262,8 +303,10 @@ public class BattleSystem : MonoBehaviour
     // Intercambia el Pokémon actual por uno nuevo
     IEnumerator SwitchPokemon(Pokemon newPokemon)
     {
+        bool currentPokemonFainted = true;
         if (playerUnit.Pokemon.HP > 0)
         {
+            currentPokemonFainted=false;
             yield return dialogBox.TypeDialog($"Vuelve {playerUnit.Pokemon.Base.Name}");
             playerUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(2f);
@@ -273,6 +316,10 @@ public class BattleSystem : MonoBehaviour
         dialogBox.SetMoveNames(newPokemon.Moves);
         yield return dialogBox.TypeDialog($"Tu turno {newPokemon.Base.Name}!");
 
-        StartCoroutine(EnemyMove()); // Tras cambiar, el enemigo ataca
+        //Si nuestro pokemon es derrotado, se vuelve a elegir quien ataca
+        if (currentPokemonFainted)
+            ChooseFirstTurn();
+        else
+            StartCoroutine(EnemyMove()); // Tras cambiar, el enemigo ataca, 
     }
 }

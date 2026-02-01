@@ -1,44 +1,72 @@
+using System.Collections.Generic;
 using UnityEngine;
-//Para crear un nuevo asset de tipo MoveBase desde el menu de Unity
+
+// Permite crear nuevos movimientos como archivos de datos (Assets) desde el menú de Unity.
 [CreateAssetMenu(fileName = "Move", menuName = "Pokemons/New Move")]
 public class MoveBase : ScriptableObject
 {
+
     [SerializeField] string name;
-    [TextArea]
+
+    [TextArea] // Crea un cuadro de texto más grande en el Inspector para la descripción.
     [SerializeField] string description;
 
     [SerializeField] PokemonType type;
     [SerializeField] int power;
-    //precision del movimiento
+
+    // Probabilidad de acierto
     [SerializeField] int accuracy;
-    //numero de veces que se puede usar el movimiento
+
+    // Puntos de Poder: cantidad de veces que se puede ejecutar este ataque.
     [SerializeField] int pp;
 
-    //Property getters
-    public string Name { get { return name; } }
-    public string Description { get { return description; } }
-    public PokemonType Type { get { return type; } }
-    public int Power { get { return power; } }
-    public int Accuracy { get { return accuracy; } }
-    public int Pp { get { return pp; } }
+    // Clasificación: Físico, Especial o Estado 
+    [SerializeField] MoveCategory category;
 
-    public bool IsSpecial
-    {
-        get
-        {
-            //Ejemplo simple: movimientos de tipo Fuego, Agua, Planta son especiales
-            if(type == PokemonType.Fuego || type == PokemonType.Agua || type == PokemonType.Planta
-                || type == PokemonType.Electrico || type == PokemonType.Hielo || type == PokemonType.Psiquico || type == PokemonType.Dragon
-                || type==PokemonType.Lucha || type==PokemonType.Roca|| type==PokemonType.Tierra || type == PokemonType.Volador || type == PokemonType.Bicho || type == PokemonType.Fantasma || 
-                type==PokemonType.Veneno)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+    // Efectos secundarios 
+    [SerializeField] MoveEffects effects;
 
-    }
+    // Define a quién golpea: al enemigo o al propio usuario (útil para 2vs2 en el futuro).
+    [SerializeField] MoveTarget target;
+
+    // --- PROPIEDADES (GETTERS) ---
+
+    public string Name => name;
+    public string Description => description;
+    public PokemonType Type => type;
+    public int Power => power;
+    public int Accuracy => accuracy;
+    public int Pp => pp;
+    public MoveCategory Category => category;
+    public MoveEffects Effects => effects;
+    public MoveTarget Target => target;
+}
+
+[System.Serializable] // Permite que esta clase aparezca y sea editable dentro del Inspector de Unity.
+public class MoveEffects
+{
+    [SerializeField] List<StatBoost> boosts;
+
+    public List<StatBoost> Boosts => boosts;
+}
+
+[System.Serializable]
+public class StatBoost
+{
+    public Stat stat; // La estadística que se ve afectada (Ataque, Defensa, etc.)
+    public int boost; // El nivel de cambio (ej: +1, -1)
+}
+
+
+public enum MoveCategory
+{
+    Fisico,   // Basado en la estadística de Ataque.
+    Especial, // Basado en la estadística de Ataque Especial.
+    Estado    // Movimientos que no hacen daño directo, sino que alteran el combate.
+}
+
+public enum MoveTarget
+{
+    Foe,  // Objetivo: El enemigo.
+    Self  // Objetivo: El propio Pokémon que usa el movimiento.
 }

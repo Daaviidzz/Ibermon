@@ -1,82 +1,115 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-//Clase principal de Pokemon que contiene los datos y metodos necesarios para el funcionamiento del mismo
-//System.Serializable para que pueda ser serializado por Unity y guardado en archivos
+// Clase principal que representa una instancia individual de un Pokémon.
 [System.Serializable]
 public class Pokemon
 {
-   [SerializeField] PokemonBase _base;
-   [SerializeField] int level;
+    [SerializeField] PokemonBase _base;
+    [SerializeField] int level;
 
-    public PokemonBase Base { get { 
-            return _base;
-        } }
-    public int Level {
-        get {  return level; }
-            }
+    // Propiedades básicas
+    public PokemonBase Base => _base;
+    public int Level => level;
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
 
+    // Diccionarios para gestionar estadísticas base y modificadores de combate (Evasión, Ataque, etc.)
+    public Dictionary<Stat, int> Stats { get; private set; }
+    public Dictionary<Stat, int> StatsBoosts { get; private set; }
+
+    // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
+    public Queue<string> StatusChanges { get; private set; } = new();
+
     public void Init()
     {
-        HP = MaxHp;
+        Moves = new(); 
 
-        Moves = new List<Move>();
-        //Aprender movimientos segun el nivel
+        // El Pokémon aprende movimientos de su lista base según su nivel actual.
         foreach (var learnableMove in Base.LearnableMoves)
         {
             if (learnableMove.Level <= Level)
-            {
                 Moves.Add(new Move(learnableMove.MoveBase));
-            }
-            //solo puede aprender 4 movimientos
-            if (Moves.Count >= 4)
-                break;
+
+            if (Moves.Count >= 4) break; // Límite clásico de 4 movimientos.
+        }
+
+        CalculateStats();
+        HP = MaxHp;
+        ResetStatBoost();
+    }
+
+    // Calcula las estadísticas finales basadas en la fórmula oficial de los juegos de Pokémon.
+    void CalculateStats()
+    {
+        Stats = new();
+        Stats.Add(Stat.Ataque, Mathf.FloorToInt((Base.Attack * Level) / 100f) + 5);
+        Stats.Add(Stat.Defensa, Mathf.FloorToInt((Base.Defense * Level) / 100f) + 5);
+        Stats.Add(Stat.AtaqueEspecial, Mathf.FloorToInt((Base.SpAttack * Level) / 100f) + 5);
+        Stats.Add(Stat.DefensaEspecial, Mathf.FloorToInt((Base.SpDefense * Level) / 100f) + 5);
+        Stats.Add(Stat.Velocidad, Mathf.FloorToInt((Base.Speed * Level) / 100f) + 5);
+
+        MaxHp = Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10;
+    }
+
+    // Reinicia los niveles de modificadores (buffs/debuffs) a 0.
+    void ResetStatBoost()
+    {
+        StatsBoosts = new()
+        {
+            { Stat.Ataque, 0 },
+            { Stat.Defensa, 0 },
+            { Stat.AtaqueEspecial, 0 },
+            { Stat.DefensaEspecial, 0 },
+            { Stat.Velocidad, 0 }
+        };
+    }
+
+    // Obtiene el valor real de una estadística aplicando el modificador actual (boost).
+    int GetStat(Stat stat)
+    {
+        int statVal = Stats[stat];
+        int boost = StatsBoosts[stat];
+        var boostValues = new float[] { 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f };
+
+        // Si el boost es positivo multiplica, si es negativo divide.
+        return boost >= 0
+            ? Mathf.FloorToInt(statVal * boostValues[boost])
+            : Mathf.FloorToInt(statVal / boostValues[-boost]);
+    }
+
+    // Aplica cambios a las estadísticas 
+    public void ApplyBoosts(List<StatBoost> statBoosts)
+    {
+        foreach (var statBoost in statBoosts)
+        {
+            var stat = statBoost.stat;
+            var boost = statBoost.boost;
+
+            // Clampeamos entre -6 y 6 niveles (límite estándar).
+            StatsBoosts[stat] = Mathf.Clamp(StatsBoosts[stat] + boost, -6, 6);
+
+            string changeType = boost > 0 ? "aumento!" : "disminuyo!";
+            StatusChanges.Enqueue($"{stat} de {Base.Name} {changeType}");
         }
     }
 
-    //Calculo de stats
-    public int Attack
-    {
-        //Formula para calcular el stat de ataque(en el juego real es exactamente esta)
-        get { return Mathf.FloorToInt((Base.Attack * Level) / 100f) + 5; }
-    }
-    public int Defense
-    {
-        get { return Mathf.FloorToInt((Base.Defense * Level) / 100f) + 5; }
-    }
-    public int SpAttack
-    {
-        get { return Mathf.FloorToInt((Base.SpAttack * Level) / 100f) + 5; }
-    }
-    public int SpDefense
-    {
-        get { return Mathf.FloorToInt((Base.SpDefense * Level) / 100f) + 5; }
-    }
-    public int Speed
-    {
-        get { return Mathf.FloorToInt((Base.Speed * Level) / 100f) + 5; }
-    }
-    public int MaxHp
-    {
-        //Formula para calcular el stat de vida(en el juego real es exactamente esta)
-        get { return Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10; }
-    }
+    // Getters 
+    public int Attack => GetStat(Stat.Ataque);
+    public int Defense => GetStat(Stat.Defensa);
+    public int SpAttack => GetStat(Stat.AtaqueEspecial);
+    public int SpDefense => GetStat(Stat.DefensaEspecial);
+    public int Speed => GetStat(Stat.Velocidad);
+    public int MaxHp { get; private set; }
 
+    // Procesa el daño recibido por un ataque enemigo.
     public DamageDetails TakeDamage(Move move, Pokemon attacker)
     {
-        //Calculo de daño mas critico y efectividad 
-        //critico 6.25% de probabilidad
-        float critical = 1f;
-        if (Random.value*100f<=6.25f)
-        {
-            critical = 2f;
-        }
+        // Probabilidad de golpe crítico (6.25%).
+        float critical = (Random.value * 100f <= 6.25f) ? 2f : 1f;
 
-        //efectividad
-        float type =TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type1) * TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type2);
+        // Cálculo de efectividad de tipos 
+        float type = TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type1) * TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type2);
 
         var damageDetails = new DamageDetails()
         {
@@ -85,32 +118,31 @@ public class Pokemon
             Fainted = false
         };
 
-        //calculo de ataque y defensa especial o fisico
-        float attack = (move.Base.IsSpecial)? attacker.SpAttack : attacker.Attack;
-         float defense = (move.Base.IsSpecial)? this.SpDefense : this.Defense;
+        // Seleccionamos ataque y defensa según la categoría del movimiento.
+        float attack = (move.Base.Category == MoveCategory.Especial) ? attacker.SpAttack : attacker.Attack;
+        float defense = (move.Base.Category == MoveCategory.Especial) ? this.SpDefense : this.Defense;
 
-        //formulacion de daño
-        float modifiers =Random.Range(0.85f, 1f) * type * critical;
+        // Implementación de la fórmula de daño oficial.
+        float modifiers = Random.Range(0.85f, 1f) * type * critical;
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * move.Base.Power * ((float)attack / defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
         HP -= damage;
-        if(HP <= 0) 
-        {  
+        if (HP <= 0)
+        {
             HP = 0;
-             damageDetails.Fainted = true;
+            damageDetails.Fainted = true;
         }
+
         return damageDetails;
-
     }
-    public Move GetRandomMove()
-    {
-        int r = Random.Range(0, Moves.Count);
 
-        return Moves[r];
-    }
+    public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
+
+    public void OnBattleOver() => ResetStatBoost();
 }
+
 public class DamageDetails
 {
     public bool Fainted { get; set; }
