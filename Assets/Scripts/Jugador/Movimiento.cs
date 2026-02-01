@@ -73,7 +73,7 @@ public class Movimiento : MonoBehaviour
                 ChequearHierba();
             }
 
-        // --- Detectar ENTER para abrir menú ---
+        // --- Detectar X para abrir menú ---
         if (Input.GetKeyDown(KeyCode.X))
         {
             GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
