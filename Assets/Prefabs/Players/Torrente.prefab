@@ -398,14 +398,14 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   frasesTorrente:
   - {fileID: 8300000, guid: fd97e225082d8bc469e3c184197ae276, type: 3}
-  - {fileID: 8300000, guid: 359f48d736ba9074782e769a9ab29d98, type: 3}
+  - {fileID: 8300000, guid: 090064cf03d578240a1c9f967ad417f2, type: 3}
   - {fileID: 8300000, guid: 908220d12c8d0e14eab05176fd6a5e83, type: 3}
   - {fileID: 8300000, guid: 78f1cca580c8a594cbe747f70d2cb5af, type: 3}
   - {fileID: 8300000, guid: f13a1450cbe8b7d4984083a3c1c0ac1c, type: 3}
   - {fileID: 8300000, guid: b7556e024150a124fbb00eff5aaeccde, type: 3}
   - {fileID: 8300000, guid: 50ec7756935b0c34d9f5cdf1d9fdf73d, type: 3}
   - {fileID: 8300000, guid: 106d0ee3a083a3b46aeb06a401e724ab, type: 3}
-  - {fileID: 8300000, guid: 2d8a33245a86cbe4b9ebfaa8d6f5a115, type: 3}
+  - {fileID: 8300000, guid: c3b04b14d834f7547a6e1cd5acd9c397, type: 3}
   tiempoEntreFrases: 100
 --- !u!114 &-91521033044494198
 MonoBehaviour:
