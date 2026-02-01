@@ -406,7 +406,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 50ec7756935b0c34d9f5cdf1d9fdf73d, type: 3}
   - {fileID: 8300000, guid: 106d0ee3a083a3b46aeb06a401e724ab, type: 3}
   - {fileID: 8300000, guid: c3b04b14d834f7547a6e1cd5acd9c397, type: 3}
-  tiempoEntreFrases: 100
+  tiempoEntreFrases: 60
 --- !u!114 &-91521033044494198
 MonoBehaviour:
   m_ObjectHideFlags: 0
