@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class TorrenteFrases : MonoBehaviour
 {
@@ -20,6 +21,25 @@ public class TorrenteFrases : MonoBehaviour
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
+        }
+    }
+
+    void OnEnable()
+    {
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Combate")
+        {
+            DetenerFrases();
         }
     }
 
@@ -45,5 +65,14 @@ public class TorrenteFrases : MonoBehaviour
 
         ultimoIndice = indice;
         audioSource.PlayOneShot(frasesTorrente[indice]);
+    }
+
+    void DetenerFrases()
+    {
+        CancelInvoke("ReproducirFraseRandom");
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+        }
     }
 }
