@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6d3f625a7bbcd48a3d6304d09365e5, type: 3}
+  m_Name: Weedle
+  m_EditorClassIdentifier: Assembly-CSharp::PokemonBase
+  name: Weedle
+  description: 
+  frontSprite: {fileID: 8389134475083476877, guid: 3dbc1ddff65415341859836cfbb13924, type: 3}
+  backSprite: {fileID: 8389134475083476877, guid: f724b4838f0c6504db02307e21f99ef4, type: 3}
+  type1: 12
+  type2: 8
+  maxHp: 45
+  attack: 25
+  defense: 30
+  spAttack: 20
+  spDefense: 20
+  speed: 50
+  learnableMoves:
+  - moveBase: {fileID: 11400000, guid: bbdd0e1a822e28b4fa70d3faf1b21be4, type: 2}
+    level: 1
+  - moveBase: {fileID: 11400000, guid: 3fe543bd211f7534599af6d40a19df00, type: 2}
+    level: 10

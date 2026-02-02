@@ -7,6 +7,11 @@ public class Pokemon
 {
     [SerializeField] PokemonBase _base;
     [SerializeField] int level;
+    public Pokemon(PokemonBase pBase, int pLevel)
+    {
+        _base = pBase;
+        level = pLevel;
+    }
 
     // Propiedades básicas
     public PokemonBase Base => _base;
@@ -19,7 +24,9 @@ public class Pokemon
     public Dictionary<Stat, int> StatsBoosts { get; private set; }
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
-    public Queue<string> StatusChanges { get; private set; } = new();
+    public Queue<string> StatusChanges { get; private set; } 
+
+    
 
     public void Init()
     {
@@ -36,6 +43,7 @@ public class Pokemon
 
         CalculateStats();
         HP = MaxHp;
+        StatusChanges = new();
         ResetStatBoost();
     }
 

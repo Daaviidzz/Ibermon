@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening; // Importante: Librería para animaciones suaves (DOTween).
+using DG.Tweening;
+using System.Collections; // Importante: Librería para animaciones suaves (DOTween).
 
 public class BattleUnit : MonoBehaviour
 {
@@ -45,6 +46,7 @@ public class BattleUnit : MonoBehaviour
             // Actualizamos la interfaz (Nombre, Nivel, Vida) en el HUD.
             hud.SetData(pokemon);
 
+            transform.localScale=new Vector3(1,1,1);
             // Iniciamos la animación de entrada deslizante.
             PlayEnterAnimation();
         }
@@ -101,5 +103,23 @@ public class BattleUnit : MonoBehaviour
 
         // Join: AL MISMO TIEMPO, reduce la opacidad (alpha) a 0 (invisible).
         sequence.Join(image.DOFade(0f, 0.5f));
+    }
+
+    public IEnumerator PlayCaptureAnimation()
+    {
+        var sequence = DOTween.Sequence();
+        sequence.Append(image.DOFade(0f, 0.5f));
+        sequence.Join(transform.DOLocalMoveY(originalPosition.y + 50f, 0.5f));
+        sequence.Join(transform.DOScale(new Vector3(0.3f,0.3f,1f),0.5f));
+       yield return sequence.WaitForCompletion();
+    }
+
+    public IEnumerator PlayBreakOutAnimation()
+    {
+        var sequence = DOTween.Sequence();
+        sequence.Append(image.DOFade(1f, 0.5f));
+        sequence.Join(transform.DOLocalMoveY(originalPosition.y, 0.5f));
+        sequence.Join(transform.DOScale(new Vector3(1f, 1f, 1f), 0.5f));
+        yield return sequence.WaitForCompletion();
     }
 }

@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using TMPro; 
 using UnityEngine;
@@ -39,4 +40,5 @@ public class BattleHud : MonoBehaviour
         // 'yield return' significa que el código esperará aquí hasta que la animación de la barra termine.
         yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
     }
+   
 }

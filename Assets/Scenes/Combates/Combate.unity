@@ -1011,7 +1011,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: -267923863
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &105612560
@@ -1198,9 +1198,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f23cada2897365547ba379a32432a3c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleDialogBox
-  dialogText: {fileID: 1780982375}
   lettersPerSecond: 30
   highlightedColor: {r: 0.18653606, g: 0.29314986, b: 0.8037735, a: 1}
+  dialogText: {fileID: 1780982375}
   actionSelector: {fileID: 389192003}
   moveSelector: {fileID: 1983216895}
   moveDetails: {fileID: 1896132964}
@@ -1587,6 +1587,7 @@ MonoBehaviour:
   enemyUnit: {fileID: 996686787}
   partyScreen: {fileID: 1451336895}
   dialogBox: {fileID: 163808555}
+  pokeballSprite: {fileID: 6044954367389343694, guid: 6e353274f7bdb2b4ebcda0535a738fdc, type: 3}
 --- !u!4 &496714905
 Transform:
   m_ObjectHideFlags: 0

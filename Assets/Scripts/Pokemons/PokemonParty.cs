@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq; // Necesario para el Where y FirstOrDefault
+using System.Linq; 
 using UnityEngine;
 
 public class PokemonParty : MonoBehaviour
@@ -27,5 +27,13 @@ public class PokemonParty : MonoBehaviour
         if (pokemons == null) return null;
 
         return pokemons.Where(p => p.HP > 0).FirstOrDefault();
+    }
+
+    public void AddPokemon(Pokemon newPokemon)
+    {
+        if (pokemons.Count < 6)
+            pokemons.Add(newPokemon);
+        else;
+            //TODO
     }
 }

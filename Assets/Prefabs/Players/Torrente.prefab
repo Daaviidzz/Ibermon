@@ -216,7 +216,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1322852105
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1570390323858658695, guid: 7b1054dbc4d19ea40b99e1c18b4fad93, type: 3}
@@ -424,7 +424,5 @@ MonoBehaviour:
     level: 10
   - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
     level: 10
-  - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
-    level: 2
-  - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
-    level: 4
+  - _base: {fileID: 11400000, guid: 86c68001d3835de43bce0cd0e42fe467, type: 2}
+    level: 10
