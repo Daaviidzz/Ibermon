@@ -26,8 +26,6 @@ public class Pokemon
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
     public Queue<string> StatusChanges { get; private set; } 
 
-    
-
     public void Init()
     {
         Moves = new(); 
@@ -149,6 +147,12 @@ public class Pokemon
     public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
 
     public void OnBattleOver() => ResetStatBoost();
+
+    public void HealthAllPokemons() => ResetHealth();
+    void ResetHealth()
+    {
+        HP=MaxHp;
+    }
 }
 
 public class DamageDetails

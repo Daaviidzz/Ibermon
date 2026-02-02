@@ -27,6 +27,8 @@ public class BattleSystem : MonoBehaviour
     PokemonParty playerParty;
     Pokemon wildPokemon;
 
+    int escapeAttempts; // Contador de intentos para escapar
+
     private void Start()
     {
         // Recuperamos el equipo del jugador mediante el Tag "Player"
@@ -58,7 +60,7 @@ public class BattleSystem : MonoBehaviour
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
 
         yield return dialogBox.TypeDialog($"Un {enemyUnit.Pokemon.Base.Name} salvaje ha aparecido!");
-
+        escapeAttempts = 0; 
         ChooseFirstTurn();
     }
 
@@ -264,11 +266,17 @@ public class BattleSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             if (currentAction == 0) MoveSelection(); // Luchar
-            else if (currentAction == 1) { 
+            else if (currentAction == 1)
+            {
                 dialogBox.EnableActionSelector(false);
-                StartCoroutine(ThrowPokeball()); }//Mochila
+                StartCoroutine(ThrowPokeball());
+            }//Mochila
             else if (currentAction == 2) OpenPartyScreen(); // Pokémon
-            else if (currentAction == 3) StartCoroutine(dialogBox.TypeDialog("No puedes huir de una batalla salvaje!")); // Huir
+            else if (currentAction == 3)
+            {
+                dialogBox.EnableActionSelector(false);
+                StartCoroutine(TryToEscape()); // Huir
+            }
         }
     }
 
@@ -374,7 +382,7 @@ public class BattleSystem : MonoBehaviour
             yield return enemyUnit.PlayBreakOutAnimation();
 
             if (shakeCount < 2)
-                yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha escapado de la Ball!");
+                yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha escapado de la PokeBall!");
             else
                 yield return dialogBox.TypeDialog($"¡Casi lo atrapas!");
 
@@ -400,4 +408,36 @@ public class BattleSystem : MonoBehaviour
         }
         return shakeCount;
     }
+    IEnumerator TryToEscape()
+    {
+        state=BattleState.BUSY;
+
+        ++escapeAttempts;
+        int playerSpeed = playerUnit.Pokemon.Speed;
+        int enemySpeed=enemyUnit.Pokemon.Speed;
+
+        if (enemySpeed < playerSpeed)
+        {
+            yield return dialogBox.TypeDialog($"Puedes huir del combate a salvo!");
+            BattleOver(false);
+        }
+        else
+        {
+            float f = (playerSpeed * 128) / enemySpeed + 30 * escapeAttempts;
+            f = f % 256;
+
+            if(UnityEngine.Random.Range(0,256)<f)
+            {
+                yield return dialogBox.TypeDialog($"Puedes huir a savo!");
+                BattleOver(false);
+            }
+            else
+            {
+                yield return dialogBox.TypeDialog($"No has podido huir!");
+                StartCoroutine(EnemyMove());
+
+            }
+        }
+    }
+   
 }
