@@ -26,6 +26,9 @@ public class Movimiento : MonoBehaviour
     //creamos una variable tipo vector2 que es la que nos permitirá el movimiento
     private Vector2 entradaMovimiento;
 
+    //Para saber si el personaje está en interacción o no
+    public bool estaEnInteraccion = false;
+
     //Metodo que se ejecuta nada más iniciar
     private void Awake()
     {
@@ -44,6 +47,8 @@ public class Movimiento : MonoBehaviour
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
+        if (!estaEnInteraccion)
+        {
             //si pulsa shift irá más rapido y sino irá a la velocidad normal
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -73,19 +78,20 @@ public class Movimiento : MonoBehaviour
                 ChequearHierba();
             }
 
-        // --- Detectar X para abrir menú ---
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
-            GuardarPosicionAnterior.posicionAnterior = transform.position;
+            // --- Detectar X para abrir menú ---
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+                GuardarPosicionAnterior.posicionAnterior = transform.position;
 
-            // Deshabilitar AudioListener del Player ANTES de cargar la escena
-            var listener = GetComponentInChildren<AudioListener>();
-            if (listener) listener.enabled = false;
+                // Deshabilitar AudioListener del Player ANTES de cargar la escena
+                var listener = GetComponentInChildren<AudioListener>();
+                if (listener) listener.enabled = false;
 
-            SceneManager.LoadScene("Opciones");
+                SceneManager.LoadScene("Opciones");
+            }
         }
-
+           
     }
 
     private void FixedUpdate()

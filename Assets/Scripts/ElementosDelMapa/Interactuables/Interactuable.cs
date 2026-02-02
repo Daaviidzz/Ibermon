@@ -26,7 +26,17 @@ public class Interactuable : MonoBehaviour
     [SerializeField]
     private ControladorTextosUI controladorTextosUI;//hace referencia al script que controlará la parte UI
 
+    //variable de movimiento de personaje que luego usaremos
+    private Movimiento movimientoPersonaje;
+
     private int indice;//El contador de frases
+
+
+    private void Awake()
+    {
+        //para coger el script de movimiento del personaje con tag Player
+        movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     { 
@@ -51,10 +61,15 @@ public class Interactuable : MonoBehaviour
         //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E
         if (jugadorDentro && Input.GetKeyDown(KeyCode.E))
         {
+            //Bloqueamos el movimiento del personaje
+            movimientoPersonaje.estaEnInteraccion = true;
+
             if (archivoAudio != null)
             {
                 //Lanza el audio
                 archivoAudio.PlayOneShot(audio);
+                //Desbloqueamos el movimiento del personaje
+                movimientoPersonaje.estaEnInteraccion = false;
             }
 
             //Si el animación no es nulo
@@ -62,6 +77,8 @@ public class Interactuable : MonoBehaviour
             {
                 // Lanzar animación una sola vez
                 animacion.SetTrigger(triggerAnimacion);
+                //Desbloqueamos el movimiento del personaje
+                movimientoPersonaje.estaEnInteraccion = false;
             }
 
             if(listaTextos != null && listaTextos.Count > 0)
@@ -69,7 +86,6 @@ public class Interactuable : MonoBehaviour
                 controladorTextosUI.activarDesactivarCajaDeTextos(true);//activamos la UI
                 activarCartel();
             }
-
         }
     }
 
@@ -85,6 +101,10 @@ public class Interactuable : MonoBehaviour
         {
             controladorTextosUI.activarDesactivarCajaDeTextos(false);//basicamente cuando ya no queden más desactivamos la UI
             indice = 0;//cuando haya terminado ponemos que el indice sea 0
+
+            //Desbloqueamos el movimiento del personaje
+            movimientoPersonaje.estaEnInteraccion = false;
+
         }
     }
 
