@@ -88,7 +88,11 @@ public class Movimiento : MonoBehaviour
                 var listener = GetComponentInChildren<AudioListener>();
                 if (listener) listener.enabled = false;
 
-                SceneManager.LoadScene("Opciones");
+                //  SceneManager.LoadScene("Opciones");
+
+
+                //ahora cargamos de manera asincrona para que la musica no se pare (o de menos sensacion de que lo hace)
+                SceneManager.LoadSceneAsync("Opciones");
             }
         }
            
