@@ -9,10 +9,13 @@ public class ControladorTextosUI : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI textoDialogo;
 
+    public bool estaActiva = false;
+
     //metodo para activar desactivar caja de textos
     public void activarDesactivarCajaDeTextos(bool activado)
     {
         cajaTexto.SetActive(activado);
+        estaActiva = activado;
     }
 
     //Metodo para mostrar textos

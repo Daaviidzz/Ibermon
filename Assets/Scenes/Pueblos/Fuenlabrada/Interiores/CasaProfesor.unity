@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ControladorTextosUI
   cajaTexto: {fileID: 1315332755}
   textoDialogo: {fileID: 1753837075}
+  estaActiva: 0
 --- !u!1 &153930095
 GameObject:
   m_ObjectHideFlags: 0
@@ -8539,11 +8540,10 @@ MonoBehaviour:
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
-  listaTextos:
-  - Buffff
-  - "Que dudas tienes ahora si est\xE1 todo en las trasparencias"
-  - 'A que quieres aprender a usar ese bicho que llevas, ese bicho se llama pockemon '
-  - En las trasparencias aparece todo explicado mucha suerte en tu viaje
+  fasesDialogo:
+  - textosDeEstaFase:
+    - Hola
+  faseActual: 0
   controladorTextosUI: {fileID: 94581505}
 --- !u!61 &2116421174
 BoxCollider2D:

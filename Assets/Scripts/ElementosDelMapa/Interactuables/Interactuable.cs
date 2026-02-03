@@ -1,6 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+// Clase que representa una fase de diálogo del NPC
+// Básicamente es una lista de frases que pertenecen a una fase concreta
+[System.Serializable]
+public class FaseDialogo
+{
+    [TextArea(1, 3)]
+    public List<string> textosDeEstaFase; // Lista de frases de esta fase
+}
 
 public class Interactuable : MonoBehaviour
 {
@@ -8,6 +16,7 @@ public class Interactuable : MonoBehaviour
     //Parte de sonido
     public AudioSource archivoAudio;
     public AudioClip audio;
+
     //Mensaje para la interacción
     public string mensaje = "Pulsa E para interactuar";
 
@@ -18,11 +27,15 @@ public class Interactuable : MonoBehaviour
     public Animator animacion;// Donde colocaremos la animación
     public string triggerAnimacion; //Nombre del trigger
 
+    // Lista de fases que tendrá este NPC
+    // Cada fase contiene su propia lista de textos
+    public List<FaseDialogo> fasesDialogo;
+
+    // Fase actual en la que se encuentra este NPC
+    // Cada NPC puede tener más o menos fases, no pasa nada
+    public int faseActual = 0;
+
     //Parte de cuadro de dialogo
-    //Con el TextArea le digo que me cree por defecto x cajas de x líneas como máximo
-    //obviamente podrá añadir más
-    [SerializeField, TextArea(1, 3)]
-    private List<string> listaTextos;//creo una lista de textos
     [SerializeField]
     private ControladorTextosUI controladorTextosUI;//hace referencia al script que controlará la parte UI
 
@@ -30,6 +43,7 @@ public class Interactuable : MonoBehaviour
     private Movimiento movimientoPersonaje;
 
     private int indice;//El contador de frases
+    private bool dialogoActivo = false; // Controla si estamos dentro de un diálogo
 
 
     private void Awake()
@@ -39,15 +53,16 @@ public class Interactuable : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    { 
+    {
         if (collision.CompareTag("Player"))
         {
             jugadorDentro = true;
             //aquí debería de mostrar el mensaje lanzando la acción necesaria
         }
     }
-    private void OnTriggerExit2D(Collider2D collision) 
-    { 
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
         if (collision.CompareTag("Player"))
         {
             jugadorDentro = false;
@@ -61,50 +76,95 @@ public class Interactuable : MonoBehaviour
         //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E
         if (jugadorDentro && Input.GetKeyDown(KeyCode.E))
         {
-            //Bloqueamos el movimiento del personaje
-            movimientoPersonaje.estaEnInteraccion = true;
-
-            if (archivoAudio != null)
+            // Si este objeto no tiene controladorTextosUI ni fasesDialogo, no hace nada con textos
+            // Solo ejecuta audio y animación si existen
+            if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
             {
-                //Lanza el audio
-                archivoAudio.PlayOneShot(audio);
-                //Desbloqueamos el movimiento del personaje
-                movimientoPersonaje.estaEnInteraccion = false;
+                if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
+                if (animacion != null) animacion.SetTrigger(triggerAnimacion);
+                return; // Sale y no intenta abrir diálogo
             }
 
-            //Si el animación no es nulo
-            if (animacion != null)
+            // Si ya estamos en diálogo, avanza la siguiente frase
+            // El return evita que se ejecute lo de abajo en el mismo frame
+            if (dialogoActivo)
             {
-                // Lanzar animación una sola vez
-                animacion.SetTrigger(triggerAnimacion);
-                //Desbloqueamos el movimiento del personaje
-                movimientoPersonaje.estaEnInteraccion = false;
-            }
-
-            if(listaTextos != null && listaTextos.Count > 0)
-            {
-                controladorTextosUI.activarDesactivarCajaDeTextos(true);//activamos la UI
                 activarCartel();
+                return;
+            }
+
+            //Bloqueamos el movimiento del personaje y activamos el diálogo
+            movimientoPersonaje.estaEnInteraccion = true;
+            dialogoActivo = true;
+
+            //Lanza el audio si existe
+            if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
+
+            //Lanza animación si existe
+            if (animacion != null) animacion.SetTrigger(triggerAnimacion);
+
+            // Comprobamos si la fase actual tiene textos
+            // Usamos && para que si la lista es nula no intente hacer .Count
+            if (fasesDialogo[faseActual].textosDeEstaFase != null && fasesDialogo[faseActual].textosDeEstaFase.Count > 0)
+            {
+                //Activamos la UI y mostramos la primera frase de la fase actual
+                controladorTextosUI.activarDesactivarCajaDeTextos(true);
+                activarCartel();
+            }
+            else
+            {
+                //Si no hay textos, no tiene sentido abrir la UI
+                //Simplemente desbloqueamos el movimiento y cerramos el diálogo
+                dialogoActivo = false;
+                movimientoPersonaje.estaEnInteraccion = false;
             }
         }
     }
 
     private void activarCartel()
     {
-        //si la posición es menor a el total de la lista
-        if (indice < listaTextos.Count)
+        // Cogemos la lista de frases de la fase actual del NPC
+        List<string> textos = fasesDialogo[faseActual].textosDeEstaFase;
+
+        // Si por lo que sea la lista está vacía o es nula, cerramos y desbloqueamos
+        // Usamos && para que si la lista es nula no intente hacer .Count
+        if (textos != null && textos.Count > 0)
         {
-            controladorTextosUI.mostrarTextos(listaTextos[indice]);//llamamos al método de la UI para que muestre el texto
-            indice++;//sumamos uno al contador
+            //si la posición es menor a el total de la lista
+            if (indice < textos.Count)
+            {
+                controladorTextosUI.mostrarTextos(textos[indice]);//llamamos al método de la UI para que muestre el texto
+                indice++;//sumamos uno al contador
+            }
+            else
+            {
+                // Ya se acabaron las frases, cerramos todo
+                controladorTextosUI.activarDesactivarCajaDeTextos(false);//basicamente cuando ya no queden más desactivamos la UI
+                indice = 0;//cuando haya terminado ponemos que el indice sea 0
+                dialogoActivo = false; // Cerramos el diálogo
+                //Desbloqueamos el movimiento del personaje
+                movimientoPersonaje.estaEnInteraccion = false;
+            }
         }
         else
         {
-            controladorTextosUI.activarDesactivarCajaDeTextos(false);//basicamente cuando ya no queden más desactivamos la UI
-            indice = 0;//cuando haya terminado ponemos que el indice sea 0
-
-            //Desbloqueamos el movimiento del personaje
+            // No hay textos, cerramos inmediatamente
+            controladorTextosUI.activarDesactivarCajaDeTextos(false);
+            indice = 0;
+            dialogoActivo = false;
             movimientoPersonaje.estaEnInteraccion = false;
+        }
+    }
 
+
+    // Método para cambiar de fase del NPC
+    // Lo puedes llamar desde cualquier script cuando el jugador haga algo
+    public void CambiarFase(int nuevaFase)
+    {
+        //Comprobamos que la fase existe para evitar errores
+        if (nuevaFase >= 0 && nuevaFase < fasesDialogo.Count)
+        {
+            faseActual = nuevaFase;
         }
     }
 
