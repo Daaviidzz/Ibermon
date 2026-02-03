@@ -16,6 +16,7 @@ public class MoveBase : ScriptableObject
 
     // Probabilidad de acierto
     [SerializeField] int accuracy;
+    [SerializeField] bool alwaysHit; // Siempre golpea el movimiento
 
     // Puntos de Poder: cantidad de veces que se puede ejecutar este ataque.
     [SerializeField] int pp;
@@ -36,6 +37,7 @@ public class MoveBase : ScriptableObject
     public PokemonType Type => type;
     public int Power => power;
     public int Accuracy => accuracy;
+    public bool AlwaysHit => alwaysHit;
     public int Pp => pp;
     public MoveCategory Category => category;
     public MoveEffects Effects => effects;

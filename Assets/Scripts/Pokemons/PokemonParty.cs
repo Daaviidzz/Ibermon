@@ -29,11 +29,13 @@ public class PokemonParty : MonoBehaviour
         return pokemons.Where(p => p.HP > 0).FirstOrDefault();
     }
 
-    public void AddPokemon(Pokemon newPokemon)
+    public bool AddPokemon(Pokemon newPokemon)
     {
-        if (pokemons.Count < 6)
+        if (pokemons.Count < 6) {
             pokemons.Add(newPokemon);
-        else;
-            //TODO
+            return true;
+        }
+        else
+            return false;
     }
 }

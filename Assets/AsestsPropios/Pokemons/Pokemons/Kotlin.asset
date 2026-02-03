@@ -19,14 +19,14 @@ MonoBehaviour:
   type1: 4
   type2: 15
   maxHp: 100
-  attack: 40
+  attack: 50
   defense: 70
   spAttack: 65
   spDefense: 65
   speed: 65
   expYield: 300
-  growthRate: 0
+  growthRate: 1
   catchRate: 255
   learnableMoves:
   - moveBase: {fileID: 11400000, guid: 0145f095de48958419c34196ec7b5c4d, type: 2}
-    level: 14
+    level: 10

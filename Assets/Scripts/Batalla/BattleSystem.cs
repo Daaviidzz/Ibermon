@@ -126,26 +126,34 @@ public class BattleSystem : MonoBehaviour
         move.Pp--;
         yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
 
-        sourceUnit.PlayAttackAnimation();
-        yield return new WaitForSeconds(1f);
-
-        targetUnit.PlayHitAnimation();
-
-        if (move.Base.Category == MoveCategory.Estado)
+        if (CheckIfMoveHits(move, sourceUnit.Pokemon, targetUnit.Pokemon))
         {
-          yield return RunMoveEffects(move,sourceUnit.Pokemon, targetUnit.Pokemon);
-        }
-        else {
-            var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
-            yield return targetUnit.Hud.UpdateHP();
-            yield return ShowDamageDetails(damageDetails);
-        }
+
+            sourceUnit.PlayAttackAnimation();
+            yield return new WaitForSeconds(1f);
+
+            targetUnit.PlayHitAnimation();
+
+            if (move.Base.Category == MoveCategory.Estado)
+            {
+                yield return RunMoveEffects(move, sourceUnit.Pokemon, targetUnit.Pokemon);
+            }
+            else
+            {
+                var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
+                yield return targetUnit.Hud.UpdateHP();
+                yield return ShowDamageDetails(damageDetails);
+            }
 
 
-        if (targetUnit.Pokemon.HP<=0)
-        {
-          yield return HandlePokemonFainted(targetUnit);
+            if (targetUnit.Pokemon.HP <= 0)
+            {
+                yield return HandlePokemonFainted(targetUnit);
+            }
         }
+        else
+            yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} falló el ataque");
+
     }
     IEnumerator RunMoveEffects(Move move,Pokemon source,Pokemon target)
     {
@@ -170,7 +178,25 @@ public class BattleSystem : MonoBehaviour
             yield return dialogBox.TypeDialog(message);
         }
     }
+    bool CheckIfMoveHits(Move move,Pokemon source,Pokemon target)
+    {
+        if (move.Base.AlwaysHit)
+            return true;
+        float moveAccuracy=move.Base.Accuracy;
+        int evasion = target.StatsBoosts[Stat.Evasion];
+        int accuracy = target.StatsBoosts[Stat.Accuracy];
+        var boostValues = new float[] { 1f, 4f / 3f, 5f / 3f, 2f, 7f / 3f, 8f / 3f, 3f };
+        if(accuracy>0)
+            moveAccuracy *= boostValues[accuracy];
+        else
+            moveAccuracy /= boostValues[-accuracy];
+        if(evasion >0)
+            moveAccuracy /= boostValues[evasion];
+        else
+            moveAccuracy *= boostValues[-evasion];
 
+       return UnityEngine.Random.Range(1, 101) <= moveAccuracy;
+    }
 
     // Verifica si alguien se quedó sin Pokémon para seguir luchando
     void CheckBattleOver(BattleUnit faintedUnit)
@@ -394,8 +420,11 @@ public class BattleSystem : MonoBehaviour
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido capturado");
             yield return pokeball.DOFade(0,1.5f).WaitForCompletion();
 
-            playerParty.AddPokemon(enemyUnit.Pokemon);
-            yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido añadido a tu equipo");
+            if(playerParty.AddPokemon(enemyUnit.Pokemon)) 
+            { 
+                yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido añadido a tu equipo");
+            }else
+                yield return dialogBox.TypeDialog($"Equipo lleno");
 
             Destroy(pokeballObJ);
             BattleOver(true);

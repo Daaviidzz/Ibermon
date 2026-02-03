@@ -135,6 +135,9 @@ public enum Stat
     Defensa,
     AtaqueEspecial,
     DefensaEspecial,
-    Velocidad
+    Velocidad,
+    // Estas dos no son estadisticas, son modificadores de la precisión
+    Accuracy,
+    Evasion
 
 }

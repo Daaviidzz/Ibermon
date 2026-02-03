@@ -69,7 +69,9 @@ public class Pokemon
             { Stat.Defensa, 0 },
             { Stat.AtaqueEspecial, 0 },
             { Stat.DefensaEspecial, 0 },
-            { Stat.Velocidad, 0 }
+            { Stat.Velocidad, 0 },
+            {Stat.Accuracy, 0 },
+            {Stat.Evasion, 0}
         };
     }
 
