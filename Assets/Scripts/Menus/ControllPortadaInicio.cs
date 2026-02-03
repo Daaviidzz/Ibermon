@@ -1,6 +1,6 @@
+using TMPro; // Cambiado para usar TextMeshPro
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // Cambiado para usar TextMeshPro
 
 public class ControllPortadaInicio : MonoBehaviour
 {
@@ -13,13 +13,21 @@ public class ControllPortadaInicio : MonoBehaviour
     //Velocidad de parpadeo del texto
     public float velocidadParpadeo = 2f;
 
+    // Detectar si estamos en móvil o PC
+    private bool esMovil;
+
     //bloqueamos el cursor desde el principio del juego
     private void Awake()
     {
-        //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
-        Cursor.lockState = CursorLockMode.Locked;
-        //Y ahora le quitamos la visibilidad
-        Cursor.visible = false;
+        comprobacionInicialParteMovil();
+        // Solo bloquear cursor en PC
+        if (!esMovil)
+        {
+            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+            Cursor.lockState = CursorLockMode.Locked;
+            //Y ahora le quitamos la visibilidad
+            Cursor.visible = false;
+        }
     }
 
     void Update()
@@ -43,4 +51,18 @@ public class ControllPortadaInicio : MonoBehaviour
         }
 
     }
+
+
+    //Parte movil inicial
+    private void comprobacionInicialParteMovil()
+    {
+        // Detectar la plataforma
+#if UNITY_ANDROID || UNITY_IOS
+        esMovil = true;
+#else
+            esMovil = false;
+#endif
+
+    }
+
 }

@@ -16,13 +16,22 @@ public class MenuOpciones : MonoBehaviour
     //boton volver del panel controles
     public Button botonVolverPanelControles;
 
+    // Detectar si estamos en móvil o PC
+    private bool esMovil;
+
     //desbloqueamos el cursor desde el principio del juego
     private void Awake()
     {
-        //Para que el cursor se pueda mover
-        Cursor.lockState = CursorLockMode.None;
-        //Para que se vea
-        Cursor.visible = true;
+
+        comprobacionInicialParteMovil();
+        // Solo desbloquear cursor en PC
+        if (!esMovil)
+        {
+            //Para que el cursor se pueda mover
+            Cursor.lockState = CursorLockMode.None;
+            //Para que se vea
+            Cursor.visible = true;
+        }
 
 
         //Son expresiones lambda que esperan a la activación del botón 
@@ -56,10 +65,14 @@ public class MenuOpciones : MonoBehaviour
 
     private void volver()
     {
-        //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
-        Cursor.lockState = CursorLockMode.Locked;
-        //Y ahora le quitamos la visibilidad
-        Cursor.visible = false;
+        // Solo bloquear cursor en PC
+        if (!esMovil)
+        {
+            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+            Cursor.lockState = CursorLockMode.Locked;
+            //Y ahora le quitamos la visibilidad
+            Cursor.visible = false;
+        }
 
         //Le asignamos la posición al jugador
         JugadorSpawn.posicion = GuardarPosicionAnterior.posicionAnterior;
@@ -69,6 +82,18 @@ public class MenuOpciones : MonoBehaviour
         //para que siempre se muestre primero la de opciones y no la de configuración
         panelOpciones.SetActive(true);
         panelControles.SetActive(false);
+    }
+
+    //Parte movil inicial
+    private void comprobacionInicialParteMovil()
+    {
+        // Detectar la plataforma
+#if UNITY_ANDROID || UNITY_IOS
+        esMovil = true;
+#else
+            esMovil = false;
+#endif
+
     }
 
 }

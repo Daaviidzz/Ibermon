@@ -50,10 +50,14 @@ public class Movimiento : MonoBehaviour
         //lo mismo pero como la animación no está en el padre y está en el hijo haré
         animacion = GetComponentInChildren<Animator>();
 
-        //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
-        Cursor.lockState = CursorLockMode.Locked;
-        //Y ahora le quitamos la visibilidad
-        Cursor.visible = false;
+        // Solo bloquear cursor en PC
+        if (!esMovil)
+        {
+            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+            Cursor.lockState = CursorLockMode.Locked;
+            //Y ahora le quitamos la visibilidad
+            Cursor.visible = false;
+        }
 
     }
 
@@ -168,22 +172,24 @@ public class Movimiento : MonoBehaviour
         // Detectar la plataforma
         #if UNITY_ANDROID || UNITY_IOS
             esMovil = true;
-        #else
+#else
             esMovil = false;
-        #endif
+#endif
+
+        ControlesMoviles controles = FindObjectOfType<ControlesMoviles>();
 
         // Obtener referencias del script estatico de ControlesMoviles que estará asignado en UIMovil
-        if (esMovil && ControlesMoviles.Instance != null)
+        if (esMovil && controles != null)
         {
-            joystick = ControlesMoviles.Instance.joystick;
-            botonCorrer = ControlesMoviles.Instance.botonCorrer;
-            botonMenuOpciones = ControlesMoviles.Instance.botonMenu;
+            joystick = controles.joystick;
+            botonCorrer = controles.botonCorrer;
+            botonMenuOpciones = controles.botonMenu;
         }
 
         // Desactivar controles en PC
-        if (!esMovil && ControlesMoviles.Instance != null)
+        if (!esMovil && controles != null)
         {
-            ControlesMoviles.Instance.gameObject.SetActive(false);
+            controles.gameObject.SetActive(false);
         }
     }
 
