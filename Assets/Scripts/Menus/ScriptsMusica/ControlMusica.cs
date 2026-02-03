@@ -44,7 +44,8 @@ public class ControlMusica : MonoBehaviour
         if (!musicaMenuParada &&
             scene.name != "Opciones" &&
             scene.name != "MenuPrincipal" &&
-            scene.name != "PortadaInicio")
+            scene.name != "PortadaInicio"&&
+            scene.name != "Creditos")
         {
             PararMusicaMenu();
             musicaMenuParada = true;
