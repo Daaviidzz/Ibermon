@@ -151,9 +151,19 @@ public class Pokemon
     public void OnBattleOver() => ResetStatBoost();
 
     public void HealthAllPokemons() => ResetHealth();
-    void ResetHealth()
+    public void ResetHealth()
     {
         HP=MaxHp;
+    }
+    //Comprueba para subir de nivel al pokemon
+    public bool CheckForLevelUp()
+    {
+        if(Exp>=Base.GetExpForLevel(level+1))
+        {
+         ++level;
+            return true;
+        }
+        return false;
     }
 }
 

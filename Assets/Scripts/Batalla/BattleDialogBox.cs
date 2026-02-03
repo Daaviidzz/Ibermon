@@ -44,11 +44,10 @@ public class BattleDialogBox : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
-    // Métodos "One-liner" usando Expression Body (=>) para mayor limpieza
     public void EnableDialogText(bool enabled) => dialogText.enabled = enabled;
     public void EnableActionSelector(bool enabled) => actionSelector.SetActive(enabled);
 
-    public void EnableMoveSelector(bool enabled) // Corregido typo: Eneable -> Enable
+    public void EnableMoveSelector(bool enabled) 
     {
         moveSelector.SetActive(enabled);
         moveDetails.SetActive(enabled);
@@ -58,7 +57,7 @@ public class BattleDialogBox : MonoBehaviour
     {
         for (int i = 0; i < actionTexts.Count; i++)
         {
-            // Usamos operador ternario: (condición) ? valor_si_true : valor_si_false
+           
             actionTexts[i].color = (i == selectedAction) ? highlightedColor : Color.black;
         }
     }

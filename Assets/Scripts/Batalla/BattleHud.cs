@@ -26,7 +26,7 @@ public class BattleHud : MonoBehaviour
 
         // Asignamos el nombre y el nivel a los textos de la UI.
         NameText.text = pokemon.Base.Name;
-        LevelText.text = "Lvl " + pokemon.Level;
+        SetLevel();
 
         // Ajustamos la barra de vida a su estado inicial.
         hpBar.SetHP((float)pokemon.HP / pokemon.MaxHp);
@@ -41,6 +41,11 @@ public class BattleHud : MonoBehaviour
         // 'yield return' significa que el código esperará aquí hasta que la animación de la barra termine.
         yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
     }
+    public void SetLevel()
+    {
+        LevelText.text = "Lvl " + _pokemon.Level;
+    }
+
     public void SetExp()
     {
         if (expBar == null) return;
@@ -49,9 +54,12 @@ public class BattleHud : MonoBehaviour
         expBar.transform.localScale = new Vector3(normalizedExp, 1f, 1f); 
 
     }
-    public IEnumerator SetExpSmooth()
+    public IEnumerator SetExpSmooth(bool reset=false)
     {
         if (expBar == null) yield break;
+
+        if(reset)
+            expBar.transform.localScale = new Vector3(0, 1f, 1f);
 
         float normalizedExp = GetNormalizedExp();
         yield return expBar.transform.DOScaleX(normalizedExp,1.5f).WaitForCompletion();
