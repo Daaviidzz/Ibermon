@@ -13,7 +13,7 @@ public class BattleHud : MonoBehaviour
     [SerializeField] TextMeshProUGUI NameText; // Texto para el nombre del Pokémon.
     [SerializeField] TextMeshProUGUI LevelText; // Texto para el nivel (ej: "Lvl 15").
     [SerializeField] HPBar hpBar; // Referencia al script 'HPBar' que controla visualmente la barra de vida (el relleno verde).
-
+    [SerializeField] GameObject expBar; // Referencia al objeto Exp
     // Referencia privada al objeto Pokémon cuyos datos estamos mostrando.
     
     Pokemon _pokemon;
@@ -30,6 +30,7 @@ public class BattleHud : MonoBehaviour
 
         // Ajustamos la barra de vida a su estado inicial.
         hpBar.SetHP((float)pokemon.HP / pokemon.MaxHp);
+        SetExp();
     }
 
     // Corrutina para actualizar la barra de vida con una animación suave.
@@ -40,5 +41,27 @@ public class BattleHud : MonoBehaviour
         // 'yield return' significa que el código esperará aquí hasta que la animación de la barra termine.
         yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
     }
-   
+    public void SetExp()
+    {
+        if (expBar == null) return;
+
+        float normalizedExp = GetNormalizedExp();
+        expBar.transform.localScale = new Vector3(normalizedExp, 1f, 1f); 
+
+    }
+    public IEnumerator SetExpSmooth()
+    {
+        if (expBar == null) yield break;
+
+        float normalizedExp = GetNormalizedExp();
+        yield return expBar.transform.DOScaleX(normalizedExp,1.5f).WaitForCompletion();
+    }
+    float GetNormalizedExp()
+    {
+        int currLevelExp= _pokemon.Base.GetExpForLevel(_pokemon.Level);
+        int nextLevelExp = _pokemon.Base.GetExpForLevel(_pokemon.Level+1);
+
+        float normalizedExp = (float)(_pokemon.Exp - currLevelExp) / (nextLevelExp - currLevelExp);
+        return Mathf.Clamp01(normalizedExp);
+    }
 }

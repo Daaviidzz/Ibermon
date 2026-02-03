@@ -14,6 +14,7 @@ public class Pokemon
     }
 
     // Propiedades básicas
+    public int Exp { get; set; }
     public PokemonBase Base => _base;
     public int Level => level;
     public int HP { get; set; }
@@ -38,6 +39,7 @@ public class Pokemon
 
             if (Moves.Count >= 4) break; // Límite clásico de 4 movimientos.
         }
+        Exp=Base.GetExpForLevel(Level);
 
         CalculateStats();
         HP = MaxHp;

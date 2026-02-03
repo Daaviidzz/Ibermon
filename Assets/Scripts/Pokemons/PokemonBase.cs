@@ -24,11 +24,22 @@ public class PokemonBase : ScriptableObject
     [SerializeField] int spAttack;
     [SerializeField] int spDefense;
     [SerializeField] int speed;
+    [SerializeField] int expYield; // Experiencia que da el pokemon
+    [SerializeField] GrowthRate growthRate; // Velocidad de crecimiento
     
     [SerializeField] int catchRate = 255;
 
     // Movimientos aprendibles
     [SerializeField] List<LearnableMove> learnableMoves;
+
+    public int GetExpForLevel(int level) 
+    {
+        if (growthRate == GrowthRate.Rapido)
+            return 4 * (level * level * level) / 5; // Experiencia que da el pokemon 
+        else if (growthRate == GrowthRate.Medio)
+            return level * level * level;
+        return -1;
+    }
 
     // Getters correctos (conectados a los campos serializados)
     public string Name => name;
@@ -46,6 +57,8 @@ public class PokemonBase : ScriptableObject
     public List<LearnableMove> LearnableMoves => learnableMoves;
 
     public int CatchRate=>catchRate;
+    public int ExpYield => expYield; // Experiencia que da el pokemon
+    public GrowthRate GrowthRate => growthRate;
 }
 [System.Serializable]
 public class LearnableMove
@@ -93,9 +106,9 @@ public class TypeChart
         /*Lucha*/   new float[] {2f,   1f,   1f, 1f,      1f,    2f,   1f,  0.5f,   1f,   0.5f,    2f,      0.5f, 2f, 0f,     1f },
         /*Veneno*/  new float[] {1f,   1f,   1f, 1f,      2f,    1f,   1f,  0.5f,  0.5f,   1f,     1f,      1f,  0.5f, 0.5f,   1f },
         /*Tierra*/  new float[] {1f,   2f,   1f, 2f,      0.5f,   1f,   1f,   2f,    1f,    0f,     1f,      2f,   1f, 1f,     1f },
-        /*Volador*/ new float[] {1f,   1f,   1f, 0.5f,    2f,    1f,   2f,   1f,    1f,    1f,     1f,     0.5f, 1f, 1f,     1f },
+        /*Volador*/ new float[] {1f,   1f,   1f, 0.5f,    2f,    1f,   2f,   1f,    1f,    1f,     1f,      2f,     0.5f, 1f,     1f },
         /*Psiquico*/new float[] {1f,   1f,   1f, 1f,      1f,    1f,   2f,   2f,    1f,    1f,    0.5f,     0.5f,   1f, 1f,     1f },
-        /*Bicho*/   new float[] {1f,   0.5f, 1f, 1f,      1f,    1f,   0.5f, 0.5f,   1f,    2f,     2f,      1f,   1f, 0.5f,   1f },
+        /*Bicho*/   new float[] {1f,   0.5f, 1f, 1f,      1f,    1f,   0.5f, 0.5f,   1f,    0.5f,     2f,      1f,   1f, 0.5f,   1f },
         /*Roca*/    new float[] {1f,   2f,   1f, 1f,      1f,    2f,   0.5f, 1f,    0.5f,   2f,     1f,      2f,   1f, 1f,     1f },
         /*Fantasma*/new float[] {0f,   1f,   1f, 1f,      1f,    1f,   1f,   1f,    1f,    1f,     2f,      1f,   1f,  2f,     1f },
         /*Dragon*/  new float[] {1f,   1f,   1f, 1f,      1f,    1f,   1f,   1f,    1f,    1f,     1f,      1f,   1f,  1f,     2f }
@@ -110,6 +123,11 @@ public class TypeChart
         int col = (int)defenseType - 1;
         return chart[row][col];
     }
+}
+public enum GrowthRate
+{
+    Medio,
+    Rapido
 }
 public enum Stat
 {

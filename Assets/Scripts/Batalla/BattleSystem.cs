@@ -144,10 +144,7 @@ public class BattleSystem : MonoBehaviour
 
         if (targetUnit.Pokemon.HP<=0)
         {
-            yield return dialogBox.TypeDialog($"{targetUnit.Pokemon.Base.Name} se ha debilitado!");
-            targetUnit.PlayFaintAnimation();
-            yield return new WaitForSeconds(2f);
-            CheckBattleOver(targetUnit);
+          yield return HandlePokemonFainted(targetUnit);
         }
     }
     IEnumerator RunMoveEffects(Move move,Pokemon source,Pokemon target)
@@ -315,6 +312,30 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    IEnumerator HandlePokemonFainted(BattleUnit faintedUnit)
+    {
+        yield return dialogBox.TypeDialog($"{faintedUnit.Pokemon.Base.Name} ha sido derrotado!");
+        faintedUnit.PlayFaintAnimation();
+        yield return new WaitForSeconds(2f);
+
+        if (!faintedUnit.IsPlayerUnit)
+        {
+            //Ganar Experiencia
+            int expYield=faintedUnit.Pokemon.Base.ExpYield;
+            int enemyLevel = faintedUnit.Pokemon.Level;
+            //Formula real
+            int expGain=Mathf.FloorToInt((enemyLevel * expYield)/7);
+            playerUnit.Pokemon.Exp += expGain;
+            yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} ganó {expGain} de experiencia");
+            yield return playerUnit.Hud.SetExpSmooth();
+            //Chack Subida de nivel
+
+        }
+
+        CheckBattleOver(faintedUnit);
+    }
+
+
     // Intercambia el Pokémon actual por uno nuevo
     IEnumerator SwitchPokemon(Pokemon newPokemon)
     {
@@ -428,7 +449,7 @@ public class BattleSystem : MonoBehaviour
 
             if(UnityEngine.Random.Range(0,256)<f)
             {
-                yield return dialogBox.TypeDialog($"Puedes huir a savo!");
+                yield return dialogBox.TypeDialog($"Puedes huir a salvo!");
                 BattleOver(false);
             }
             else
