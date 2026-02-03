@@ -29,9 +29,22 @@ public class Movimiento : MonoBehaviour
     //Para saber si el personaje está en interacción o no
     public bool estaEnInteraccion = false;
 
+
+    //Parte movil
+    [Header("Controles Móviles (Opcional)")]
+    [SerializeField] private JoystickVirtual joystick; // Referencia al joystick
+    [SerializeField] private ActivacionBoton botonCorrer; // Referencia al botón de correr
+    [SerializeField] private ActivacionBoton botonMenuOpciones; // Referencia al botón de correr
+
+    // Detectar si estamos en móvil o PC
+    private bool esMovil;
+
     //Metodo que se ejecuta nada más iniciar
     private void Awake()
     {
+        //Para la parte móvil
+        comprobacionInicialParteMovil();
+
         //coger el rigidbody del objeto y ponerselo a la variable que hemos creado
         rigidbody2D = GetComponent<Rigidbody2D>();
         //lo mismo pero como la animación no está en el padre y está en el hijo haré
@@ -49,8 +62,8 @@ public class Movimiento : MonoBehaviour
     {
         if (!estaEnInteraccion)
         {
-            //si pulsa shift irá más rapido y sino irá a la velocidad normal
-            if (Input.GetKey(KeyCode.LeftShift))
+            //llamamos a detectar correr para saber si está corriendo o no
+            if (DetectarCorrer())
             {
                 velocidad = velocidadMaxima;
             }
@@ -60,8 +73,8 @@ public class Movimiento : MonoBehaviour
             }
 
             //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
-            entradaMovimiento.x = Input.GetAxis("Horizontal");//Horizontal   
-            entradaMovimiento.y = Input.GetAxis("Vertical");//Vertical
+            entradaMovimiento.x = ObtenerInputHorizontal();//Horizontal   
+            entradaMovimiento.y = ObtenerInputVertical();//Vertical
 
             //para normalizarlo
             entradaMovimiento = entradaMovimiento.normalized;
@@ -78,8 +91,8 @@ public class Movimiento : MonoBehaviour
                 ChequearHierba();
             }
 
-            // --- Detectar X para abrir menú ---
-            if (Input.GetKeyDown(KeyCode.X))
+            // llamada al metodo para detectar abrirMenu
+            if (DetectarMenuOpciones())
             {
                 GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
                 GuardarPosicionAnterior.posicionAnterior = transform.position;
@@ -145,5 +158,94 @@ public class Movimiento : MonoBehaviour
             }
         }
     }
+
+
+    // ========== FUNCIONES MULTIPLATAFORMA ==========
+
+    //Parte movil inicial
+    private void comprobacionInicialParteMovil()
+    {
+        // Detectar la plataforma
+        #if UNITY_ANDROID || UNITY_IOS
+            esMovil = true;
+        #else
+            esMovil = false;
+        #endif
+
+        // Obtener referencias del script estatico de ControlesMoviles que estará asignado en UIMovil
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            joystick = ControlesMoviles.Instance.joystick;
+            botonCorrer = ControlesMoviles.Instance.botonCorrer;
+            botonMenuOpciones = ControlesMoviles.Instance.botonMenu;
+        }
+
+        // Desactivar controles en PC
+        if (!esMovil && ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.gameObject.SetActive(false);
+        }
+    }
+
+
+    // Obtener input horizontal (A/D o Joystick)
+    float ObtenerInputHorizontal()
+    {
+        if (esMovil && joystick != null)
+        {
+            // Usar joystick en móvil
+            return joystick.Horizontal();
+        }
+        else
+        {
+            // Usar teclado en PC
+            return Input.GetAxis("Horizontal");
+        }
+    }
+    // Obtener input vertical (W/S o Joystick)
+    float ObtenerInputVertical()
+    {
+        if (esMovil && joystick != null)
+        {
+            // Usar joystick en móvil
+            return joystick.Vertical();
+        }
+        else
+        {
+            // Usar teclado en PC
+            return Input.GetAxis("Vertical");
+        }
+    }
+
+    // Detectar si se presionó el botón de correr
+    bool DetectarCorrer()
+    {
+        if (esMovil && botonCorrer != null)
+        {
+            // Usar botón táctil en móvil
+            return botonCorrer.EstaPresionado();
+        }
+        else
+        {
+            // Usar tecla espacio en PC
+            return Input.GetKey(KeyCode.LeftShift);
+        }
+    }
+
+    // Detectar si se presionó el botón de abrirMenu
+    bool DetectarMenuOpciones()
+    {
+        if (esMovil && botonMenuOpciones != null)
+        {
+            // Usar botón táctil en móvil
+            return botonMenuOpciones.SePresionoEsteFrame();
+        }
+        else
+        {
+            // Usar tecla espacio en PC
+            return Input.GetKeyDown(KeyCode.X);
+        }
+    }
+
 
 }

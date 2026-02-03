@@ -309,6 +309,9 @@ MonoBehaviour:
   probabilidad: 10
   tiempoEntreChequeos: 0.5
   estaEnInteraccion: 0
+  joystick: {fileID: 0}
+  botonCorrer: {fileID: 0}
+  botonMenuOpciones: {fileID: 0}
 --- !u!70 &1494706064288278466
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

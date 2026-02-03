@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 // Clase que representa una fase de diálogo del NPC
 // Básicamente es una lista de frases que pertenecen a una fase concreta
@@ -46,8 +47,17 @@ public class Interactuable : MonoBehaviour
     private bool dialogoActivo = false; // Controla si estamos dentro de un diálogo
 
 
+    //Parte movil
+    [Header("Controles Móviles (Opcional)")]
+    [SerializeField] private ActivacionBoton botonInteraccion; // Referencia al botón de interacción
+
+    // Detectar si estamos en móvil o PC
+    private bool esMovil;
+
     private void Awake()
     {
+        comprobacionInicialParteMovil();
+
         //para coger el script de movimiento del personaje con tag Player
         movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
     }
@@ -73,8 +83,8 @@ public class Interactuable : MonoBehaviour
     //Metodo para detectar colisiones 2D
     private void Update()
     {
-        //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E
-        if (jugadorDentro && Input.GetKeyDown(KeyCode.E))
+        //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E o el botón de interacción en caso móvil
+        if (jugadorDentro && DetectarInteraccion())
         {
             // Si este objeto no tiene controladorTextosUI ni fasesDialogo, no hace nada con textos
             // Solo ejecuta audio y animación si existen
@@ -165,6 +175,48 @@ public class Interactuable : MonoBehaviour
         if (nuevaFase >= 0 && nuevaFase < fasesDialogo.Count)
         {
             faseActual = nuevaFase;
+        }
+    }
+
+
+    //Parte para movil
+
+
+    //Parte movil inicial
+    private void comprobacionInicialParteMovil()
+    {
+        // Detectar la plataforma
+        #if UNITY_ANDROID || UNITY_IOS
+            esMovil = true;
+        #else
+            esMovil = false;
+        #endif
+
+        // Obtener referencias del script estatico de ControlesMoviles que estará asignado en UIMovil
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            botonInteraccion = ControlesMoviles.Instance.botonInteraccion;
+        }
+
+        // Desactivar controles en PC
+        if (!esMovil && ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.gameObject.SetActive(false);
+        }
+    }
+
+    // Detectar si se presionó el botón de interaccion
+    bool DetectarInteraccion()
+    {
+        if (esMovil && botonInteraccion != null)
+        {
+            // Usar botón táctil en móvil
+            return botonInteraccion.SePresionoEsteFrame();
+        }
+        else
+        {
+            // Usar tecla espacio en PC
+            return Input.GetKeyDown(KeyCode.E);
         }
     }
 
