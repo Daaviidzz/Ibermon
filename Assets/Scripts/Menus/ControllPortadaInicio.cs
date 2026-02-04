@@ -87,11 +87,11 @@ public class ControllPortadaInicio : MonoBehaviour
     //Parte movil inicial
     private void comprobacionInicialParteMovil()
     {
-        // Detectar la plataforma (Incluimos Editor para poder probarlo)
-#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR
+        // Detectar la plataforma
+        #if UNITY_ANDROID || UNITY_IOS 
         esMovil = true;
-#else
+        #else
         esMovil = false;
-#endif
+        #endif
     }
 }

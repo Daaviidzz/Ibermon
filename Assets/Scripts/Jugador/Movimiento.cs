@@ -172,9 +172,9 @@ public class Movimiento : MonoBehaviour
         // Detectar la plataforma
         #if UNITY_ANDROID || UNITY_IOS
             esMovil = true;
-#else
+        #else
             esMovil = false;
-#endif
+        #endif
 
         // Desactivar controles en PC
         if (!esMovil && ControlesMoviles.Instance != null)
