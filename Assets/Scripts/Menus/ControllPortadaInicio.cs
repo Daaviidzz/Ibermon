@@ -20,6 +20,20 @@ public class ControllPortadaInicio : MonoBehaviour
     private void Awake()
     {
         comprobacionInicialParteMovil();
+
+        // Cambiamos el texto dinámicamente según la plataforma
+        if (textoPulsarEnter != null)
+        {
+            if (esMovil)
+            {
+                textoPulsarEnter.text = "TOCA LA PANTALLA";
+            }
+            else
+            {
+                textoPulsarEnter.text = "PULSA ENTER";
+            }
+        }
+
         // Solo bloquear cursor en PC
         if (!esMovil)
         {
@@ -44,25 +58,40 @@ public class ControllPortadaInicio : MonoBehaviour
             //Asignamos el color modificado al texto
             textoPulsarEnter.color = c;
         }
-        //Para detectar si pulsa enter del teclado y el enter del teclado numerico
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+
+        // DETECCIÓN DE ENTRADA
+        if (DetectarEntrada())
         {
             SceneManager.LoadScene(escenaDestino);
         }
+    }
 
+    // Método que unifica la detección según la plataforma
+    private bool DetectarEntrada()
+    {
+        if (esMovil)
+        {
+            // Detecta si hay al menos un toque en la pantalla
+            //return Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;//es este el que hay que poner pero para hacer pruebas desde el pc necesito el de abajo
+            return Input.GetMouseButtonDown(0);
+
+        }
+        else
+        {
+            // Para detectar si pulsa enter del teclado y el enter del teclado numerico
+            return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
+        }
     }
 
 
     //Parte movil inicial
     private void comprobacionInicialParteMovil()
     {
-        // Detectar la plataforma
-#if UNITY_ANDROID || UNITY_IOS
+        // Detectar la plataforma (Incluimos Editor para poder probarlo)
+#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR
         esMovil = true;
 #else
-            esMovil = false;
+        esMovil = false;
 #endif
-
     }
-
 }
