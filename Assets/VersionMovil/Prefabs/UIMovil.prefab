@@ -532,7 +532,7 @@ MonoBehaviour:
   joystick: {fileID: 6777980199337289122}
   botonInteraccion: {fileID: 4597904429625987617}
   botonCorrer: {fileID: 631631487420510369}
-  botonMenu: {fileID: 5998834500867844983}
+  botonMenuOpciones: {fileID: 5998834500867844983}
 --- !u!1 &6218282538670608566
 GameObject:
   m_ObjectHideFlags: 0

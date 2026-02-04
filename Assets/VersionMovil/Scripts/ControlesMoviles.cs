@@ -8,7 +8,7 @@ public class ControlesMoviles : MonoBehaviour
     public JoystickVirtual joystick;
     public ActivacionBoton botonInteraccion;
     public ActivacionBoton botonCorrer;
-    public ActivacionBoton botonMenu;
+    public ActivacionBoton botonMenuOpciones;
 
     private void Awake()
     {

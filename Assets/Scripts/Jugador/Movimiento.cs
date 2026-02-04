@@ -176,20 +176,10 @@ public class Movimiento : MonoBehaviour
             esMovil = false;
 #endif
 
-        ControlesMoviles controles = FindObjectOfType<ControlesMoviles>();
-
-        // Obtener referencias del script estatico de ControlesMoviles que estará asignado en UIMovil
-        if (esMovil && controles != null)
-        {
-            joystick = controles.joystick;
-            botonCorrer = controles.botonCorrer;
-            botonMenuOpciones = controles.botonMenu;
-        }
-
         // Desactivar controles en PC
-        if (!esMovil && controles != null)
+        if (!esMovil && ControlesMoviles.Instance != null)
         {
-            controles.gameObject.SetActive(false);
+            ControlesMoviles.Instance.gameObject.SetActive(false);
         }
     }
 
@@ -197,10 +187,10 @@ public class Movimiento : MonoBehaviour
     // Obtener input horizontal (A/D o Joystick)
     float ObtenerInputHorizontal()
     {
-        if (esMovil && joystick != null)
+        if (esMovil && ControlesMoviles.Instance.joystick != null)
         {
             // Usar joystick en móvil
-            return joystick.Horizontal();
+            return ControlesMoviles.Instance.joystick.Horizontal();
         }
         else
         {
@@ -211,10 +201,10 @@ public class Movimiento : MonoBehaviour
     // Obtener input vertical (W/S o Joystick)
     float ObtenerInputVertical()
     {
-        if (esMovil && joystick != null)
+        if (esMovil && ControlesMoviles.Instance.joystick != null)
         {
             // Usar joystick en móvil
-            return joystick.Vertical();
+            return ControlesMoviles.Instance.joystick.Vertical();
         }
         else
         {
@@ -226,10 +216,10 @@ public class Movimiento : MonoBehaviour
     // Detectar si se presionó el botón de correr
     bool DetectarCorrer()
     {
-        if (esMovil && botonCorrer != null)
+        if (esMovil && ControlesMoviles.Instance.botonCorrer != null)
         {
             // Usar botón táctil en móvil
-            return botonCorrer.EstaPresionado();
+            return ControlesMoviles.Instance.botonCorrer.EstaPresionado();
         }
         else
         {
@@ -241,10 +231,10 @@ public class Movimiento : MonoBehaviour
     // Detectar si se presionó el botón de abrirMenu
     bool DetectarMenuOpciones()
     {
-        if (esMovil && botonMenuOpciones != null)
+        if (esMovil && ControlesMoviles.Instance.botonMenuOpciones != null)
         {
             // Usar botón táctil en móvil
-            return botonMenuOpciones.SePresionoEsteFrame();
+            return ControlesMoviles.Instance.botonMenuOpciones.SePresionoEsteFrame();
         }
         else
         {
