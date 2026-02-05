@@ -429,8 +429,6 @@ MonoBehaviour:
     level: 10
   - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
     level: 10
-  - _base: {fileID: 11400000, guid: 86c68001d3835de43bce0cd0e42fe467, type: 2}
-    level: 10
 --- !u!82 &8369456761620733134
 AudioSource:
   m_ObjectHideFlags: 0
