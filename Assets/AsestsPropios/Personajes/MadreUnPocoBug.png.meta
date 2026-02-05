@@ -1,0 +1,559 @@
+fileFormatVersion: 2
+guid: 65584cc6014fb0e40bc5ac9961ce9eb0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6059280738242346207
+    second: MadreUnPocoBug_0
+  - first:
+      213: 1363203977025638297
+    second: MadreUnPocoBug_1
+  - first:
+      213: -5971042398622828001
+    second: MadreUnPocoBug_2
+  - first:
+      213: -2358214883570156661
+    second: MadreUnPocoBug_3
+  - first:
+      213: 425137561898079275
+    second: MadreUnPocoBug_4
+  - first:
+      213: 7401553320612292365
+    second: MadreUnPocoBug_5
+  - first:
+      213: 7028516638823198302
+    second: MadreUnPocoBug_6
+  - first:
+      213: -842824427544742390
+    second: MadreUnPocoBug_7
+  - first:
+      213: -2022980422238035818
+    second: MadreUnPocoBug_8
+  - first:
+      213: -3968786163136411350
+    second: MadreUnPocoBug_9
+  - first:
+      213: 2046748823295388855
+    second: MadreUnPocoBug_10
+  - first:
+      213: 2184256314660462308
+    second: MadreUnPocoBug_11
+  - first:
+      213: -1120425797851345071
+    second: MadreUnPocoBug_12
+  - first:
+      213: -6580374393181123429
+    second: MadreUnPocoBug_13
+  - first:
+      213: 848610634179552625
+    second: MadreUnPocoBug_14
+  - first:
+      213: -2558063507140049572
+    second: MadreUnPocoBug_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MadreUnPocoBug_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 857
+        width: 192
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123c2b2a54c19eba0800000000000000
+      internalID: -6059280738242346207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_1
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 857
+        width: 115
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99f43076bc21be210800000000000000
+      internalID: 1363203977025638297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_2
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 857
+        width: 115
+        height: 239
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1a3a4b0398922da0800000000000000
+      internalID: -5971042398622828001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_3
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 857
+        width: 188
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8bf2c8ce00f54fd0800000000000000
+      internalID: -2358214883570156661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_4
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 579
+        width: 114
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b245c9d2c5466e500800000000000000
+      internalID: 425137561898079275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_5
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 579
+        width: 114
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07653da78997b660800000000000000
+      internalID: 7401553320612292365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_6
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 579
+        width: 107
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5eaaf2f4ae4a8160800000000000000
+      internalID: 7028516638823198302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_7
+      rect:
+        serializedVersion: 2
+        x: 758
+        y: 579
+        width: 110
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a067c2c06afad44f0800000000000000
+      internalID: -842824427544742390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_8
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 299
+        width: 121
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 690aee0360eece3e0800000000000000
+      internalID: -2022980422238035818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_9
+      rect:
+        serializedVersion: 2
+        x: 290
+        y: 299
+        width: 117
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a29c4cc130a0ce8c0800000000000000
+      internalID: -3968786163136411350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_10
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 299
+        width: 115
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7bc68fce533876c10800000000000000
+      internalID: 2046748823295388855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_11
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 298
+        width: 95
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ee9db5ab89005e10800000000000000
+      internalID: 2184256314660462308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_12
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 176
+        height: 257
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15f03e15ca27370f0800000000000000
+      internalID: -1120425797851345071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_13
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 21
+        width: 128
+        height: 237
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9ccc5d8a50dda4a0800000000000000
+      internalID: -6580374393181123429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_14
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 19
+        width: 127
+        height: 238
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17524ea20eed6cb00800000000000000
+      internalID: 848610634179552625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MadreUnPocoBug_15
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 19
+        width: 127
+        height: 238
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5507002bceef7cd0800000000000000
+      internalID: -2558063507140049572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MadreUnPocoBug_0: -6059280738242346207
+      MadreUnPocoBug_1: 1363203977025638297
+      MadreUnPocoBug_10: 2046748823295388855
+      MadreUnPocoBug_11: 2184256314660462308
+      MadreUnPocoBug_12: -1120425797851345071
+      MadreUnPocoBug_13: -6580374393181123429
+      MadreUnPocoBug_14: 848610634179552625
+      MadreUnPocoBug_15: -2558063507140049572
+      MadreUnPocoBug_2: -5971042398622828001
+      MadreUnPocoBug_3: -2358214883570156661
+      MadreUnPocoBug_4: 425137561898079275
+      MadreUnPocoBug_5: 7401553320612292365
+      MadreUnPocoBug_6: 7028516638823198302
+      MadreUnPocoBug_7: -842824427544742390
+      MadreUnPocoBug_8: -2022980422238035818
+      MadreUnPocoBug_9: -3968786163136411350
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
