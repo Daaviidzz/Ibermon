@@ -29,7 +29,22 @@ public class BattleSystem : MonoBehaviour
 
     int escapeAttempts; // Contador de intentos para escapar
 
-    private void Start()
+    // --- VARIABLES CONTROL MOVIL ---
+    private bool esMovil;
+    private float tiempoSiguienteInput = 0f; // Cooldown para que el joystick no se mueva demasiado rápido
+    private float intervaloInput = 0.2f; // Tiempo de espera entre movimientos del cursor
+
+    private void Awake()
+    {
+        // Detectar si estamos en móvil
+#if UNITY_ANDROID || UNITY_IOS
+        esMovil = true;
+#else
+        esMovil = false;
+#endif
+    }
+
+     void Start()
     {
         // Recuperamos el equipo del jugador mediante el Tag "Player"
         var playerParty = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
@@ -44,7 +59,7 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    private void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
+     void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
     {
         this.playerParty = playerParty;
         this.wildPokemon = wildPokemon;
@@ -60,7 +75,7 @@ public class BattleSystem : MonoBehaviour
         dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
 
         yield return dialogBox.TypeDialog($"Un {enemyUnit.Pokemon.Base.Name} salvaje ha aparecido!");
-        escapeAttempts = 0; 
+        escapeAttempts = 0;
         ChooseFirstTurn();
     }
 
@@ -155,7 +170,7 @@ public class BattleSystem : MonoBehaviour
             yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} falló el ataque");
 
     }
-    IEnumerator RunMoveEffects(Move move,Pokemon source,Pokemon target)
+    IEnumerator RunMoveEffects(Move move, Pokemon source, Pokemon target)
     {
         var effects = move.Base.Effects;
         if (effects.Boosts != null)
@@ -174,28 +189,28 @@ public class BattleSystem : MonoBehaviour
     {
         while (pokemon.StatusChanges.Count > 0)
         {
-            var message=pokemon.StatusChanges.Dequeue();
+            var message = pokemon.StatusChanges.Dequeue();
             yield return dialogBox.TypeDialog(message);
         }
     }
-    bool CheckIfMoveHits(Move move,Pokemon source,Pokemon target)
+    bool CheckIfMoveHits(Move move, Pokemon source, Pokemon target)
     {
         if (move.Base.AlwaysHit)
             return true;
-        float moveAccuracy=move.Base.Accuracy;
+        float moveAccuracy = move.Base.Accuracy;
         int evasion = target.StatsBoosts[Stat.Evasion];
         int accuracy = target.StatsBoosts[Stat.Accuracy];
         var boostValues = new float[] { 1f, 4f / 3f, 5f / 3f, 2f, 7f / 3f, 8f / 3f, 3f };
-        if(accuracy>0)
+        if (accuracy > 0)
             moveAccuracy *= boostValues[accuracy];
         else
             moveAccuracy /= boostValues[-accuracy];
-        if(evasion >0)
+        if (evasion > 0)
             moveAccuracy /= boostValues[evasion];
         else
             moveAccuracy *= boostValues[-evasion];
 
-       return UnityEngine.Random.Range(1, 101) <= moveAccuracy;
+        return UnityEngine.Random.Range(1, 101) <= moveAccuracy;
     }
 
     // Verifica si alguien se quedó sin Pokémon para seguir luchando
@@ -238,8 +253,8 @@ public class BattleSystem : MonoBehaviour
         if (state == BattleState.ACTIONSELECTION) HandleActionSelection();
         else if (state == BattleState.MOVESELECTION) HandleMoveSelection();
         else if (state == BattleState.PARTYSCREEN) HandlePartyScreenSelection();
-        
-           
+
+
     }
 
     IEnumerator ShowDamageDetails(DamageDetails damageDetails)
@@ -250,24 +265,71 @@ public class BattleSystem : MonoBehaviour
         else if (damageDetails.TypeEffectiveness < 1f) yield return dialogBox.TypeDialog("No es muy efectivo...");
     }
 
+    // --- FUNCIONES AUXILIARES PARA INPUTS ---
+
+    // Detectar "Enter" o Botón Interacción (A)
+    bool InputConfirmar()
+    {
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            return ControlesMoviles.Instance.botonInteraccion.SePresionoEsteFrame();
+        }
+        return Input.GetKeyDown(KeyCode.Return);
+    }
+
+    // Detectar "Escape" o Botón Correr (que usaremos como botón B/Atrás)
+    bool InputCancelar()
+    {
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            // Usamos el botón de correr como "Atrás" en los menús
+            return ControlesMoviles.Instance.botonCorrer.SePresionoEsteFrame();
+        }
+        return Input.GetKeyDown(KeyCode.Escape);
+    }
+
     // Control de navegación en el menú de ataques
     void HandleMoveSelection()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentMove;
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentMove;
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentMove += 2;
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentMove -= 2;
+        // Input de movimiento con cooldown para el joystick
+        if (Time.time >= tiempoSiguienteInput)
+        {
+            // Derecha
+            if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+            {
+                ++currentMove;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            // Izquierda
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+            {
+                --currentMove;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            // Abajo
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+            {
+                currentMove += 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            // Arriba
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+            {
+                currentMove -= 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+        }
 
         currentMove = Math.Clamp(currentMove, 0, playerUnit.Pokemon.Moves.Count - 1);
         dialogBox.UpdateMoveSelection(currentMove, playerUnit.Pokemon.Moves[currentMove]);
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (InputConfirmar())
         {
             dialogBox.EnableMoveSelector(false);
             dialogBox.EnableDialogText(true);
             StartCoroutine(PlayerMove());
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (InputCancelar())
         {
             dialogBox.EnableMoveSelector(false);
             dialogBox.EnableDialogText(true);
@@ -278,15 +340,34 @@ public class BattleSystem : MonoBehaviour
     // Control de navegación en el menú de acciones principales
     void HandleActionSelection()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentAction;
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentAction;
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentAction += 2;
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentAction -= 2;
+        if (Time.time >= tiempoSiguienteInput)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+            {
+                ++currentAction;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+            {
+                --currentAction;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+            {
+                currentAction += 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+            {
+                currentAction -= 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+        }
 
         currentAction = Math.Clamp(currentAction, 0, 3);
         dialogBox.UpdateActionSelection(currentAction);
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (InputConfirmar())
         {
             if (currentAction == 0) MoveSelection(); // Luchar
             else if (currentAction == 1)
@@ -306,15 +387,34 @@ public class BattleSystem : MonoBehaviour
     // Control de selección en la pantalla de equipo
     void HandlePartyScreenSelection()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow)) ++currentMember;
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) --currentMember;
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) currentMember += 2;
-        else if (Input.GetKeyDown(KeyCode.UpArrow)) currentMember -= 2;
+        if (Time.time >= tiempoSiguienteInput)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+            {
+                ++currentMember;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+            {
+                --currentMember;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+            {
+                currentMember += 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+            {
+                currentMember -= 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+        }
 
         currentMember = Math.Clamp(currentMember, 0, playerParty.Pokemons.Count - 1);
         partyScreen.UpdateMemberSelection(currentMember);
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (InputConfirmar())
         {
             var selectedMember = playerParty.Pokemons[currentMember];
             if (selectedMember.HP <= 0)
@@ -331,7 +431,7 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.BUSY;
             StartCoroutine(SwitchPokemon(selectedMember));
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (InputCancelar())
         {
             partyScreen.gameObject.SetActive(false);
             ActionSelection();
@@ -347,22 +447,22 @@ public class BattleSystem : MonoBehaviour
         if (!faintedUnit.IsPlayerUnit)
         {
             //Ganar Experiencia
-            int expYield=faintedUnit.Pokemon.Base.ExpYield;
+            int expYield = faintedUnit.Pokemon.Base.ExpYield;
             int enemyLevel = faintedUnit.Pokemon.Level;
             //Formula real
-            int expGain=Mathf.FloorToInt((enemyLevel * expYield)/7);
+            int expGain = Mathf.FloorToInt((enemyLevel * expYield) / 7);
             playerUnit.Pokemon.Exp += expGain;
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} ganó {expGain} de experiencia");
             yield return playerUnit.Hud.SetExpSmooth();
             //Chack Subida de nivel
-            while( playerUnit.Pokemon.CheckForLevelUp())
+            while (playerUnit.Pokemon.CheckForLevelUp())
             {
                 playerUnit.Hud.SetLevel();
                 yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} subio a nivel {playerUnit.Pokemon.Level}");
                 yield return playerUnit.Hud.SetExpSmooth(true);
                 playerUnit.Pokemon.ResetHealth();
             }
-                
+
 
         }
 
@@ -376,7 +476,7 @@ public class BattleSystem : MonoBehaviour
         bool currentPokemonFainted = true;
         if (playerUnit.Pokemon.HP > 0)
         {
-            currentPokemonFainted=false;
+            currentPokemonFainted = false;
             yield return dialogBox.TypeDialog($"Vuelve {playerUnit.Pokemon.Base.Name}");
             playerUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(2f);
@@ -395,35 +495,36 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator ThrowPokeball()
     {
-        state=BattleState.BUSY;
+        state = BattleState.BUSY;
 
-       yield return dialogBox.TypeDialog($"Has usado una pokeball");
+        yield return dialogBox.TypeDialog($"Has usado una pokeball");
 
-       var pokeballObJ=Instantiate(pokeballSprite, playerUnit.transform.position - new Vector3(0, 2, 1), Quaternion.identity);
+        var pokeballObJ = Instantiate(pokeballSprite, playerUnit.transform.position - new Vector3(0, 2, 1), Quaternion.identity);
         var pokeball = pokeballObJ.GetComponent<SpriteRenderer>();
 
         //Animaciones
-       yield return pokeball.transform.DOJump(enemyUnit.transform.position+ new Vector3(0,2,1),2f,1,1f).WaitForCompletion();
+        yield return pokeball.transform.DOJump(enemyUnit.transform.position + new Vector3(0, 2, 1), 2f, 1, 1f).WaitForCompletion();
         yield return enemyUnit.PlayCaptureAnimation();
-        yield return pokeball.transform.DOMoveY(enemyUnit.transform.position.y-3f,0.5f).WaitForCompletion();
+        yield return pokeball.transform.DOMoveY(enemyUnit.transform.position.y - 3f, 0.5f).WaitForCompletion();
 
         int shakeCount = TryCatchPokemon(enemyUnit.Pokemon);
 
-        for (int i = 0; i < Mathf.Min(shakeCount,3); i++)
+        for (int i = 0; i < Mathf.Min(shakeCount, 3); i++)
         {
             yield return new WaitForSeconds(0.5f);
-            yield return pokeball.transform.DOPunchRotation(new Vector3(0,0,10f),0.8f).WaitForCompletion() ;
+            yield return pokeball.transform.DOPunchRotation(new Vector3(0, 0, 10f), 0.8f).WaitForCompletion();
         }
         if (shakeCount == 4)
         {
             //Pokemon capturado
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido capturado");
-            yield return pokeball.DOFade(0,1.5f).WaitForCompletion();
+            yield return pokeball.DOFade(0, 1.5f).WaitForCompletion();
 
-            if(playerParty.AddPokemon(enemyUnit.Pokemon)) 
-            { 
+            if (playerParty.AddPokemon(enemyUnit.Pokemon))
+            {
                 yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido añadido a tu equipo");
-            }else
+            }
+            else
                 yield return dialogBox.TypeDialog($"Equipo lleno");
 
             Destroy(pokeballObJ);
@@ -461,18 +562,18 @@ public class BattleSystem : MonoBehaviour
         int shakeCount = 0;
         while (shakeCount < 4)
         {
-            if(UnityEngine.Random.Range(0, 65535) >= b) break;
+            if (UnityEngine.Random.Range(0, 65535) >= b) break;
             ++shakeCount;
         }
         return shakeCount;
     }
     IEnumerator TryToEscape()
     {
-        state=BattleState.BUSY;
+        state = BattleState.BUSY;
 
         ++escapeAttempts;
         int playerSpeed = playerUnit.Pokemon.Speed;
-        int enemySpeed=enemyUnit.Pokemon.Speed;
+        int enemySpeed = enemyUnit.Pokemon.Speed;
 
         if (enemySpeed < playerSpeed)
         {
@@ -484,7 +585,7 @@ public class BattleSystem : MonoBehaviour
             float f = (playerSpeed * 128) / enemySpeed + 30 * escapeAttempts;
             f = f % 256;
 
-            if(UnityEngine.Random.Range(0,256)<f)
+            if (UnityEngine.Random.Range(0, 256) < f)
             {
                 yield return dialogBox.TypeDialog($"Puedes huir a salvo!");
                 BattleOver(false);
@@ -497,5 +598,5 @@ public class BattleSystem : MonoBehaviour
             }
         }
     }
-   
+
 }
