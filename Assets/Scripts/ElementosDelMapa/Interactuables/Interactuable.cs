@@ -42,6 +42,10 @@ public class Interactuable : MonoBehaviour
 
     //variable de movimiento de personaje que luego usaremos
     private Movimiento movimientoPersonaje;
+    private PokemonParty equipoPokemon;
+    //Para cojer el personaje
+    private GameObject personaje;
+
 
     private int indice;//El contador de frases
     private bool dialogoActivo = false; // Controla si estamos dentro de un diálogo
@@ -60,6 +64,8 @@ public class Interactuable : MonoBehaviour
 
         //para coger el script de movimiento del personaje con tag Player
         movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
+        equipoPokemon = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -120,6 +126,7 @@ public class Interactuable : MonoBehaviour
                 //Activamos la UI y mostramos la primera frase de la fase actual
                 controladorTextosUI.activarDesactivarCajaDeTextos(true);
                 activarCartel();
+               
             }
             else
             {

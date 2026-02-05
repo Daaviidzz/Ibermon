@@ -38,4 +38,14 @@ public class PokemonParty : MonoBehaviour
         else
             return false;
     }
+    public void HealAllPokemonsInParty()
+    {
+        // Iteramos por cada pokemon en la lista y le decimos que se cure individualmente
+        foreach (var pokemon in pokemons)
+        {
+            pokemon.ResetHealth();
+        }
+
+        
+    }
 }

@@ -152,7 +152,7 @@ public class Pokemon
 
     public void OnBattleOver() => ResetStatBoost();
 
-    public void HealthAllPokemons() => ResetHealth();
+    //Restaura la vida
     public void ResetHealth()
     {
         HP=MaxHp;
