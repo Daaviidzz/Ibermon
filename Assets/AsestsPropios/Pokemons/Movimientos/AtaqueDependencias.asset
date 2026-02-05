@@ -16,7 +16,7 @@ MonoBehaviour:
   description: Ataque muy eficaz pero dificil de acertar
   type: 4
   power: 100
-  accuracy: 40
+  accuracy: 20
   alwaysHit: 0
   pp: 3
   category: 1
