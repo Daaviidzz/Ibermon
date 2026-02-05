@@ -3845,6 +3845,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+--- !u!114 &460087813 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1580146671054917278, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+  m_PrefabInstance: {fileID: 460087812}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5c226d8d9c4ab48ae2238f99fa4532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControladorTextosUI
 --- !u!1 &583646397
 GameObject:
   m_ObjectHideFlags: 0
@@ -4324,7 +4335,7 @@ MonoBehaviour:
     - "Captura 3 Pok\xE9mon para poder salir de aventura"
     - "Bueno vete ya y haz algo con tu vida, \xA1NINI!"
   faseActual: 0
-  controladorTextosUI: {fileID: 0}
+  controladorTextosUI: {fileID: 460087813}
   botonInteraccion: {fileID: 0}
 --- !u!61 &1603670180
 BoxCollider2D:
@@ -4360,7 +4371,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.028780937, y: 0.8843367}
+  m_Offset: {x: 0.1482724, y: -0.10359287}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4370,7 +4381,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 3.4174914, y: 5.9844413}
+  m_Size: {x: 3.771598, y: 4.008582}
   m_EdgeRadius: 0
 --- !u!1 &1657460800
 GameObject:
