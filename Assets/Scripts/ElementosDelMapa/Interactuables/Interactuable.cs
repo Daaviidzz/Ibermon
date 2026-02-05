@@ -42,9 +42,10 @@ public class Interactuable : MonoBehaviour
 
     //variable de movimiento de personaje que luego usaremos
     private Movimiento movimientoPersonaje;
-    private PokemonParty equipoPokemon;
-    //Para cojer el personaje
-    private GameObject personaje;
+    private PokemonParty equipoPokemon; // Referencia al componente que cura los Pokémon
+
+    // NUEVO: Referencia al Rigidbody para frenar la inercia sin desactivar colisiones
+    private Rigidbody2D rbPersonaje;
 
 
     private int indice;//El contador de frases
@@ -62,10 +63,16 @@ public class Interactuable : MonoBehaviour
     {
         comprobacionInicialParteMovil();
 
-        //para coger el script de movimiento del personaje con tag Player
-        movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
-        equipoPokemon = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
-        
+        if (GameObject.FindWithTag("Player") != null)
+        {
+            //Buscamos el componente de Movimiento del personaje para poder pararle
+            movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
+            // Buscamos el componente PokemonParty en el jugador para poder curarlo luego
+            equipoPokemon = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
+
+            // NUEVO: Pillamos el Rigidbody del jugador
+            rbPersonaje = GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -109,8 +116,27 @@ public class Interactuable : MonoBehaviour
                 return;
             }
 
+            // --- Lógica especial para la Abuela ---
+            // Si el objeto actual tiene el tag "Abuela", curamos a los pokemons
+            if (gameObject.CompareTag("Abuela"))
+            {
+                if (equipoPokemon != null)
+                {
+                    equipoPokemon.HealAllPokemonsInParty();
+                }
+            }
+
             //Bloqueamos el movimiento del personaje y activamos el diálogo
-            movimientoPersonaje.estaEnInteraccion = true;
+            if (movimientoPersonaje != null) movimientoPersonaje.estaEnInteraccion = true;
+
+            //FRENADO EN SECO SIN ATRAVESAR PAREDES
+            if (rbPersonaje != null)
+            {
+                rbPersonaje.linearVelocity = Vector2.zero; // Anulamos la velocidad que llevaba
+                // Congelamos la posición en X e Y para que no se deslice, pero sigue siendo Dynamic para que las paredes lo paren
+                rbPersonaje.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+            }
+
             dialogoActivo = true;
 
             //Lanza el audio si existe
@@ -126,14 +152,11 @@ public class Interactuable : MonoBehaviour
                 //Activamos la UI y mostramos la primera frase de la fase actual
                 controladorTextosUI.activarDesactivarCajaDeTextos(true);
                 activarCartel();
-               
             }
             else
             {
-                //Si no hay textos, no tiene sentido abrir la UI
-                //Simplemente desbloqueamos el movimiento y cerramos el diálogo
-                dialogoActivo = false;
-                movimientoPersonaje.estaEnInteraccion = false;
+                // Si no hay textos, cerramos usando el nuevo método de limpieza
+                TerminarDialogo();
             }
         }
     }
@@ -155,21 +178,31 @@ public class Interactuable : MonoBehaviour
             }
             else
             {
-                // Ya se acabaron las frases, cerramos todo
-                controladorTextosUI.activarDesactivarCajaDeTextos(false);//basicamente cuando ya no queden más desactivamos la UI
-                indice = 0;//cuando haya terminado ponemos que el indice sea 0
-                dialogoActivo = false; // Cerramos el diálogo
-                //Desbloqueamos el movimiento del personaje
-                movimientoPersonaje.estaEnInteraccion = false;
+                // Ya se acabaron las frases, cerramos todo con el método de limpieza
+                TerminarDialogo();
             }
         }
         else
         {
             // No hay textos, cerramos inmediatamente
-            controladorTextosUI.activarDesactivarCajaDeTextos(false);
-            indice = 0;
-            dialogoActivo = false;
-            movimientoPersonaje.estaEnInteraccion = false;
+            TerminarDialogo();
+        }
+    }
+
+    // NUEVO: Método para limpiar estados y devolver el control al jugador correctamente
+    private void TerminarDialogo()
+    {
+        controladorTextosUI.activarDesactivarCajaDeTextos(false);
+        indice = 0;
+        dialogoActivo = false;
+
+        // Desbloqueamos el movimiento del personaje
+        if (movimientoPersonaje != null) movimientoPersonaje.estaEnInteraccion = false;
+
+        // NUEVO: Quitamos el "freno de mano" (FreezePosition) pero mantenemos la rotación congelada para que no se caiga
+        if (rbPersonaje != null)
+        {
+            rbPersonaje.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 
@@ -193,11 +226,11 @@ public class Interactuable : MonoBehaviour
     private void comprobacionInicialParteMovil()
     {
         // Detectar la plataforma
-        #if UNITY_ANDROID || UNITY_IOS
-            esMovil = true;
-        #else
-            esMovil = false;
-        #endif
+#if UNITY_ANDROID || UNITY_IOS
+        esMovil = true;
+#else
+        esMovil = false;
+#endif
 
         // Obtener referencias del script estatico de ControlesMoviles que estará asignado en UIMovil
         if (esMovil && ControlesMoviles.Instance != null)
@@ -205,7 +238,7 @@ public class Interactuable : MonoBehaviour
             botonInteraccion = ControlesMoviles.Instance.botonInteraccion;
         }
 
-        // Desactivar controles en PC
+        // Desactivar controles en PC si no estamos en el editor probando
         if (!esMovil && ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.gameObject.SetActive(false);
@@ -222,7 +255,7 @@ public class Interactuable : MonoBehaviour
         }
         else
         {
-            // Usar tecla espacio en PC
+            // Usar tecla E en PC
             return Input.GetKeyDown(KeyCode.E);
         }
     }
