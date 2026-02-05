@@ -260,6 +260,113 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &151797301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 151797302}
+  - component: {fileID: 151797304}
+  - component: {fileID: 151797303}
+  m_Layer: 0
+  m_Name: Texto
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &151797302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151797301}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -198.46198, y: -536.20667, z: 0}
+  m_LocalScale: {x: 19.047667, y: 20.97788, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1075339211}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &151797303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151797301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630d8697fc2d585409e0a2c6f4da94a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactuable
+  archivoAudio: {fileID: 0}
+  audio: {fileID: 0}
+  mensaje: Pulsa E para interactuar
+  animacion: {fileID: 0}
+  triggerAnimacion: 
+  fasesDialogo:
+  - textosDeEstaFase:
+    - "Te veo muy alterado, parece que quieres salir del pueblo\u2026"
+    - "Pues te tengo malas noticias, todav\xEDa no vamos a poder combatir"
+    - "\xBFQu\xE9 por qu\xE9? Pues porque no me da la vida"
+    - "Aqu\xED donde me ves a parte de entrenadora soy profesora"
+    - Hasta que no termine este trimestre no vamos a poder combatir
+    - 'Ahora que ya lo sabes fuera de mi vista, que me subes los niveles de cortisol '
+  faseActual: 0
+  controladorTextosUI: {fileID: 0}
+  botonInteraccion: {fileID: 0}
+--- !u!61 &151797304
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151797301}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.028780937, y: 0.8843367}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 3.4174914, y: 5.9844413}
+  m_EdgeRadius: 0
 --- !u!1 &156287990
 GameObject:
   m_ObjectHideFlags: 0
@@ -12250,9 +12357,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 7865868235014235541, guid: df8a338ca980e7b48b936a41fc334951, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 151797302}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df8a338ca980e7b48b936a41fc334951, type: 3}
+--- !u!4 &1075339211 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7865868235014235541, guid: df8a338ca980e7b48b936a41fc334951, type: 3}
+  m_PrefabInstance: {fileID: 1075339210}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1276662114
 GameObject:
   m_ObjectHideFlags: 0

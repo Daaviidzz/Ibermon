@@ -4300,9 +4300,29 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - Hola
-    - Te voy a contar un secreto
-    - David es maricon
+    - "\xA1Pero mira a quien tenemos aqu\xED! Otro desempleado m\xE1s, ya van 3 esta
+      semana"
+    - "Te voy a explicar un poco que es el bicho ese que traes, vamos a llamarlos
+      Pok\xE9mon para entendernos nosotros"
+    - "Los Pok\xE9mon son seres vivos que habitan en todos los rincones del mundo:
+      bosques, mares, cuevas\u2026 incluso en las ciudades."
+    - "Algunos son peque\xF1os y amistosos, otros son enormes y poderosos. Cada uno
+      es \xFAnico."
+    - "Las personas y los Pok\xE9mon convivimos, trabajamos juntos y formamos v\xEDnculos
+      muy especiales"
+    - "Quiz\xE1s a ti no te suena, que en este pueblucho de mala muerte solo est\xE1n
+      los que se han perdido y no son muchos"
+    - "Pero bueno\u2026 que me voy por las ramas"
+    - "Muchos j\xF3venes se convierten en entrenadores Pok\xE9mon."
+    - "Los entrenadores viajan, capturan Pok\xE9mon y fortalecen sus equipos"
+    - Si tienes alguna duda esta todo en las transparencias, no te preocupes
+    - "Esta explicaci\xF3n no es usual, de alguna forma tengo que pagar a tu madre\u2026 "
+    - "\xA1Qu\xE9 mujer! Tu padre no la sabia valorar, pero bueno, nada que no sepas
+      \xBFNo? "
+    - "\xA1Al final hasta me terminas llamando papa! "
+    - "Es broma, es broma\u2026"
+    - "Captura 3 Pok\xE9mon para poder salir de aventura"
+    - "Bueno vete ya y haz algo con tu vida, \xA1NINI!"
   faseActual: 0
   controladorTextosUI: {fileID: 0}
   botonInteraccion: {fileID: 0}
