@@ -319,7 +319,12 @@ MonoBehaviour:
     - Hasta que no termine este trimestre no vamos a poder combatir
     - 'Ahora que ya lo sabes fuera de mi vista, que me subes los niveles de cortisol '
   faseActual: 0
-  controladorTextosUI: {fileID: 0}
+  cambiarFaseSegunPokemon: 0
+  pokemonNecesariosParaFase1: 5
+  cambiarEscenaAlTerminarFase1: 0
+  escenaDespuesDeFase1: SalidaRuta1
+  segundosEnEscenaTransicion: 5
+  controladorTextosUI: {fileID: 1299471068}
   botonInteraccion: {fileID: 0}
 --- !u!61 &151797304
 BoxCollider2D:
@@ -16280,6 +16285,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+--- !u!114 &1299471068 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1580146671054917278, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+  m_PrefabInstance: {fileID: 1299471067}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5c226d8d9c4ab48ae2238f99fa4532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControladorTextosUI
 --- !u!1 &1447289376
 GameObject:
   m_ObjectHideFlags: 0

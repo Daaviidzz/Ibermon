@@ -36,6 +36,21 @@ public class Interactuable : MonoBehaviour
     // Cada NPC puede tener más o menos fases, no pasa nada
     public int faseActual = 0;
 
+    // NUEVO: Variable para activar el cambio automático de fase según Pokémon capturados
+    [Header("Cambio automático de fase")]
+    [Tooltip("Si está marcado, la fase cambiará automáticamente según los Pokémon capturados")]
+    public bool cambiarFaseSegunPokemon = false;
+    [Tooltip("Número de Pokémon necesarios para cambiar a la fase 1")]
+    public int pokemonNecesariosParaFase1 = 5;
+
+    [Header("Cambio de escena al terminar fase 1")]
+    [Tooltip("Si está marcado, al terminar la fase 1 cambia automáticamente a otra escena")]
+    public bool cambiarEscenaAlTerminarFase1 = false;
+    [Tooltip("Nombre de la escena a la que ir (ej: SalidaRuta1)")]
+    public string escenaDespuesDeFase1 = "SalidaRuta1";
+    [Tooltip("Segundos que durará la escena antes de volver")]
+    public float segundosEnEscenaTransicion = 5f;
+
     //Parte de cuadro de dialogo
     [SerializeField]
     private ControladorTextosUI controladorTextosUI;//hace referencia al script que controlará la parte UI
@@ -99,6 +114,12 @@ public class Interactuable : MonoBehaviour
         //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E o el botón de interacción en caso móvil
         if (jugadorDentro && DetectarInteraccion())
         {
+            // NUEVO: Antes de mostrar el diálogo, comprobar si hay que cambiar de fase automáticamente
+            if (cambiarFaseSegunPokemon && equipoPokemon != null)
+            {
+                ActualizarFaseSegunPokemon();
+            }
+
             // Si este objeto no tiene controladorTextosUI ni fasesDialogo, no hace nada con textos
             // Solo ejecuta audio y animación si existen
             if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
@@ -189,7 +210,7 @@ public class Interactuable : MonoBehaviour
         }
     }
 
-    // NUEVO: Método para limpiar estados y devolver el control al jugador correctamente
+    //  Método para limpiar estados y devolver el control al jugador correctamente
     private void TerminarDialogo()
     {
         controladorTextosUI.activarDesactivarCajaDeTextos(false);
@@ -199,13 +220,46 @@ public class Interactuable : MonoBehaviour
         // Desbloqueamos el movimiento del personaje
         if (movimientoPersonaje != null) movimientoPersonaje.estaEnInteraccion = false;
 
-        // NUEVO: Quitamos el "freno de mano" (FreezePosition) pero mantenemos la rotación congelada para que no se caiga
+        //  Quitamos el "freno de mano" (FreezePosition) pero mantenemos la rotación congelada para que no se caiga
         if (rbPersonaje != null)
         {
             rbPersonaje.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
+
+        //  Si acabamos de terminar la fase 1 y está activado el cambio de escena, lo hacemos
+        if (cambiarEscenaAlTerminarFase1 && faseActual == 1)
+        {
+            CambiarAEscenaTransicion();
+        }
     }
 
+    //  Método simple que solo cambia a la escena de transición
+    private void CambiarAEscenaTransicion()
+    {
+        // Guardar la escena actual y posición del jugador
+        JugadorSpawn.escenaAnterior = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        JugadorSpawn.posicion = GameObject.FindWithTag("Player").transform.position;
+
+        // Cambiar a la escena de transición (que tiene el script AutoVolverEscena)
+        UnityEngine.SceneManagement.SceneManager.LoadScene(escenaDespuesDeFase1);
+    }
+
+    //  Método que actualiza la fase según cuántos Pokémon tiene el jugador
+    private void ActualizarFaseSegunPokemon()
+    {
+        int cantidadPokemon = equipoPokemon.Pokemons.Count;
+
+        // Si tiene 5 o más Pokémon, cambia a la fase 1
+        if (cantidadPokemon >= pokemonNecesariosParaFase1)
+        {
+            CambiarFase(1);
+        }
+        // Si tiene menos, mantiene la fase 0
+        else
+        {
+            CambiarFase(0);
+        }
+    }
 
     // Método para cambiar de fase del NPC
     // Lo puedes llamar desde cualquier script cuando el jugador haga algo

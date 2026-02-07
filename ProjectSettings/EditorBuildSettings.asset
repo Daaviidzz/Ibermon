@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menus/Opciones.unity
     guid: 7cbe3f4d26a197f4e878d2215be8b661
+  - enabled: 1
+    path: Assets/Scenes/EscenasFinalesRutas/SalidaRuta1.unity
+    guid: 239dd9eb891d0ea40ab038d33c53e9a1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
