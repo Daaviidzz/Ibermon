@@ -312,12 +312,19 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - "Te veo muy alterado, parece que quieres salir del pueblo\u2026"
-    - "Pues te tengo malas noticias, todav\xEDa no vamos a poder combatir"
-    - "\xBFQu\xE9 por qu\xE9? Pues porque no me da la vida"
-    - "Aqu\xED donde me ves a parte de entrenadora soy profesora"
-    - Hasta que no termine este trimestre no vamos a poder combatir
-    - 'Ahora que ya lo sabes fuera de mi vista, que me subes los niveles de cortisol '
+    - "\xA1Uy! Pero si es el Nini... Te veo muy alterado, \xBFno? Esa cara de ansiedad
+      solo puede significar una cosa: quieres salir del pueblo."
+    - "Pues tranquilo, porque te traigo malas noticias: todav\xEDa no vamos a combatir."
+    - "\xBFQue por qu\xE9? \xA1Porque no me da la vida, chaval! Suficiente tengo
+      ya con mi clase de 2\xBA de DAM."
+    - "\xBFT\xFA sabes lo que es eso? Es una sala llena de gente que no sabe ni d\xF3nde
+      tiene la mano derecha, entregando trabajos que dan verg\xFCenza ajena y quej\xE1ndose
+      por todo. \xA1Es un suplicio!"
+    - "As\xED que, hasta que no termine este trimestre y consiga quitarme de encima
+      a esa panda, no pienso perder ni un segundo contigo."
+    - "Hala, ya tienes tu respuesta. Ahora, \xA1fuera de mi vista! Solo de pensar
+      que esos seres son el \"brillante\" futuro que le espera a este pa\xEDs, se
+      me suben los niveles de cortisol por las nubes. "
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5

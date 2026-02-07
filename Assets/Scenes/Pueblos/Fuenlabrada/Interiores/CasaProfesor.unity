@@ -3918,6 +3918,11 @@ MonoBehaviour:
     - "!Bueno! Captura 3 Pok\xE9mon para poder salir de aventura"
     - "Vete ya y haz algo con tu vida, \xA1NINI!"
   faseActual: 0
+  cambiarFaseSegunPokemon: 0
+  pokemonNecesariosParaFase1: 5
+  cambiarEscenaAlTerminarFase1: 0
+  escenaDespuesDeFase1: SalidaRuta1
+  segundosEnEscenaTransicion: 5
   controladorTextosUI: {fileID: 0}
   botonInteraccion: {fileID: 0}
 --- !u!212 &583646399
@@ -4311,30 +4316,39 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - "\xA1Pero mira a quien tenemos aqu\xED! Otro desempleado m\xE1s, ya van 3 esta
-      semana"
-    - "Te voy a explicar un poco que es el bicho ese que traes, vamos a llamarlos
-      Pok\xE9mon para entendernos nosotros"
-    - "Los Pok\xE9mon son seres vivos que habitan en todos los rincones del mundo:
-      bosques, mares, cuevas\u2026 incluso en las ciudades."
-    - "Algunos son peque\xF1os y amistosos, otros son enormes y poderosos. Cada uno
-      es \xFAnico."
-    - "Las personas y los Pok\xE9mon convivimos, trabajamos juntos y formamos v\xEDnculos
-      muy especiales"
-    - "Quiz\xE1s a ti no te suena, que en este pueblucho de mala muerte solo est\xE1n
-      los que se han perdido y no son muchos"
-    - "Pero bueno\u2026 que me voy por las ramas"
-    - "Muchos j\xF3venes se convierten en entrenadores Pok\xE9mon."
-    - "Los entrenadores viajan, capturan Pok\xE9mon y fortalecen sus equipos"
-    - Si tienes alguna duda esta todo en las transparencias, no te preocupes
-    - "Esta explicaci\xF3n no es usual, de alguna forma tengo que pagar a tu madre\u2026 "
-    - "\xA1Qu\xE9 mujer! Tu padre no la sabia valorar, pero bueno, nada que no sepas
-      \xBFNo? "
-    - "\xA1Al final hasta me terminas llamando papa! "
-    - "Es broma, es broma\u2026"
-    - "Captura 3 Pok\xE9mon para poder salir de aventura"
-    - "Bueno vete ya y haz algo con tu vida, \xA1NINI!"
+    - "\xA1Pero bueno! Miren a qui\xE9n tenemos aqu\xED..."
+    - "Otro desempleado m\xE1s que cruza mi puerta. Con el tuyo ya van tres casos
+      perdidos esta misma semana. Menudo panorama."
+    - "Supongo que vienes por el bicho ese que arrastras. Vamos a llamarlos Pok\xE9mon,
+      m\xE1s que nada para que t\xFA y yo nos entendamos."
+    - "Los Pok\xE9mon son seres que habitan en todas partes: bosques, cuevas, mares...
+      incluso en las ciudades. Unos son peque\xF1os y otros enormes. Vamos, lo que
+      viene siendo un animal, pero con superpoderes."
+    - "Se supone que las personas y los Pok\xE9mon conviven y forman \"v\xEDnculos
+      especiales\".(sobre todo con los vaporeon)"
+    - "Aunque claro, qu\xE9 vas a saber t\xFA de eso viviendo en este pueblucho de
+      mala muerte. Aqu\xED solo se queda el que se ha perdido o el que no tiene a
+      d\xF3nde ir... que no sois pocos."
+    - Pero bueno, que me voy por las ramas y mi tiempo vale dinero
+    - "Muchos j\xF3venes con algo de sangre en las venas se hacen Entrenadores. Viajan,
+      capturan Pok\xE9mon y fortalecen sus equipos. Un trabajo de verdad, para variar."
+    - "Si te pierdes, todo est\xE1 en las transparencias. M\xEDralas si es que sabes
+      leer."
+    - Normalmente no doy estas charlas gratis, pero bueno... de alguna forma tengo
+      que pagarle a tu madre los "servicios" prestados.
+    - "\xA1Qu\xE9 mujer! Tu padre era un inepto que no sab\xEDa lo que ten\xEDa en
+      casa, pero bueno... a ti no te estoy contando nada nuevo, \xBFverdad?"
+    - "\xA1Ja! \xA1A ver si al final vas a terminar llam\xE1ndome \"pap\xE1\"!"
+    - Es broma, hombre, es broma... No pongas esa cara.
+    - "Escucha: si quieres que te tome en serio, captura 3 Pok\xE9mon. Solo entonces
+      te dar\xE9 permiso para salir de aventura y largarte de aqu\xED."
+    - "\xA1Venga, mu\xE9vete ya y haz algo con tu vida, NINI!"
   faseActual: 0
+  cambiarFaseSegunPokemon: 0
+  pokemonNecesariosParaFase1: 5
+  cambiarEscenaAlTerminarFase1: 0
+  escenaDespuesDeFase1: SalidaRuta1
+  segundosEnEscenaTransicion: 5
   controladorTextosUI: {fileID: 460087813}
   botonInteraccion: {fileID: 0}
 --- !u!61 &1603670180

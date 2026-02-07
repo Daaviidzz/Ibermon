@@ -1386,6 +1386,11 @@ MonoBehaviour:
   triggerAnimacion: Ladrido
   fasesDialogo: []
   faseActual: 0
+  cambiarFaseSegunPokemon: 0
+  pokemonNecesariosParaFase1: 5
+  cambiarEscenaAlTerminarFase1: 0
+  escenaDespuesDeFase1: SalidaRuta1
+  segundosEnEscenaTransicion: 5
   controladorTextosUI: {fileID: 0}
   botonInteraccion: {fileID: 0}
 --- !u!1 &538586072
@@ -1547,20 +1552,29 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - "\xA1Joder! \xBFYa era hora no?"
-    - Las 3 de la tarde y acabas de levantarte de la cama, a mesa puesta
-    - "No estudias, no trabajas, que hijo que tengo\u2026 \xA1Eres la decepci\xF3n
-      de la familia!"
+    - "\xA1Vaya, miren qui\xE9n ha decidido honrarnos con su presencia! \xBFYa era
+      hora, no?"
+    - "Las tres de la tarde... y t\xFA te levantas directo a mesa puesta. Ni estudias,
+      ni trabajas, ni se te espera. \xA1Qu\xE9 decepci\xF3n de hijo, de verdad!"
+    - "A ver si por un milagro de la vida, con el bicho raro ese que has tra\xEDdo
+      a casa, haces algo \xFAtil con tu miserable existencia."
     - "A ver si tenemos algo de suerte y con el bicho ese raro que has tra\xEDdo
       a casa haces algo con tu miserable vida"
-    - "(Por lo bajito) O por lo menos a ver si te vas de casa y no te veo m\xE1s\u2026"
+    - O por lo menos, a ver si te largas ya y dejas de ser un estorbo...
     - "\xBF? No he dicho nada\u2026"
-    - "Vete a buscar al profesor, quiz\xE1s el te puede ayudar a entender m\xE1s
-      al bicho ese "
-    - "Ay el profesor\u2026 Un hombre de verdad, desde que me abandon\xF3 tu padre,
-      el \xFAnico que me ha entendido, bueno, ese es otro tema"
-    - "\xA1Vete Ya!"
+    - "\xBFEh? \xBFQu\xE9 me miras? \xA1No he dicho nada!"
+    - "Anda, vete a buscar al Profesor. Quiz\xE1s \xE9l tenga la paciencia que a
+      m\xED se me agot\xF3 para explicarte qu\xE9 hace ese bicho."
+    - "Ay, el Profesor... Eso s\xED es un hombre de verdad. Desde que tu padre nos
+      abandon\xF3, es el \xFAnico que me ha entendido... Pero bueno, ese es otro
+      tema que a ti ni te va ni te viene."
+    - "\xA1He dicho que te muevas! \xA1Vete ya!"
   faseActual: 0
+  cambiarFaseSegunPokemon: 0
+  pokemonNecesariosParaFase1: 5
+  cambiarEscenaAlTerminarFase1: 0
+  escenaDespuesDeFase1: SalidaRuta1
+  segundosEnEscenaTransicion: 5
   controladorTextosUI: {fileID: 495234164}
   botonInteraccion: {fileID: 0}
 --- !u!1 &921904871
