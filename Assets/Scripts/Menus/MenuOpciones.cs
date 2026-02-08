@@ -10,6 +10,8 @@ public class MenuOpciones : MonoBehaviour
     public Button botonVolverPanelOpciones;
     //boton ir a controles
     public Button botonControles;
+    //boton ir a menú principal
+    public Button botonVolverAlMenuPrincipal;
 
     //Objeto que hace refencia al panel de controles
     public GameObject panelControles;
@@ -51,6 +53,20 @@ public class MenuOpciones : MonoBehaviour
         {
             panelOpciones.SetActive(true);
             panelControles.SetActive(false);
+        });
+
+        botonVolverAlMenuPrincipal.onClick.AddListener(() =>
+        {
+            // Solo bloquear cursor en PC
+            if (!esMovil)
+            {
+                //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+                Cursor.lockState = CursorLockMode.Locked;
+                //Y ahora le quitamos la visibilidad
+                Cursor.visible = false;
+            }
+            //Cambiamos de escena
+            SceneManager.LoadScene("MenuPrincipal");
         });
     }
 
