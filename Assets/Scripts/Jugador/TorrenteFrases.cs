@@ -11,22 +11,13 @@ public class TorrenteFrases : MonoBehaviour
 
     void Awake()
     {
-        // Si no lo has asignado en el Inspector, lo busca automáticamente
-        if (audioSource == null)
-        {
-            audioSource = GetComponent<AudioSource>();
-        }
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
 
-        // Si aún no existe, lo creamos en el momento
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
     }
 
     void OnEnable()
     {
-        
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -37,24 +28,27 @@ public class TorrenteFrases : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Si entramos en combate, paramos las frases
         if (scene.name == "Combate")
         {
             DetenerFrases();
+        }
+        else
+        {
+            // SI NO es combate (es decir, hemos vuelto al mundo), las reactivamos
+            ReanudarFrases();
         }
     }
 
     void Start()
     {
-        InvokeRepeating("ReproducirFraseRandom", tiempoEntreFrases, tiempoEntreFrases);
+        // Iniciamos el ciclo normalmente
+        ReanudarFrases();
     }
 
     void ReproducirFraseRandom()
     {
-        if (frasesTorrente.Count == 0)
-        {
-            Debug.LogWarning("No hay frases de Torrente asignadas.");
-            return;
-        }
+        if (frasesTorrente.Count == 0) return;
 
         int indice = Random.Range(0, frasesTorrente.Count);
 
@@ -64,15 +58,35 @@ public class TorrenteFrases : MonoBehaviour
         }
 
         ultimoIndice = indice;
-        audioSource.PlayOneShot(frasesTorrente[indice]);
+
+        // Verificamos que el audioSource esté activo y habilitado antes de reproducir
+        if (audioSource != null && audioSource.isActiveAndEnabled)
+        {
+            audioSource.PlayOneShot(frasesTorrente[indice]);
+        }
     }
 
     void DetenerFrases()
     {
+        // Cancela la repetición para que deje de contar el tiempo
         CancelInvoke("ReproducirFraseRandom");
+
         if (audioSource != null)
         {
             audioSource.Stop();
+        }
+        Debug.Log("Frases detenidas por modo Combate");
+    }
+
+    // NUEVA FUNCIÓN para reactivar
+    void ReanudarFrases()
+    {
+        // IsInvoking comprueba si ya se está ejecutando.
+        // Esto evita que  entre escenas seguras se duplique la velocidad de las frases.
+        if (!IsInvoking("ReproducirFraseRandom"))
+        {
+            InvokeRepeating("ReproducirFraseRandom", tiempoEntreFrases, tiempoEntreFrases);
+            Debug.Log("Frases reactivadas");
         }
     }
 }

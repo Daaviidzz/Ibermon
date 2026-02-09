@@ -15,8 +15,6 @@ public class BattleUnit : MonoBehaviour
     // Propiedad auto-implementada para guardar la referencia del Pokémon actual.
     public Pokemon Pokemon { get; set; }
 
-    
-
     Image image; // Referencia al componente visual del Pokémon.
     Vector3 originalPosition; // Guardamos dónde estaba originalmente para volver tras animaciones.
     Color originalColor;      // Guardamos el color original para restaurarlo tras recibir daño.

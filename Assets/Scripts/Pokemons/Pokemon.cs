@@ -112,7 +112,7 @@ public class Pokemon
     public int Speed => GetStat(Stat.Velocidad);
     public int MaxHp { get; private set; }
 
-    // Procesa el daño recibido por un ataque enemigo.
+    // Procesa el daño recibido por un ataque.
     public DamageDetails TakeDamage(Move move, Pokemon attacker)
     {
         // Probabilidad de golpe crítico (6.25%).

@@ -32,7 +32,7 @@ public class BattleDialogBox : MonoBehaviour
     {
         dialogText.text = "";
 
-        // OPTIMIZACIÓN: Cacheamos el tiempo de espera para no crear "basura" (Garbage) en cada vuelta del bucle.
+        //Cacheamos el tiempo de espera para no crear "basura" en cada vuelta del bucle.
         var waitTime = new WaitForSeconds(1f / lettersPerSecond);
 
         foreach (var letter in dialog)
