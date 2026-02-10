@@ -30,4 +30,24 @@ public class ControlesMoviles : MonoBehaviour
         gameObject.SetActive(false);
         #endif
     }
+
+    public void MostrarSoloInteraccion()
+    {
+        if (joystick != null) joystick.gameObject.SetActive(false);
+        if (botonCorrer != null) botonCorrer.gameObject.SetActive(false);
+        if (botonMenuOpciones != null) botonMenuOpciones.gameObject.SetActive(false);
+
+        if (botonInteraccion != null) botonInteraccion.gameObject.SetActive(true);
+    }
+
+    public void MostrarTodosLosControles()
+    {
+        if (joystick != null) joystick.gameObject.SetActive(true);
+        if (botonCorrer != null) botonCorrer.gameObject.SetActive(true);
+        if (botonMenuOpciones != null) botonMenuOpciones.gameObject.SetActive(true);
+
+        if (botonInteraccion != null) botonInteraccion.gameObject.SetActive(true);
+    }
+
+
 }

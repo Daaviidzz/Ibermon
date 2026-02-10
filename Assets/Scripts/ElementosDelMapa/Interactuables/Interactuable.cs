@@ -111,6 +111,12 @@ public class Interactuable : MonoBehaviour
     //Metodo para detectar colisiones 2D
     private void Update()
     {
+        // Si estamos en móvil y el botón aún no existe, lo reasignamos dinámicamente
+        if (esMovil && botonInteraccion == null && ControlesMoviles.Instance != null)
+        {
+            botonInteraccion = ControlesMoviles.Instance.botonInteraccion;
+        }
+
         //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E o el botón de interacción en caso móvil
         if (jugadorDentro && DetectarInteraccion())
         {
@@ -159,6 +165,13 @@ public class Interactuable : MonoBehaviour
             }
 
             dialogoActivo = true;
+
+            //ocultar controles móviles excepto interacción
+            if (esMovil && ControlesMoviles.Instance != null)
+            {
+                ControlesMoviles.Instance.MostrarSoloInteraccion();
+            }
+
 
             //Lanza el audio si existe
             if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
@@ -231,6 +244,14 @@ public class Interactuable : MonoBehaviour
         {
             CambiarAEscenaTransicion();
         }
+
+        // restaurar controles móviles
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.MostrarTodosLosControles();
+        }
+
+
     }
 
     //  Método simple que solo cambia a la escena de transición
