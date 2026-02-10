@@ -13,7 +13,7 @@ public class PokemonParty : MonoBehaviour
     }
 
     private void Start()
-    {/*
+    {
         // Intentar cargar el equipo guardado
         if (SistemGuardadoPokemon.HayDatosGuardados())
         {
@@ -26,13 +26,16 @@ public class PokemonParty : MonoBehaviour
             }
         }
         else
-        */
+        {
+            //// Si no hay guardado, inicializar los Pokémon del inspector
+            //foreach (var pokemon in pokemons)
+            //{
+            //    pokemon.Init();
+            //}
+        }
         
-            // Si no hay guardado, inicializar los Pokémon del inspector
-            foreach (var pokemon in pokemons)
-            {
-                pokemon.Init();
-            }
+        
+          
         
     }
 

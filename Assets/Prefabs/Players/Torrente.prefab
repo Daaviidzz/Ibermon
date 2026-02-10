@@ -424,9 +424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0085f10bf9a207b4bb1f4a38d91f1b18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PokemonParty
-  pokemons:
-  - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
-    level: 10
+  pokemons: []
 --- !u!82 &8369456761620733134
 AudioSource:
   m_ObjectHideFlags: 0

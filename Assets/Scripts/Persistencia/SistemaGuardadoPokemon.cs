@@ -30,6 +30,94 @@ public static class SistemGuardadoPokemon
 {
     private const string CLAVE_GUARDADO = "EquipoPokemon";
 
+    // Nombre del Pokémon inicial por defecto
+    private const string POKEMON_INICIAL = "Charmander";
+    private const int NIVEL_INICIAL = 9;
+
+    // ========== NUEVA PARTIDA ==========
+    // Borra datos guardados y crea equipo con Pokémon inicial
+    public static List<Pokemon> NuevaPartida()
+    {
+        BorrarDatos();
+
+        List<Pokemon> equipoNuevo = new List<Pokemon>();
+
+        // Crear Pokémon inicial
+        PokemonBase pokemonBase = ObtenerPokemonBasePorNombre(POKEMON_INICIAL);
+
+        if (pokemonBase != null)
+        {
+            Pokemon pokemonInicial = new Pokemon(pokemonBase, NIVEL_INICIAL);
+            pokemonInicial.Init();
+            equipoNuevo.Add(pokemonInicial);
+
+            Debug.Log($"Nueva partida iniciada con {POKEMON_INICIAL} nivel {NIVEL_INICIAL}");
+        }
+        else
+        {
+            Debug.LogError($"No se encontró el Pokémon inicial: {POKEMON_INICIAL}");
+        }
+
+        // Guardar equipo inicial
+        GuardarEquipo(equipoNuevo);
+
+        return equipoNuevo;
+    }
+
+    // ========== CARGAR PARTIDA ==========
+    // Carga partida guardada SIN borrar datos
+    public static List<Pokemon> CargarPartida()
+    {
+        if (!HayDatosGuardados())
+        {
+            Debug.LogWarning("No hay partida guardada. Creando nueva partida...");
+            return NuevaPartida();
+        }
+
+        List<Pokemon> equipoCargado = CargarEquipo();
+
+        if (equipoCargado == null || equipoCargado.Count == 0)
+        {
+            Debug.LogWarning("Error al cargar equipo. Creando nueva partida...");
+            return NuevaPartida();
+        }
+
+        Debug.Log($"Partida cargada exitosamente con {equipoCargado.Count} Pokémon");
+        return equipoCargado;
+    }
+
+
+    // Buscar PokemonBase por nombre
+    private static PokemonBase ObtenerPokemonBasePorNombre(string nombre)
+    {
+        // Buscar en Resources
+        PokemonBase[] todosLosPokemon = Resources.LoadAll<PokemonBase>("AssetsPropios/Pokemons/Pokemons");
+
+        // Si Resources no funciona, buscar en todo el proyecto (solo en Editor)
+        if (todosLosPokemon == null || todosLosPokemon.Length == 0)
+        {
+#if UNITY_EDITOR
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:PokemonBase");
+            todosLosPokemon = new PokemonBase[guids.Length];
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+                todosLosPokemon[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<PokemonBase>(path);
+            }
+#endif
+        }
+
+        foreach (var pokemon in todosLosPokemon)
+        {
+            if (pokemon != null && pokemon.Name == nombre)
+            {
+                return pokemon;
+            }
+        }
+
+        return null;
+    }
+
     // Guardar el equipo completo en disco
     public static void GuardarEquipo(List<Pokemon> pokemons)
     {
@@ -64,33 +152,8 @@ public static class SistemGuardadoPokemon
 
         foreach (var pokemonGuardado in datos.equipo)
         {
-            // Buscar el PokemonBase correspondiente desde AssetsPropios/Pokemons/Pokemons
-            PokemonBase[] todosLosPokemon = Resources.LoadAll<PokemonBase>("AssetsPropios/Pokemons/Pokemons");
-            
-            // Si no funciona Resources, buscar manualmente en todo el proyecto
-            if (todosLosPokemon == null || todosLosPokemon.Length == 0)
-            {
-#if UNITY_EDITOR
-                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:PokemonBase");
-                todosLosPokemon = new PokemonBase[guids.Length];
-                for (int i = 0; i < guids.Length; i++)
-                {
-                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
-                    todosLosPokemon[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<PokemonBase>(path);
-                }
-#endif
-            }
-            
-            PokemonBase pBase = null;
-            foreach (var p in todosLosPokemon)
-            {
-                if (p != null && p.Name == pokemonGuardado.nombreBase)
-                {
-                    pBase = p;
-                    break;
-                }
-            }
-            
+            PokemonBase pBase = ObtenerPokemonBasePorNombre(pokemonGuardado.nombreBase);
+
             if (pBase != null)
             {
                 Pokemon pokemon = new Pokemon(pBase, pokemonGuardado.nivel);
