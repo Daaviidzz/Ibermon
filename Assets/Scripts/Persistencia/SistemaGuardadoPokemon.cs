@@ -88,23 +88,15 @@ public static class SistemGuardadoPokemon
 
 
     // Buscar PokemonBase por nombre
+    // Buscar PokemonBase por nombre
     private static PokemonBase ObtenerPokemonBasePorNombre(string nombre)
     {
-        // Buscar en Resources
-        PokemonBase[] todosLosPokemon = Resources.LoadAll<PokemonBase>("AssetsPropios/Pokemons/Pokemons");
+        PokemonBase[] todosLosPokemon = Resources.LoadAll<PokemonBase>("Pokemons");
 
-        // Si Resources no funciona, buscar en todo el proyecto (solo en Editor)
         if (todosLosPokemon == null || todosLosPokemon.Length == 0)
         {
-#if UNITY_EDITOR
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:PokemonBase");
-            todosLosPokemon = new PokemonBase[guids.Length];
-            for (int i = 0; i < guids.Length; i++)
-            {
-                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
-                todosLosPokemon[i] = UnityEditor.AssetDatabase.LoadAssetAtPath<PokemonBase>(path);
-            }
-#endif
+            Debug.LogError("No se encontraron Pokémon en Resources/Pokemons/");
+            return null;
         }
 
         foreach (var pokemon in todosLosPokemon)
@@ -115,6 +107,7 @@ public static class SistemGuardadoPokemon
             }
         }
 
+        Debug.LogError($"No se encontró el Pokémon: {nombre}");
         return null;
     }
 
