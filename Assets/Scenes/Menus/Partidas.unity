@@ -838,7 +838,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 698817243}
         m_TargetAssemblyTypeName: MenuPartida, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: BotonVolver
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -13,7 +13,7 @@ public class Movimiento : MonoBehaviour
 
     // --- Variables de enfrentamientos en hierba ---
     public LayerMask grassLayer;         // Capa de la hierba
-    public float probabilidad = 30f;    // 30% de probabilidad
+    public float probabilidad = 60f;    // 30% de probabilidad
     private float cronometroPasos;      // Tiempo acumulado caminando
     public float tiempoEntreChequeos = 0.5f; // Cada cuánto tiempo tira el dado
 

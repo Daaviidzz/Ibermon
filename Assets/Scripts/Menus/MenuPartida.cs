@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class MenuPartida : MonoBehaviour
 {
@@ -24,6 +25,11 @@ public class MenuPartida : MonoBehaviour
     {
         List<Pokemon> equipoNuevo = SistemGuardadoPokemon.NuevaPartida();
         posicionarPlayer.crearEInstanciarPersonaje();
+    }
+
+    public void BotonVolver()
+    {
+        SceneManager.LoadScene("MenuPrincipal");
     }
 
 
