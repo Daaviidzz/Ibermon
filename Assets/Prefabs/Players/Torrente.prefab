@@ -425,8 +425,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PokemonParty
   pokemons:
-  - _base: {fileID: 11400000, guid: 4b514d23af3fd294784c54b19189c54c, type: 2}
-    level: 10
   - _base: {fileID: 11400000, guid: 9e9c491356cb3314e985562cc0b6c1e3, type: 2}
     level: 10
 --- !u!82 &8369456761620733134

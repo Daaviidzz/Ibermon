@@ -13,10 +13,11 @@ public class PokemonParty : MonoBehaviour
     }
 
     private void Start()
-    {
+    {/*
         // Intentar cargar el equipo guardado
         if (SistemGuardadoPokemon.HayDatosGuardados())
         {
+           
             List<Pokemon> equipoCargado = SistemGuardadoPokemon.CargarEquipo();
             if (equipoCargado != null && equipoCargado.Count > 0)
             {
@@ -25,13 +26,14 @@ public class PokemonParty : MonoBehaviour
             }
         }
         else
-        {
+        */
+        
             // Si no hay guardado, inicializar los Pokémon del inspector
             foreach (var pokemon in pokemons)
             {
                 pokemon.Init();
             }
-        }
+        
     }
 
     private void OnDestroy()
