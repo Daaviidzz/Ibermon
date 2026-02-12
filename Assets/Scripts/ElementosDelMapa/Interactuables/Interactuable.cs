@@ -95,6 +95,14 @@ public class Interactuable : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             jugadorDentro = true;
+
+            // CRÍTICO: Limpiar el estado del botón de interacción al entrar al trigger
+            // Esto evita que clicks antiguos fuera del área se activen cuando entramos
+            if (esMovil && ControlesMoviles.Instance != null && ControlesMoviles.Instance.botonInteraccion != null)
+            {
+                ControlesMoviles.Instance.botonInteraccion.ResetearEstado();
+                Debug.Log($"[{gameObject.name}] Jugador entro - Estado de interaccion limpiado");
+            }
             //aquí debería de mostrar el mensaje lanzando la acción necesaria
         }
     }
@@ -117,8 +125,9 @@ public class Interactuable : MonoBehaviour
             botonInteraccion = ControlesMoviles.Instance.botonInteraccion;
         }
 
-        //Si el tag del objeto que detecta que colisiona es Player y ese player pulsa E o el botón de interacción en caso móvil
-        if (jugadorDentro && DetectarInteraccion())
+        // NUEVA VERIFICACIÓN: Solo procesar input si NO estamos ya en diálogo
+        // Y si el jugador está dentro del collider
+        if (jugadorDentro && !dialogoActivo && DetectarInteraccion())
         {
             // NUEVO: Antes de mostrar el diálogo, comprobar si hay que cambiar de fase automáticamente
             if (cambiarFaseSegunPokemon && equipoPokemon != null)
@@ -133,14 +142,6 @@ public class Interactuable : MonoBehaviour
                 if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
                 if (animacion != null) animacion.SetTrigger(triggerAnimacion);
                 return; // Sale y no intenta abrir diálogo
-            }
-
-            // Si ya estamos en diálogo, avanza la siguiente frase
-            // El return evita que se ejecute lo de abajo en el mismo frame
-            if (dialogoActivo)
-            {
-                activarCartel();
-                return;
             }
 
             // --- Lógica especial para la Abuela ---
@@ -192,6 +193,11 @@ public class Interactuable : MonoBehaviour
                 // Si no hay textos, cerramos usando el nuevo método de limpieza
                 TerminarDialogo();
             }
+        }
+        // Si YA estamos en diálogo y detectamos input, avanzamos
+        else if (dialogoActivo && jugadorDentro && DetectarInteraccion())
+        {
+            activarCartel();
         }
     }
 
@@ -323,6 +329,11 @@ public class Interactuable : MonoBehaviour
     // Detectar si se presionó el botón de interaccion
     bool DetectarInteraccion()
     {
+        // CRÍTICO: Solo permitir interacción si el jugador ESTÁ DENTRO del collider
+        // Esto evita que clicks fuera del área se cuelen cuando entramos después
+        if (!jugadorDentro)
+            return false;
+
         if (esMovil && botonInteraccion != null)
         {
             // Usar botón táctil en móvil

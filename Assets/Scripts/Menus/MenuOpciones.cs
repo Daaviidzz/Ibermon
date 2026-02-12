@@ -6,14 +6,17 @@ public class MenuOpciones : MonoBehaviour
 {
     //Objeto que hace refencia al panel de opciones
     public GameObject panelOpciones;
+
     //boton volver del panel opciones
     public Button botonVolverPanelOpciones;
+
     //boton ir a controles
     public Button botonControles;
     public Button botonSalirJuego;
 
     //Objeto que hace refencia al panel de controles
     public GameObject panelControles;
+
     //boton volver del panel controles
     public Button botonVolverPanelControles;
 
@@ -23,8 +26,8 @@ public class MenuOpciones : MonoBehaviour
     //desbloqueamos el cursor desde el principio del juego
     private void Awake()
     {
-
         comprobacionInicialParteMovil();
+
         // Solo desbloquear cursor en PC
         if (!esMovil)
         {
@@ -34,9 +37,7 @@ public class MenuOpciones : MonoBehaviour
             Cursor.visible = true;
         }
 
-
         //Son expresiones lambda que esperan a la activación del botón 
-
         botonVolverPanelOpciones.onClick.AddListener(() =>
         {
             volver();
@@ -58,7 +59,6 @@ public class MenuOpciones : MonoBehaviour
         {
             Application.Quit();
         });
-
     }
 
     private void Update()
@@ -81,8 +81,16 @@ public class MenuOpciones : MonoBehaviour
             Cursor.visible = false;
         }
 
+        // Limpiar el estado de todos los botones móviles antes de cambiar de escena
+        // Esto previene que clicks pendientes activen cosas en la escena siguiente
+        if (ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.LimpiarEstadoBotones();
+        }
+
         //Le asignamos la posición al jugador
         JugadorSpawn.posicion = GuardarPosicionAnterior.posicionAnterior;
+
         //Cambiamos de escena
         SceneManager.LoadScene(GuardarPosicionAnterior.escenaAnterior);
 
@@ -98,9 +106,7 @@ public class MenuOpciones : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         esMovil = true;
 #else
-            esMovil = false;
+        esMovil = false;
 #endif
-
     }
-
 }

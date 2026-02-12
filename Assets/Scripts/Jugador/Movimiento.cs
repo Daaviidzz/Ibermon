@@ -61,6 +61,17 @@ public class Movimiento : MonoBehaviour
 
     }
 
+    // Añade este método Start después del Awake
+    private void Start()
+    {
+        // Al cargar la escena del juego, bloquear controles brevemente
+        // Esto evita que inputs de escenas anteriores se cuelen aquí
+        if (ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
+        }
+    }
+
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {

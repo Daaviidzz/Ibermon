@@ -1,6 +1,7 @@
 using TMPro; // Cambiado para usar TextMeshPro
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class ControllPortadaInicio : MonoBehaviour
 {
@@ -10,11 +11,15 @@ public class ControllPortadaInicio : MonoBehaviour
 
     //Texto de pulsar enter
     public TextMeshProUGUI textoPulsarEnter;
+
     //Velocidad de parpadeo del texto
     public float velocidadParpadeo = 2f;
 
     // Detectar si estamos en móvil o PC
     private bool esMovil;
+
+    // Variable para evitar múltiples cambios de escena
+    private bool cambiandoEscena = false;
 
     //bloqueamos el cursor desde el principio del juego
     private void Awake()
@@ -59,11 +64,51 @@ public class ControllPortadaInicio : MonoBehaviour
             textoPulsarEnter.color = c;
         }
 
-        // DETECCIÓN DE ENTRADA
-        if (DetectarEntrada())
+        // DETECCIÓN DE ENTRADA - solo si no estamos ya cambiando de escena
+        if (!cambiandoEscena && DetectarEntrada())
         {
-            SceneManager.LoadScene(escenaDestino);
+            StartCoroutine(CambiarEscenaConBloqueo());
         }
+    }
+
+    // Corrutina para cambiar de escena bloqueando completamente los controles
+    // Esto evita que el click de la portada active botones en la siguiente escena
+    private IEnumerator CambiarEscenaConBloqueo()
+    {
+        cambiandoEscena = true;
+
+        Debug.Log("[Portada] Iniciando cambio de escena");
+
+        // Bloquear inmediatamente todos los controles móviles
+        if (ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.DeshabilitarBotones();
+            ControlesMoviles.Instance.LimpiarEstadoBotones();
+        }
+
+        // Esperar 2 frames para que Unity procese el bloqueo del raycast
+        yield return null;
+        yield return null;
+
+        // Limpiar de nuevo por si acaso
+        if (ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.LimpiarEstadoBotones();
+        }
+
+        // Pequeño delay adicional para asegurar que todo está limpio
+        yield return new WaitForSeconds(0.15f);
+
+        // Limpieza final antes de cambiar de escena
+        if (ControlesMoviles.Instance != null)
+        {
+            ControlesMoviles.Instance.LimpiarEstadoBotones();
+        }
+
+        Debug.Log("[Portada] Cargando escena: " + escenaDestino);
+
+        // Cambiar de escena
+        SceneManager.LoadScene(escenaDestino);
     }
 
     // Método que unifica la detección según la plataforma
@@ -72,9 +117,27 @@ public class ControllPortadaInicio : MonoBehaviour
         if (esMovil)
         {
             // Detecta si hay al menos un toque en la pantalla
+            bool tocoPantalla = Input.GetMouseButtonDown(0);
             //return Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;//es este el que hay que poner pero para hacer pruebas desde el pc necesito el de abajo
-            return Input.GetMouseButtonDown(0);
 
+            if (tocoPantalla)
+            {
+                Debug.Log("[Portada] Toque detectado en pantalla");
+
+                // IMPORTANTE: Consumir todos los eventos de botones INMEDIATAMENTE
+                // Esto previene que el click se propague a la siguiente escena
+                if (ControlesMoviles.Instance != null)
+                {
+                    if (ControlesMoviles.Instance.botonInteraccion != null)
+                        ControlesMoviles.Instance.botonInteraccion.SePresionoEsteFrame();
+                    if (ControlesMoviles.Instance.botonCorrer != null)
+                        ControlesMoviles.Instance.botonCorrer.SePresionoEsteFrame();
+                    if (ControlesMoviles.Instance.botonMenuOpciones != null)
+                        ControlesMoviles.Instance.botonMenuOpciones.SePresionoEsteFrame();
+                }
+            }
+
+            return tocoPantalla;
         }
         else
         {
@@ -83,15 +146,14 @@ public class ControllPortadaInicio : MonoBehaviour
         }
     }
 
-
     //Parte movil inicial
     private void comprobacionInicialParteMovil()
     {
         // Detectar la plataforma
-        #if UNITY_ANDROID || UNITY_IOS 
+#if UNITY_ANDROID || UNITY_IOS
         esMovil = true;
-        #else
+#else
         esMovil = false;
-        #endif
+#endif
     }
 }
