@@ -2427,6 +2427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConfiguracionVideo
   dropdownResoluciones: {fileID: 208831010}
+  togglePantallaCompleta: {fileID: 0}
 --- !u!1 &894811626
 GameObject:
   m_ObjectHideFlags: 0
