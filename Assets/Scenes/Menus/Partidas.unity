@@ -735,6 +735,7 @@ GameObject:
   - component: {fileID: 926650722}
   - component: {fileID: 926650721}
   - component: {fileID: 926650720}
+  - component: {fileID: 926650725}
   m_Layer: 5
   m_Name: Volver
   m_TagString: Untagged
@@ -886,6 +887,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 926650718}
   m_CullTransparentMesh: 1
+--- !u!114 &926650725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 926650718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1 &1060294688
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,6 +913,7 @@ GameObject:
   - component: {fileID: 1060294692}
   - component: {fileID: 1060294691}
   - component: {fileID: 1060294690}
+  - component: {fileID: 1060294695}
   m_Layer: 5
   m_Name: Cargar
   m_TagString: Untagged
@@ -1051,6 +1065,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1060294688}
   m_CullTransparentMesh: 1
+--- !u!114 &1060294695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060294688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
+--- !u!1 &1105328164
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1105328166}
+  - component: {fileID: 1105328165}
+  m_Layer: 0
+  m_Name: SonidosBotones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1105328165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105328164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a232d6277e412d4f8e1deef15487bb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIAudioManager
+  audioSource: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 10ddaecd15a222145ad9eb8aff2277c1, type: 3}
+  clickSound: {fileID: 8300000, guid: 2a05751969d9f1946ba14d7ac5cf5090, type: 3}
+  volume: 0.5
+--- !u!4 &1105328166
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105328164}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 471.1209, y: 282.3103, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1252332383
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1515,7 @@ GameObject:
   - component: {fileID: 1474449931}
   - component: {fileID: 1474449930}
   - component: {fileID: 1474449929}
+  - component: {fileID: 1474449934}
   m_Layer: 5
   m_Name: Nueva
   m_TagString: Untagged
@@ -1592,6 +1667,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474449927}
   m_CullTransparentMesh: 1
+--- !u!114 &1474449934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474449927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1599,3 +1686,4 @@ SceneRoots:
   - {fileID: 1252332386}
   - {fileID: 1256479927}
   - {fileID: 390916729}
+  - {fileID: 1105328166}

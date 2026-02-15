@@ -876,6 +876,7 @@ GameObject:
   - component: {fileID: 1164942668}
   - component: {fileID: 1164942667}
   - component: {fileID: 1164942666}
+  - component: {fileID: 1164942671}
   m_Layer: 5
   m_Name: Opciones
   m_TagString: Untagged
@@ -1027,6 +1028,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1164942664}
   m_CullTransparentMesh: 1
+--- !u!114 &1164942671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164942664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1 &1177732684
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,6 +1054,7 @@ GameObject:
   - component: {fileID: 1177732686}
   - component: {fileID: 1177732690}
   - component: {fileID: 1177732689}
+  - component: {fileID: 1177732691}
   m_Layer: 5
   m_Name: Jugar
   m_TagString: Untagged
@@ -1192,6 +1206,18 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 1, b: 1, a: 1}
   m_EffectDistance: {x: 2, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &1177732691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1177732684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1 &1342831360
 GameObject:
   m_ObjectHideFlags: 0
@@ -1206,6 +1232,7 @@ GameObject:
   - component: {fileID: 1342831364}
   - component: {fileID: 1342831363}
   - component: {fileID: 1342831362}
+  - component: {fileID: 1342831367}
   m_Layer: 5
   m_Name: Creditos
   m_TagString: Untagged
@@ -1357,6 +1384,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1342831360}
   m_CullTransparentMesh: 1
+--- !u!114 &1342831367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1342831360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1 &1524103189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,6 +1470,54 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1643821805
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1643821807}
+  - component: {fileID: 1643821806}
+  m_Layer: 0
+  m_Name: SonidosBotones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1643821806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643821805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a232d6277e412d4f8e1deef15487bb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIAudioManager
+  audioSource: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 10ddaecd15a222145ad9eb8aff2277c1, type: 3}
+  clickSound: {fileID: 8300000, guid: 2a05751969d9f1946ba14d7ac5cf5090, type: 3}
+  volume: 0.5
+--- !u!4 &1643821807
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643821805}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 471.1209, y: 282.3103, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1587,6 +1674,7 @@ GameObject:
   - component: {fileID: 2079599928}
   - component: {fileID: 2079599927}
   - component: {fileID: 2079599926}
+  - component: {fileID: 2079599931}
   m_Layer: 5
   m_Name: Salir
   m_TagString: Untagged
@@ -1738,6 +1826,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2079599924}
   m_CullTransparentMesh: 1
+--- !u!114 &2079599931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079599924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540ebf15d6e09ad458862131a49f7639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonSounds
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1745,3 +1845,4 @@ SceneRoots:
   - {fileID: 1917559883}
   - {fileID: 231300723}
   - {fileID: 1524103192}
+  - {fileID: 1643821807}
