@@ -6,37 +6,37 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menus/PortadaInicio.unity
+    path: Assets/_Game/Escenas/Menus/PortadaInicio.unity
     guid: 3f4db0a11369d6c49b8cc8b808ee3964
   - enabled: 1
-    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/CasaPersonaje.unity
+    path: Assets/_Game/Escenas/Pueblos/Fuenlabrada/Interiores/CasaPersonaje.unity
     guid: e478738c5e35e2849968c17b43ae9511
   - enabled: 1
-    path: Assets/Scenes/Pueblos/Fuenlabrada/PuebloFuenlabrada.unity
+    path: Assets/_Game/Escenas/Pueblos/Fuenlabrada/PuebloFuenlabrada.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/CasaProfesor.unity
+    path: Assets/_Game/Escenas/Pueblos/Fuenlabrada/Interiores/CasaProfesor.unity
     guid: 3a83eace0875b8c429c6bd4b56cf610f
   - enabled: 1
-    path: Assets/Scenes/Pueblos/Fuenlabrada/Interiores/Gimnasio.unity
+    path: Assets/_Game/Escenas/Pueblos/Fuenlabrada/Interiores/Gimnasio.unity
     guid: 8fcc1a407484cc74a9d852221aa05845
   - enabled: 1
-    path: Assets/Scenes/Menus/MenuPrincipal.unity
+    path: Assets/_Game/Escenas/Menus/MenuPrincipal.unity
     guid: 66ada340e3cc6d24eb1f92a317d654eb
   - enabled: 1
-    path: Assets/Scenes/Menus/Creditos.unity
+    path: Assets/_Game/Escenas/Menus/Creditos.unity
     guid: df360fe30ba7a354fa2a68eb924ffa2f
   - enabled: 1
-    path: Assets/Scenes/Combates/Combate.unity
+    path: Assets/_Game/Escenas/Combates/Combate.unity
     guid: 2e40b5745c1699e4189d6b4fae89ca40
   - enabled: 1
-    path: Assets/Scenes/Menus/Opciones.unity
+    path: Assets/_Game/Escenas/Menus/Opciones.unity
     guid: 7cbe3f4d26a197f4e878d2215be8b661
   - enabled: 1
-    path: Assets/Scenes/EscenasFinalesRutas/SalidaRuta1.unity
+    path: Assets/_Game/Escenas/EscenasFinalesRutas/SalidaRuta1.unity
     guid: 239dd9eb891d0ea40ab038d33c53e9a1
   - enabled: 1
-    path: Assets/Scenes/Menus/Partidas.unity
+    path: Assets/_Game/Escenas/Menus/Partidas.unity
     guid: 66430196237fa15459c6aa059c7c1a1b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
