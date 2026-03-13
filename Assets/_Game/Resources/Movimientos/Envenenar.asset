@@ -10,17 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c351f44638adf3443b40e4578d899df3, type: 3}
-  m_Name: PicotazoVen
+  m_Name: Envenenar
   m_EditorClassIdentifier: Assembly-CSharp::MoveBase
-  name: Picotazo Ven
+  name: Envenenar
   description: 
   type: 8
-  power: 15
+  power: 0
   accuracy: 100
   alwaysHit: 0
-  pp: 35
-  category: 0
+  pp: 20
+  category: 2
   effects:
-    boosts: []
-    status: 1
+    boosts:
+    - stat: 4
+      boost: -1
+    status: 4
   target: 0

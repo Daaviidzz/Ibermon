@@ -23,9 +23,12 @@ public class Pokemon
     // Diccionarios para gestionar estadísticas base y modificadores de combate (Evasión, Ataque, etc.)
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatsBoosts { get; private set; }
+    public Condition Status { get; private set; }
+    public int StatusTime { get; set; } // Duración restante de la condición de estado, si es aplicable.
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
     public Queue<string> StatusChanges { get; private set; } 
+    public bool HpChanged { get; set; }
 
     public void Init()
     {
@@ -138,18 +141,31 @@ public class Pokemon
         float d = a * move.Base.Power * ((float)attack / defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
-        HP -= damage;
-        if (HP <= 0)
-        {
-            HP = 0;
-            damageDetails.Fainted = true;
-        }
+       UpdateHP(damage);
 
         return damageDetails;
     }
-
+    public void UpdateHP(int damage)
+    {
+        HP=Mathf.Clamp(HP - damage, 0, MaxHp);
+        HpChanged = true;
+    }
+    public void SetStatus(ConditionID conditionId)
+    {
+        if (Status != null) return; // No se puede aplicar un nuevo estado si ya hay uno activo.
+        Status = ConditionsDB.Conditions[conditionId];
+        Status?.OnStart?.Invoke(this);
+        StatusChanges.Enqueue($"{Base.Name} {Status.StartMessage}");
+    }
+    public void CureStatus()=> Status = null;
     public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
-
+    public bool OnBeforeMove() 
+    {
+        if (Status?.OnBeforeMove != null)
+            return Status.OnBeforeMove.Invoke(this);
+        return true;
+    } 
+    public void OnAfterTurn() => Status?.OnAfterTurn?.Invoke(this);
     public void OnBattleOver() => ResetStatBoost();
 
     //Restaura la vida

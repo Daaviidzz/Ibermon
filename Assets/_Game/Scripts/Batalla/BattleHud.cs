@@ -39,7 +39,12 @@ public class BattleHud : MonoBehaviour
     {
         // Llamamos a SetHPSmooth del script HPBar, que se encargará de bajar la barra poco a poco visualmente.
         // 'yield return' significa que el código esperará aquí hasta que la animación de la barra termine.
-        yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
+        if (_pokemon.HpChanged) 
+        {
+            yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
+            _pokemon.HpChanged = false;
+        }
+        
     }
     public void SetLevel()
     {

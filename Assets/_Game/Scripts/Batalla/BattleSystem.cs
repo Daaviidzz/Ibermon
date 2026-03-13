@@ -138,6 +138,13 @@ public class BattleSystem : MonoBehaviour
     // Método core: Maneja la animación, el daño y la reducción de PP de cualquier movimiento
     IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move)
     {
+       bool canRunMove= sourceUnit.Pokemon.OnBeforeMove();
+       if (!canRunMove)
+       {
+            yield return ShowStatusChanges(sourceUnit.Pokemon);
+            yield break;
+       }
+        yield return ShowStatusChanges(sourceUnit.Pokemon);
         move.Pp--;
         yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} usó {move.Base.Name}!");
 
@@ -165,14 +172,24 @@ public class BattleSystem : MonoBehaviour
             {
                 yield return HandlePokemonFainted(targetUnit);
             }
+
         }
         else
             yield return dialogBox.TypeDialog($"{sourceUnit.Pokemon.Base.Name} falló el ataque");
+
+        sourceUnit.Pokemon.OnAfterTurn();
+        yield return ShowStatusChanges(sourceUnit.Pokemon);
+        yield return sourceUnit.Hud.UpdateHP();
+        if (sourceUnit.Pokemon.HP <= 0)
+        {
+            yield return HandlePokemonFainted(sourceUnit);
+        }
 
     }
     IEnumerator RunMoveEffects(Move move, Pokemon source, Pokemon target)
     {
         var effects = move.Base.Effects;
+
         if (effects.Boosts != null)
         {
             if (move.Base.Target == MoveTarget.Self)
@@ -180,6 +197,10 @@ public class BattleSystem : MonoBehaviour
             else
                 target.ApplyBoosts(effects.Boosts);
 
+        }
+        if(effects.Status != ConditionID.none)
+        {
+            target.SetStatus(effects.Status);
         }
         yield return ShowStatusChanges(source);
         yield return ShowStatusChanges(target);

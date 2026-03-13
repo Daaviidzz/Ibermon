@@ -48,8 +48,10 @@ public class MoveBase : ScriptableObject
 public class MoveEffects
 {
     [SerializeField] List<StatBoost> boosts;
+    [SerializeField] ConditionID status; // Condición de estado que puede causar el movimiento (Envenenado, Paralizado, etc.)
 
     public List<StatBoost> Boosts => boosts;
+    public ConditionID Status => status;
 }
 
 [System.Serializable]
