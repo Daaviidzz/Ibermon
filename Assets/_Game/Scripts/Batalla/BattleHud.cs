@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro; 
 using UnityEngine;
 
@@ -14,9 +15,16 @@ public class BattleHud : MonoBehaviour
     [SerializeField] TextMeshProUGUI LevelText; // Texto para el nivel (ej: "Lvl 15").
     [SerializeField] HPBar hpBar; // Referencia al script 'HPBar' que controla visualmente la barra de vida (el relleno verde).
     [SerializeField] GameObject expBar; // Referencia al objeto Exp
+    [SerializeField] TextMeshProUGUI statusText;
     // Referencia privada al objeto Pokémon cuyos datos estamos mostrando.
+    [SerializeField] Color psnColor;
+    [SerializeField] Color brnColor;
+    [SerializeField] Color parColor;
+    [SerializeField] Color slpColor;
+    [SerializeField] Color frzColor;
     
     Pokemon _pokemon;
+    Dictionary<ConditionID,Color> statusColors;
 
     // Inicializa el HUD con los datos de un Pokémon específico.
     // Se llama al iniciar la batalla o cuando se cambia de Pokémon.
@@ -30,6 +38,17 @@ public class BattleHud : MonoBehaviour
 
         // Ajustamos la barra de vida a su estado inicial.
         hpBar.SetHP((float)pokemon.HP / pokemon.MaxHp);
+        statusColors=new Dictionary<ConditionID, Color>()
+        {
+            {ConditionID.psn,psnColor},
+            {ConditionID.brn,brnColor},
+            {ConditionID.par,parColor},
+            {ConditionID.slp,slpColor},
+            {ConditionID.frz,frzColor}
+        };
+
+        SetStatusText();
+        _pokemon.OnStatusChanged += SetStatusText;
         SetExp();
     }
 
@@ -50,7 +69,19 @@ public class BattleHud : MonoBehaviour
     {
         LevelText.text = "Lvl " + _pokemon.Level;
     }
-
+    public void SetStatusText()
+    {
+        if (_pokemon.Status==null)
+        {
+            statusText.text = "";
+        }
+        else
+        {
+            statusText.text=_pokemon.Status.Id.ToString().ToUpper();
+            statusText.color=statusColors[_pokemon.Status.Id];
+        }
+        
+    }
     public void SetExp()
     {
         if (expBar == null) return;

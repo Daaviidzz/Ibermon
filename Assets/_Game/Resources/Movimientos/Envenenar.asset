@@ -24,5 +24,6 @@ MonoBehaviour:
     boosts:
     - stat: 4
       boost: -1
-    status: 4
+    status: 0
+    volatileStatus: 6
   target: 0

@@ -85,6 +85,7 @@ public class PokemonParty : MonoBehaviour
         foreach (var pokemon in pokemons)
         {
             pokemon.ResetHealth();
+            pokemon.CureStatus();
         }
 
         // Guardar después de curar

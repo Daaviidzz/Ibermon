@@ -25,10 +25,13 @@ public class Pokemon
     public Dictionary<Stat, int> StatsBoosts { get; private set; }
     public Condition Status { get; private set; }
     public int StatusTime { get; set; } // Duración restante de la condición de estado, si es aplicable.
+    public Condition VolatileStatus { get; set; } // Para condiciones temporales como Confusión, etc.
+    public int VolatileStatusTime { get; set; }
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
     public Queue<string> StatusChanges { get; private set; } 
     public bool HpChanged { get; set; }
+    public event System.Action OnStatusChanged; // Evento para notificar cambios de estado
 
     public void Init()
     {
@@ -48,6 +51,8 @@ public class Pokemon
         HP = MaxHp;
         StatusChanges = new();
         ResetStatBoost();
+        Status = null;
+        VolatileStatus = null;
     }
 
     // Calcula las estadísticas finales basadas en la fórmula oficial de los juegos de Pokémon.
@@ -60,7 +65,7 @@ public class Pokemon
         Stats.Add(Stat.DefensaEspecial, Mathf.FloorToInt((Base.SpDefense * Level) / 100f) + 5);
         Stats.Add(Stat.Velocidad, Mathf.FloorToInt((Base.Speed * Level) / 100f) + 5);
 
-        MaxHp = Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10;
+        MaxHp = Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10 + Level;
     }
 
     // Reinicia los niveles de modificadores (buffs/debuffs) a 0.
@@ -153,20 +158,68 @@ public class Pokemon
     public void SetStatus(ConditionID conditionId)
     {
         if (Status != null) return; // No se puede aplicar un nuevo estado si ya hay uno activo.
-        Status = ConditionsDB.Conditions[conditionId];
-        Status?.OnStart?.Invoke(this);
-        StatusChanges.Enqueue($"{Base.Name} {Status.StartMessage}");
+        if (conditionId == ConditionID.none)
+        {
+            Status = null;
+        }
+        else
+        {
+            Status = ConditionsDB.Conditions[conditionId];
+            Status?.OnStart?.Invoke(this);
+            StatusChanges.Enqueue($"{Base.Name} {Status.StartMessage}");
+        }
+        OnStatusChanged?.Invoke();
     }
-    public void CureStatus()=> Status = null;
+    public void SetVolatileStatus(ConditionID conditionId)
+    {
+        if (VolatileStatus != null) return; // No se puede aplicar un nuevo estado si ya hay uno activo.
+        if (conditionId == ConditionID.none)
+        {
+            VolatileStatus = null;
+        }
+        else
+        {
+            VolatileStatus = ConditionsDB.Conditions[conditionId];
+            VolatileStatus?.OnStart?.Invoke(this);
+            StatusChanges.Enqueue($"{Base.Name} {VolatileStatus.StartMessage}");
+        }
+        
+    }
+    public void CureStatus()
+    {
+        Status = null;
+        OnStatusChanged?.Invoke();
+    }
+    public void CureVolatileStatus()=> VolatileStatus = null;
     public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
     public bool OnBeforeMove() 
     {
-        if (Status?.OnBeforeMove != null)
-            return Status.OnBeforeMove.Invoke(this);
-        return true;
+        bool canPerformeMove = true;
+
+        if (Status?.OnBeforeMove != null) 
+        {
+            if (!Status.OnBeforeMove.Invoke(this))
+                canPerformeMove = false;
+        }
+        if (VolatileStatus?.OnBeforeMove != null)
+        {
+            if (!VolatileStatus.OnBeforeMove.Invoke(this))
+                canPerformeMove = false;
+        }
+
+        return canPerformeMove;
     } 
-    public void OnAfterTurn() => Status?.OnAfterTurn?.Invoke(this);
-    public void OnBattleOver() => ResetStatBoost();
+    public void OnAfterTurn()
+    {
+        Status?.OnAfterTurn?.Invoke(this);
+        VolatileStatus?.OnAfterTurn?.Invoke(this);
+
+    }
+    public void OnBattleOver() 
+    {
+        VolatileStatus = null;
+        ResetStatBoost(); 
+    }
 
     //Restaura la vida
     public void ResetHealth()

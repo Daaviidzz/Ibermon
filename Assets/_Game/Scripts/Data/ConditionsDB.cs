@@ -4,10 +4,20 @@ using UnityEngine;
 //Esto luego seria una base de datos, pero por ahora lo dejo asi para probar el sistema de estados
 public class ConditionsDB 
 {
-   
+   public static void Init()
+    {
+        foreach(var kvp in Conditions)
+        {
+            var conditionId = kvp.Key;
+            var condition = kvp.Value;
+
+            condition.Id = conditionId;
+        }
+
+    }
     public static Dictionary<ConditionID, Condition> Conditions { get; set; } = new Dictionary<ConditionID, Condition>() 
     { 
-        { ConditionID.poison, new Condition() 
+        { ConditionID.psn, new Condition() 
             { 
                 Name = "Veneno", 
                 StartMessage = "¡ha sido envenenado!",
@@ -18,7 +28,7 @@ public class ConditionsDB
                 }
             } 
         },
-        { ConditionID.burn, new Condition() 
+        { ConditionID.brn, new Condition() 
             { 
                 Name = "Quemadura", 
                 StartMessage = "¡ha sido quemado!" ,
@@ -29,7 +39,7 @@ public class ConditionsDB
                 }
             } 
         },
-        { ConditionID.sleep, new Condition() 
+        { ConditionID.slp, new Condition() 
             { 
                 Name = "Sueño", 
                 StartMessage = "¡ha caído en sueño!" ,
@@ -51,7 +61,7 @@ public class ConditionsDB
                 }
             } 
         },
-        { ConditionID.paralysis, new Condition() 
+        { ConditionID.par, new Condition() 
             { 
                 Name = "Parálisis", 
                 StartMessage = "¡ha sido paralizado!" ,
@@ -67,7 +77,7 @@ public class ConditionsDB
                 
             } 
         },
-        { ConditionID.frozen, new Condition() 
+        { ConditionID.frz, new Condition() 
             { 
                 Name = "Congelado", 
                
@@ -84,10 +94,40 @@ public class ConditionsDB
                     return false;
                 }
             }
-        }
+        },
+            { ConditionID.confusion, new Condition() 
+                { 
+                    Name = "Confusión", 
+                    StartMessage = "¡está confundido!" ,
+                    OnStart=(Pokemon pokemon)=>
+                    {
+                        pokemon.VolatileStatusTime = Random.Range(1,4);
+                    },
+                    OnBeforeMove=(Pokemon pokemon)=>
+                    {
+                        if(pokemon.VolatileStatusTime<=0)
+                        {
+                            pokemon.CureVolatileStatus();
+                            pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} ya no está confundido.");
+                            return true;
+                        }
+                        pokemon.VolatileStatusTime--;
+                        if(Random.Range(1,3)==1)
+                        {
+                           return true;
+                        }
+                        pokemon.StatusChanges.Enqueue($"{pokemon.Base.Name} está confundido");
+                        pokemon.UpdateHP(pokemon.MaxHp/8);
+                        pokemon.StatusChanges.Enqueue("Se ha lastimado a si mismo por la confusión");
+                        return false;
+
+                    }
+                }
+            }
+
     };
 }
 public enum ConditionID
 {
-   none, poison,burn,sleep,paralysis, frozen
+   none, psn,brn,slp,par, frz,confusion
 }

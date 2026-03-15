@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,6 +27,8 @@ public class MoveBase : ScriptableObject
 
     // Efectos secundarios 
     [SerializeField] MoveEffects effects;
+    [SerializeField] List<SecondaryEffects> secondries;
+
 
     // Define a quién golpea: al enemigo o al propio usuario (útil para 2vs2 en el futuro).
     [SerializeField] MoveTarget target;
@@ -42,6 +45,7 @@ public class MoveBase : ScriptableObject
     public MoveCategory Category => category;
     public MoveEffects Effects => effects;
     public MoveTarget Target => target;
+    public List<SecondaryEffects> Secondries => secondries;
 }
 
 [System.Serializable] // Permite que esta clase aparezca y sea editable dentro del Inspector de Unity.
@@ -49,9 +53,19 @@ public class MoveEffects
 {
     [SerializeField] List<StatBoost> boosts;
     [SerializeField] ConditionID status; // Condición de estado que puede causar el movimiento (Envenenado, Paralizado, etc.)
+    [SerializeField] ConditionID volatileStatus;
 
     public List<StatBoost> Boosts => boosts;
     public ConditionID Status => status;
+    public ConditionID VolatileStatus => volatileStatus;
+}
+[System.Serializable]
+public class SecondaryEffects : MoveEffects
+{
+    [SerializeField] int chance;
+    [SerializeField] MoveTarget target;
+    public int Chance => chance;
+    public MoveTarget Target => target;
 }
 
 [System.Serializable]

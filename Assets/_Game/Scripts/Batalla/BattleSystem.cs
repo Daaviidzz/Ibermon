@@ -36,6 +36,7 @@ public class BattleSystem : MonoBehaviour
 
     private void Awake()
     {
+        ConditionsDB.Init();
         // Detectar si estamos en móvil
 #if UNITY_ANDROID || UNITY_IOS
         esMovil = true;
@@ -68,6 +69,8 @@ public class BattleSystem : MonoBehaviour
 
     public IEnumerator SetupBattle()
     {
+       
+        
         // Inicializa unidades: saca al primer Pokémon sano y al enemigo
         playerUnit.Setup(playerParty.GetHealtyPokemon());
         enemyUnit.Setup(wildPokemon);
@@ -142,6 +145,7 @@ public class BattleSystem : MonoBehaviour
        if (!canRunMove)
        {
             yield return ShowStatusChanges(sourceUnit.Pokemon);
+            yield return sourceUnit.Hud.UpdateHP();
             yield break;
        }
         yield return ShowStatusChanges(sourceUnit.Pokemon);
@@ -158,7 +162,7 @@ public class BattleSystem : MonoBehaviour
 
             if (move.Base.Category == MoveCategory.Estado)
             {
-                yield return RunMoveEffects(move, sourceUnit.Pokemon, targetUnit.Pokemon);
+                yield return RunMoveEffects(move.Base.Effects, sourceUnit.Pokemon, targetUnit.Pokemon,move.Base.Target);
             }
             else
             {
@@ -166,7 +170,16 @@ public class BattleSystem : MonoBehaviour
                 yield return targetUnit.Hud.UpdateHP();
                 yield return ShowDamageDetails(damageDetails);
             }
-
+            if(move.Base.Secondries !=null && move.Base.Secondries.Count > 0 && targetUnit.Pokemon.HP > 0)
+            {
+                foreach(var secondary in move.Base.Secondries)
+                {
+                    if (UnityEngine.Random.Range(1, 101) <= secondary.Chance)
+                    {
+                        yield return RunMoveEffects(secondary, sourceUnit.Pokemon, targetUnit.Pokemon,secondary.Target);
+                    }
+                }
+            }
 
             if (targetUnit.Pokemon.HP <= 0)
             {
@@ -186,13 +199,11 @@ public class BattleSystem : MonoBehaviour
         }
 
     }
-    IEnumerator RunMoveEffects(Move move, Pokemon source, Pokemon target)
+    IEnumerator RunMoveEffects(MoveEffects effects, Pokemon source, Pokemon target,MoveTarget moveTarget)
     {
-        var effects = move.Base.Effects;
-
         if (effects.Boosts != null)
         {
-            if (move.Base.Target == MoveTarget.Self)
+            if (moveTarget == MoveTarget.Self)
                 source.ApplyBoosts(effects.Boosts);
             else
                 target.ApplyBoosts(effects.Boosts);
@@ -201,6 +212,10 @@ public class BattleSystem : MonoBehaviour
         if(effects.Status != ConditionID.none)
         {
             target.SetStatus(effects.Status);
+        }
+        if(effects.VolatileStatus != ConditionID.none)
+        {
+            target.SetVolatileStatus(effects.VolatileStatus);
         }
         yield return ShowStatusChanges(source);
         yield return ShowStatusChanges(target);
