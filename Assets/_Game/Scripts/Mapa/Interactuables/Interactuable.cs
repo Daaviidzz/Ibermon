@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Batalla;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +18,9 @@ public class Interactuable : MonoBehaviour
     //Parte de sonido
     public AudioSource archivoAudio;
     public AudioClip audio;
+
+    //Si es entrenador o no
+    public bool esEntrenador = false;
 
     //Mensaje para la interacción
     public string mensaje = "Pulsa E para interactuar";
@@ -255,6 +259,21 @@ public class Interactuable : MonoBehaviour
         if (esMovil && ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.MostrarTodosLosControles();
+        }
+        // NUEVO: si es entrenador, lanzar batalla al cerrar el diálogo
+        if (esEntrenador)
+        {
+            var trainerParty = GetComponent<PokemonParty>(); // el NPC necesita este componente
+            if (trainerParty != null)
+            {
+                BattleData.TrainerParty = trainerParty;
+                BattleData.EsEntrenador = true;
+                BattleData.WildPokemon = null;
+
+                JugadorSpawn.escenaAnterior = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                JugadorSpawn.posicion = GameObject.FindWithTag("Player").transform.position;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Batalla"); // tu escena de batalla
+            }
         }
 
 

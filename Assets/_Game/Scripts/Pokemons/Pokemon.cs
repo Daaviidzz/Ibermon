@@ -19,6 +19,7 @@ public class Pokemon
     public int Level => level;
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
+    public Move CurrentMove { get; set; }
 
     // Diccionarios para gestionar estadísticas base y modificadores de combate (Evasión, Ataque, etc.)
     public Dictionary<Stat, int> Stats { get; private set; }
@@ -191,7 +192,11 @@ public class Pokemon
         OnStatusChanged?.Invoke();
     }
     public void CureVolatileStatus()=> VolatileStatus = null;
-    public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
+    public Move GetRandomMove() 
+    {
+        var movesWithPP = Moves.FindAll(m => m.PP > 0);
+        return movesWithPP[Random.Range(0, movesWithPP.Count)];
+    } 
     public bool OnBeforeMove() 
     {
         bool canPerformeMove = true;

@@ -21,6 +21,7 @@ public class MoveBase : ScriptableObject
 
     // Puntos de Poder: cantidad de veces que se puede ejecutar este ataque.
     [SerializeField] int pp;
+    [SerializeField] int priority;
 
     // Clasificación: Físico, Especial o Estado 
     [SerializeField] MoveCategory category;
@@ -41,7 +42,8 @@ public class MoveBase : ScriptableObject
     public int Power => power;
     public int Accuracy => accuracy;
     public bool AlwaysHit => alwaysHit;
-    public int Pp => pp;
+    public int PP => pp;
+    public int Priority => priority;
     public MoveCategory Category => category;
     public MoveEffects Effects => effects;
     public MoveTarget Target => target;

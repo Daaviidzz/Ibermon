@@ -164,7 +164,7 @@ public class Movimiento : MonoBehaviour
                         // Necesitamos pasar estos datos al BattleSystem. 
                         // La forma más fácil con tu estructura actual es usar una clase estática temporal 
                         // o que el BattleSystem los busque al cargar.
-                        BattleData.Party = party;
+                        BattleData.EsEntrenador = false;
                         BattleData.WildPokemon = wildPokemon;
 
                         SceneManager.LoadScene("Combate");

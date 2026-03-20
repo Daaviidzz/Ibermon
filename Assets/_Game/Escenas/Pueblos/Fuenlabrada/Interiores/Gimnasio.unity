@@ -446,6 +446,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 0
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -12301,7 +12302,7 @@ GameObject:
   - component: {fileID: 626564036}
   - component: {fileID: 626564035}
   m_Layer: 0
-  m_Name: p1_10 (3)
+  m_Name: EntrenadorPrueba
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12595,12 +12596,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 1
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - zzzzzzzzz
+    - Luchemos!
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
@@ -12799,6 +12801,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 0
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -13180,6 +13183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 0
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -17388,6 +17392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 0
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -17761,6 +17766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
+  esEntrenador: 0
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
