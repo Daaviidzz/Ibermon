@@ -5,6 +5,7 @@ using UnityEngine;
 public class PokemonParty : MonoBehaviour
 {
     [SerializeField] List<Pokemon> pokemons;
+    private bool esBatallaTemp = false;
 
     //  Hacemos que la propiedad devuelva la lista del inspector
     public List<Pokemon> Pokemons
@@ -14,10 +15,14 @@ public class PokemonParty : MonoBehaviour
 
     private void Start()
     {
-        // Intentar cargar el equipo guardado
+        if (esBatallaTemp) return;
+        CargarEquipoGuardado(); // extraemos la lógica a un método
+    }
+
+    public void CargarEquipoGuardado()
+    {
         if (SistemGuardadoPokemon.HayDatosGuardados())
         {
-           
             List<Pokemon> equipoCargado = SistemGuardadoPokemon.CargarEquipo();
             if (equipoCargado != null && equipoCargado.Count > 0)
             {
@@ -25,24 +30,17 @@ public class PokemonParty : MonoBehaviour
                 Debug.Log("Equipo cargado desde guardado");
             }
         }
-        else
-        {
-            //// Si no hay guardado, inicializar los Pokémon del inspector
-            //foreach (var pokemon in pokemons)
-            //{
-            //    pokemon.Init();
-            //}
-        }
-        
-        
-          
-        
+    }
+    public void SetPokemonsForBattle(List<Pokemon> pokemonsEntrenador)
+    {
+        esBatallaTemp = true;
+        pokemons = pokemonsEntrenador;
     }
 
     private void OnDestroy()
     {
-        // Guardar automáticamente al destruir el objeto (al cerrar el juego o cambiar escena)
-        if (pokemons != null && pokemons.Count > 0)
+        // IMPORTANTE: solo guardar si es el jugador, no el temporal del entrenador
+        if (gameObject.CompareTag("Player") && pokemons != null && pokemons.Count > 0)
         {
             SistemGuardadoPokemon.GuardarEquipo(pokemons);
         }
@@ -50,8 +48,7 @@ public class PokemonParty : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        // Guardar también al cerrar la aplicación
-        if (pokemons != null && pokemons.Count > 0)
+        if (gameObject.CompareTag("Player") && pokemons != null && pokemons.Count > 0)
         {
             SistemGuardadoPokemon.GuardarEquipo(pokemons);
         }
@@ -91,4 +88,7 @@ public class PokemonParty : MonoBehaviour
         // Guardar después de curar
         SistemGuardadoPokemon.GuardarEquipo(pokemons);
     }
+  
+
+    
 }

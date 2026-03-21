@@ -128,50 +128,19 @@ public class Movimiento : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //para la velocidad del movimiento del personaje
-        rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
+        if (!estaEnInteraccion)
+            rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
+        else
+            rigidbody2D.linearVelocity = Vector2.zero; // frena en seco
     }
 
     // --- Método para chequear encuentros en hierba ---
     private void ChequearHierba()
     {
-        // Verificamos si estamos en hierba
-        if (Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer))
-        {
-            // Acumulamos tiempo caminando
-            cronometroPasos += Time.deltaTime;
-
-            if (cronometroPasos >= tiempoEntreChequeos)
-            {
-                cronometroPasos = 0;
-
-                // 1. Verificamos si tenemos Pokémon vivos para pelear
-                var party = GetComponent<PokemonParty>();
-                if (party.GetHealtyPokemon() == null) return; // Si todos están debilitados, no hay pelea
-
-                if (Random.Range(0f, 100f) < probabilidad)
-                {
-                    // 2. Buscamos el Pokémon salvaje del área
-                    var area = Physics2D.OverlapCircle(transform.position, 0.2f, grassLayer).GetComponent<MapArea>();
-                    if (area != null)
-                    {
-                        var wildPokemon = area.GetRandomWildPokemon();
-
-                        // 3. Guardamos datos y cargamos escena
-                        JugadorSpawn.posicion = transform.position;
-                        JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
-
-                        // Necesitamos pasar estos datos al BattleSystem. 
-                        // La forma más fácil con tu estructura actual es usar una clase estática temporal 
-                        // o que el BattleSystem los busque al cargar.
-                        BattleData.EsEntrenador = false;
-                        BattleData.WildPokemon = wildPokemon;
-
-                        SceneManager.LoadScene("Combate");
-                    }
-                }
-            }
-        }
+        // Delegamos toda la lógica al PlayerCharacterController
+        var controller = GetComponent<PlayerCharacterController>();
+        if (controller != null)
+            controller.ChequearHierba(transform.position);
     }
 
 

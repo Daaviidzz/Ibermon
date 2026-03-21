@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 // Estados posibles para controlar el flujo de la máquina de estados del combate
 public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, RUNNINGTURN, BUSY, PARTYSCREEN, BATTLEOVER }
@@ -15,6 +16,8 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] BattleUnit playerUnit;
     [SerializeField] BattleUnit enemyUnit;
     [SerializeField] PartyScreen partyScreen;
+    [SerializeField] Image playerImage;
+    [SerializeField] Image trainerImage;
     [SerializeField] BattleDialogBox dialogBox;
 
     [SerializeField] GameObject pokeballSprite;
@@ -23,6 +26,7 @@ public class BattleSystem : MonoBehaviour
     int currentAction;
     int currentMove;
     int currentMember;
+     
 
     BattleState state;
     BattleState? prevState;
@@ -54,9 +58,14 @@ public class BattleSystem : MonoBehaviour
     {
         var playerParty = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
 
-        if (BattleData.EsEntrenador && BattleData.TrainerParty != null)
+        if (BattleData.EsEntrenador && BattleData.TrainerPokemons != null)
         {
-            StartTrainerBattle(playerParty, BattleData.TrainerParty);
+            var trainerGO = new GameObject("TrainerPartyTemp");
+            trainerGO.SetActive(false); // CRÍTICO: evita que Start se ejecute
+            var tempParty = trainerGO.AddComponent<PokemonParty>();
+            tempParty.SetPokemonsForBattle(BattleData.TrainerPokemons); // ahora llega antes que Start
+            trainerGO.SetActive(true); // Start se ejecuta aquí, ya con esBatallaTemp = true
+            StartTrainerBattle(playerParty, tempParty);
         }
         else if (playerParty != null && BattleData.WildPokemon != null)
         {
@@ -67,8 +76,9 @@ public class BattleSystem : MonoBehaviour
             Debug.LogError("Error: Faltan datos para iniciar la batalla.");
         }
 
-        // Limpiar el flag después de usarlo
         BattleData.EsEntrenador = false;
+        BattleData.TrainerPokemons = null;
+        BattleData.WildPokemon = null;
     }
 
     public void StartBattle(PokemonParty playerParty, Pokemon wildPokemon)
@@ -100,12 +110,21 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
-            // Batalla entrenador: el enemigo es el primer pokemon sano de su party
+            playerUnit.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(false);
+            playerImage.gameObject.SetActive(true);
+            trainerImage.gameObject.SetActive(true);
+
             var primerPokemonEntrenador = trainerParty.GetHealtyPokemon();
             enemyUnit.Setup(primerPokemonEntrenador);
             dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
             yield return dialogBox.TypeDialog($"¡El entrenador ha enviado a {primerPokemonEntrenador.Base.Name}!");
-            // En batalla de entrenador no hay intentos de escape 
+
+            // NUEVO: ocultar imágenes y mostrar unidades de combate
+            playerImage.gameObject.SetActive(false);
+            trainerImage.gameObject.SetActive(false);
+            playerUnit.gameObject.SetActive(true);
+            enemyUnit.gameObject.SetActive(true);
         }
 
         ActionSelection();

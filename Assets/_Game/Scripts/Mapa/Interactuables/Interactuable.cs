@@ -260,23 +260,37 @@ public class Interactuable : MonoBehaviour
         {
             ControlesMoviles.Instance.MostrarTodosLosControles();
         }
-        // NUEVO: si es entrenador, lanzar batalla al cerrar el diálogo
-        if (esEntrenador)
+       // Al terminar el diálogo del entrenador, lanzar la batalla
+        // Subimos al padre a buscar el TrainerController
+        var trainer = GetComponentInParent<TrainerController>();
+        if (trainer != null)
         {
-            var trainerParty = GetComponent<PokemonParty>(); // el NPC necesita este componente
-            if (trainerParty != null)
-            {
-                BattleData.TrainerParty = trainerParty;
-                BattleData.EsEntrenador = true;
-                BattleData.WildPokemon = null;
-
-                JugadorSpawn.escenaAnterior = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-                JugadorSpawn.posicion = GameObject.FindWithTag("Player").transform.position;
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Batalla"); // tu escena de batalla
-            }
+           var jugador = GameObject.FindWithTag("Player").transform;
+           trainer.IniciarBatallaEntrenador(jugador);
         }
 
 
+    }
+    public void IniciarDialogoDesdeEntrenador()
+    {
+        if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
+        {
+            var trainer = GetComponentInParent<TrainerController>();
+            if (trainer != null)
+                trainer.IniciarBatallaEntrenador(GameObject.FindWithTag("Player").transform);
+            return;
+        }
+
+        if (rbPersonaje != null)
+        {
+            rbPersonaje.linearVelocity = Vector2.zero;
+            rbPersonaje.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+        }
+
+        dialogoActivo = true;
+        jugadorDentro = true;
+        controladorTextosUI.activarDesactivarCajaDeTextos(true);
+        activarCartel();
     }
 
     //  Método simple que solo cambia a la escena de transición
@@ -364,5 +378,7 @@ public class Interactuable : MonoBehaviour
             return Input.GetKeyDown(KeyCode.E);
         }
     }
+    
+  
 
 }
