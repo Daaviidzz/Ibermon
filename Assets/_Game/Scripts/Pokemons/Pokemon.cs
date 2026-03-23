@@ -19,13 +19,20 @@ public class Pokemon
     public int Level => level;
     public int HP { get; set; }
     public List<Move> Moves { get; set; }
+    public Move CurrentMove { get; set; }
 
     // Diccionarios para gestionar estadísticas base y modificadores de combate (Evasión, Ataque, etc.)
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatsBoosts { get; private set; }
+    public Condition Status { get; private set; }
+    public int StatusTime { get; set; } // Duración restante de la condición de estado, si es aplicable.
+    public Condition VolatileStatus { get; set; } // Para condiciones temporales como Confusión, etc.
+    public int VolatileStatusTime { get; set; }
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
     public Queue<string> StatusChanges { get; private set; } 
+    public bool HpChanged { get; set; }
+    public event System.Action OnStatusChanged; // Evento para notificar cambios de estado
 
     public void Init()
     {
@@ -45,6 +52,8 @@ public class Pokemon
         HP = MaxHp;
         StatusChanges = new();
         ResetStatBoost();
+        Status = null;
+        VolatileStatus = null;
     }
 
     // Calcula las estadísticas finales basadas en la fórmula oficial de los juegos de Pokémon.
@@ -57,7 +66,7 @@ public class Pokemon
         Stats.Add(Stat.DefensaEspecial, Mathf.FloorToInt((Base.SpDefense * Level) / 100f) + 5);
         Stats.Add(Stat.Velocidad, Mathf.FloorToInt((Base.Speed * Level) / 100f) + 5);
 
-        MaxHp = Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10;
+        MaxHp = Mathf.FloorToInt((Base.MaxHp * Level) / 100f) + 10 + Level;
     }
 
     // Reinicia los niveles de modificadores (buffs/debuffs) a 0.
@@ -138,19 +147,84 @@ public class Pokemon
         float d = a * move.Base.Power * ((float)attack / defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
-        HP -= damage;
-        if (HP <= 0)
-        {
-            HP = 0;
-            damageDetails.Fainted = true;
-        }
+       UpdateHP(damage);
 
         return damageDetails;
     }
+    public void UpdateHP(int damage)
+    {
+        HP=Mathf.Clamp(HP - damage, 0, MaxHp);
+        HpChanged = true;
+    }
+    public void SetStatus(ConditionID conditionId)
+    {
+        if (Status != null) return; // No se puede aplicar un nuevo estado si ya hay uno activo.
+        if (conditionId == ConditionID.none)
+        {
+            Status = null;
+        }
+        else
+        {
+            Status = ConditionsDB.Conditions[conditionId];
+            Status?.OnStart?.Invoke(this);
+            StatusChanges.Enqueue($"{Base.Name} {Status.StartMessage}");
+        }
+        OnStatusChanged?.Invoke();
+    }
+    public void SetVolatileStatus(ConditionID conditionId)
+    {
+        if (VolatileStatus != null) return; // No se puede aplicar un nuevo estado si ya hay uno activo.
+        if (conditionId == ConditionID.none)
+        {
+            VolatileStatus = null;
+        }
+        else
+        {
+            VolatileStatus = ConditionsDB.Conditions[conditionId];
+            VolatileStatus?.OnStart?.Invoke(this);
+            StatusChanges.Enqueue($"{Base.Name} {VolatileStatus.StartMessage}");
+        }
+        
+    }
+    public void CureStatus()
+    {
+        Status = null;
+        OnStatusChanged?.Invoke();
+    }
+    public void CureVolatileStatus()=> VolatileStatus = null;
+    public Move GetRandomMove() 
+    {
+        var movesWithPP = Moves.FindAll(m => m.PP > 0);
+        return movesWithPP[Random.Range(0, movesWithPP.Count)];
+    } 
+    public bool OnBeforeMove() 
+    {
+        bool canPerformeMove = true;
 
-    public Move GetRandomMove() => Moves[Random.Range(0, Moves.Count)];
+        if (Status?.OnBeforeMove != null) 
+        {
+            if (!Status.OnBeforeMove.Invoke(this))
+                canPerformeMove = false;
+        }
+        if (VolatileStatus?.OnBeforeMove != null)
+        {
+            if (!VolatileStatus.OnBeforeMove.Invoke(this))
+                canPerformeMove = false;
+        }
 
-    public void OnBattleOver() => ResetStatBoost();
+        return canPerformeMove;
+    } 
+    public void OnAfterTurn()
+    {
+        Status?.OnAfterTurn?.Invoke(this);
+        VolatileStatus?.OnAfterTurn?.Invoke(this);
+
+    }
+    public void OnBattleOver() 
+    {
+        VolatileStatus = null;
+        ResetStatBoost(); 
+    }
 
     //Restaura la vida
     public void ResetHealth()

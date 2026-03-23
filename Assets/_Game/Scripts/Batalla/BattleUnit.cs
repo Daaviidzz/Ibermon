@@ -41,10 +41,11 @@ public class BattleUnit : MonoBehaviour
             // Asignamos el Sprite correcto dependiendo de si es Jugador (Espalda) o Enemigo (Frente).
             image.sprite = isPlayerUnit ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
 
+            hud.gameObject.SetActive(true);
             // Actualizamos la interfaz (Nombre, Nivel, Vida) en el HUD.
             hud.SetData(pokemon);
 
-            transform.localScale=new Vector3(1,1,1);
+            transform.localScale = new Vector3(1, 1, 1);
             // Iniciamos la animación de entrada deslizante.
             PlayEnterAnimation();
         }
@@ -108,8 +109,8 @@ public class BattleUnit : MonoBehaviour
         var sequence = DOTween.Sequence();
         sequence.Append(image.DOFade(0f, 0.5f));
         sequence.Join(transform.DOLocalMoveY(originalPosition.y + 50f, 0.5f));
-        sequence.Join(transform.DOScale(new Vector3(0.3f,0.3f,1f),0.5f));
-       yield return sequence.WaitForCompletion();
+        sequence.Join(transform.DOScale(new Vector3(0.3f, 0.3f, 1f), 0.5f));
+        yield return sequence.WaitForCompletion();
     }
 
     public IEnumerator PlayBreakOutAnimation()
@@ -119,5 +120,9 @@ public class BattleUnit : MonoBehaviour
         sequence.Join(transform.DOLocalMoveY(originalPosition.y, 0.5f));
         sequence.Join(transform.DOScale(new Vector3(1f, 1f, 1f), 0.5f));
         yield return sequence.WaitForCompletion();
+    }
+    public void Clear()
+    {
+        hud.gameObject.SetActive(false);
     }
 }

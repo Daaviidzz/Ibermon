@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Batalla;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,6 +18,9 @@ public class Interactuable : MonoBehaviour
     //Parte de sonido
     public AudioSource archivoAudio;
     public AudioClip audio;
+
+    //Si es entrenador o no
+    public bool esEntrenador = false;
 
     //Mensaje para la interacción
     public string mensaje = "Pulsa E para interactuar";
@@ -256,8 +260,37 @@ public class Interactuable : MonoBehaviour
         {
             ControlesMoviles.Instance.MostrarTodosLosControles();
         }
+       // Al terminar el diálogo del entrenador, lanzar la batalla
+        // Subimos al padre a buscar el TrainerController
+        var trainer = GetComponentInParent<TrainerController>();
+        if (trainer != null)
+        {
+           var jugador = GameObject.FindWithTag("Player").transform;
+           trainer.IniciarBatallaEntrenador(jugador);
+        }
 
 
+    }
+    public void IniciarDialogoDesdeEntrenador()
+    {
+        if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
+        {
+            var trainer = GetComponentInParent<TrainerController>();
+            if (trainer != null)
+                trainer.IniciarBatallaEntrenador(GameObject.FindWithTag("Player").transform);
+            return;
+        }
+
+        if (rbPersonaje != null)
+        {
+            rbPersonaje.linearVelocity = Vector2.zero;
+            rbPersonaje.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
+        }
+
+        dialogoActivo = true;
+        jugadorDentro = true;
+        controladorTextosUI.activarDesactivarCajaDeTextos(true);
+        activarCartel();
     }
 
     //  Método simple que solo cambia a la escena de transición
@@ -345,5 +378,7 @@ public class Interactuable : MonoBehaviour
             return Input.GetKeyDown(KeyCode.E);
         }
     }
+    
+  
 
 }
