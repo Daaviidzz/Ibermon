@@ -843,12 +843,12 @@ RectTransform:
   - {fileID: 1146333760}
   - {fileID: 745004351}
   - {fileID: 996686786}
+  - {fileID: 368000438}
+  - {fileID: 235046418}
   - {fileID: 163808552}
   - {fileID: 1224927640}
   - {fileID: 1317082172}
   - {fileID: 1451336892}
-  - {fileID: 368000438}
-  - {fileID: 235046418}
   m_Father: {fileID: 496714905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

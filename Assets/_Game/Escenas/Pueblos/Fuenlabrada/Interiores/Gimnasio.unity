@@ -17801,6 +17801,22 @@ PrefabInstance:
       propertyPath: m_Offset.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5406159430781548857, guid: df9525ffbebb05144a1618b0572a1836, type: 3}
+      propertyPath: pokemons.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5406159430781548857, guid: df9525ffbebb05144a1618b0572a1836, type: 3}
+      propertyPath: pokemons.Array.data[0].level
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5406159430781548857, guid: df9525ffbebb05144a1618b0572a1836, type: 3}
+      propertyPath: pokemons.Array.data[1]._base
+      value: 
+      objectReference: {fileID: 11400000, guid: 2b1dd5b921484e445a4d7ddfffed78c3, type: 2}
+    - target: {fileID: 5406159430781548857, guid: df9525ffbebb05144a1618b0572a1836, type: 3}
+      propertyPath: pokemons.Array.data[1].level
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 6498341722187783814, guid: df9525ffbebb05144a1618b0572a1836, type: 3}
       propertyPath: controladorTextosUI
       value: 

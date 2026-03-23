@@ -97,11 +97,12 @@ public class BattleSystem : MonoBehaviour
     }
     public IEnumerator SetupBattle()
     {
-        playerUnit.Setup(playerParty.GetHealtyPokemon());
-        partyScreen.Init();
 
+        playerUnit.Clear();
+        enemyUnit.Clear();
         if (!esTrainerBattle)
         {
+            playerUnit.Setup(playerParty.GetHealtyPokemon());
             // Batalla salvaje: el enemigo es el pokemon salvaje
             enemyUnit.Setup(wildPokemon);
             dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
@@ -115,18 +116,26 @@ public class BattleSystem : MonoBehaviour
             playerImage.gameObject.SetActive(true);
             trainerImage.gameObject.SetActive(true);
 
-            var primerPokemonEntrenador = trainerParty.GetHealtyPokemon();
-            enemyUnit.Setup(primerPokemonEntrenador);
-            dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
-            yield return dialogBox.TypeDialog($"¡El entrenador ha enviado a {primerPokemonEntrenador.Base.Name}!");
+            yield return dialogBox.TypeDialog($"¡El entrenador quiere combatir!");
 
-            // NUEVO: ocultar imágenes y mostrar unidades de combate
-            playerImage.gameObject.SetActive(false);
+            // Mandar el pokemon del enterenador a la pantalla de combate
             trainerImage.gameObject.SetActive(false);
-            playerUnit.gameObject.SetActive(true);
             enemyUnit.gameObject.SetActive(true);
-        }
+            var enemyPokemon=trainerParty.GetHealtyPokemon();
+            enemyUnit.Setup(enemyPokemon);
+            yield return dialogBox.TypeDialog($"¡El entrenador ha enviado a {enemyPokemon.Base.Name}!");
+            // Mandar el pokemon del personaje principal a la pantalla de combate
+            playerImage.gameObject.SetActive(false);
+            playerUnit.gameObject.SetActive(true);
+            var playerPokemon = playerParty.GetHealtyPokemon();
+            playerUnit.Setup(playerPokemon);
+            yield return dialogBox.TypeDialog($"¡Ve {playerPokemon.Base.Name}!");
 
+            dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
+
+
+        }
+        partyScreen.Init();
         ActionSelection();
     }
 
@@ -351,7 +360,27 @@ public class BattleSystem : MonoBehaviour
             if (nextPokemon != null) OpenPartyScreen();
             else BattleOver(false); // Derrota
         }
-        else BattleOver(true); // Victoria
+        else 
+        { 
+            if (!esTrainerBattle)
+            {
+                BattleOver(true); // Victoria en batalla salvaje
+
+            }
+            else
+            {
+                var nextPokemon = trainerParty.GetHealtyPokemon();
+                if (nextPokemon != null)
+                {
+                   StartCoroutine( SendNextTrainerPokemon(nextPokemon));
+                }
+                else
+                {
+                    BattleOver(true); // Victoria en batalla de entrenador
+                }
+            }
+            
+        }
     }
 
     // Gestiona la salida de la escena de combate
@@ -577,8 +606,7 @@ public class BattleSystem : MonoBehaviour
                 StartCoroutine(SwitchPokemon(selectedMember));
             }
 
-            state = BattleState.BUSY;
-            StartCoroutine(SwitchPokemon(selectedMember));
+           
         }
         else if (InputCancelar())
         {
@@ -740,6 +768,16 @@ public class BattleSystem : MonoBehaviour
 
             }
         }
+    }
+    IEnumerator SendNextTrainerPokemon(Pokemon nextPokemon)
+    {
+        state=BattleState.BUSY;
+       
+        enemyUnit.Setup(nextPokemon);
+        yield return dialogBox.TypeDialog($"¡El entrenador ha enviado a {nextPokemon.Base.Name}!");
+        state = BattleState.RUNNINGTURN;
+        
+        
     }
 
 }

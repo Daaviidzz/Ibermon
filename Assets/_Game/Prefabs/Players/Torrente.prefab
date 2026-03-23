@@ -426,6 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PokemonParty
   pokemons: []
+  esEquipoJugador: 1
 --- !u!82 &8369456761620733134
 AudioSource:
   m_ObjectHideFlags: 0

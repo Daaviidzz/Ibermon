@@ -5,6 +5,7 @@ using UnityEngine;
 public class PokemonParty : MonoBehaviour
 {
     [SerializeField] List<Pokemon> pokemons;
+    [SerializeField] bool esEquipoJugador = false;
     private bool esBatallaTemp = false;
 
     //  Hacemos que la propiedad devuelva la lista del inspector
@@ -16,7 +17,10 @@ public class PokemonParty : MonoBehaviour
     private void Start()
     {
         if (esBatallaTemp) return;
-        CargarEquipoGuardado(); // extraemos la lógica a un método
+        if (esEquipoJugador)
+        {
+            CargarEquipoGuardado(); // extraemos la lógica a un método
+        }
     }
 
     public void CargarEquipoGuardado()
@@ -35,6 +39,10 @@ public class PokemonParty : MonoBehaviour
     {
         esBatallaTemp = true;
         pokemons = pokemonsEntrenador;
+        foreach (var pokemon in pokemons)
+        {
+            pokemon.Init();
+        }
     }
 
     private void OnDestroy()
