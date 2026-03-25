@@ -19,11 +19,16 @@ public class TrainerController : MonoBehaviour
      PokemonParty trainerParty;
      Rigidbody2D rb;
      bool batallaYaIniciada = false; // Para que solo se dispare una vez
+    private bool yaDerotado = false;
+    private string claveGuardado; // clave única por entrenador
 
-     void Awake()
+    void Awake()
     {
         trainerParty = GetComponent<PokemonParty>();
         rb = GetComponent<Rigidbody2D>();
+        // Usamos el nombre del GameObject como clave única
+        claveGuardado = $"Entrenador_{gameObject.name}_Derrotado";
+        yaDerotado = PlayerPrefs.GetInt(claveGuardado, 0) == 1;
     }
 
      void Start()
@@ -51,7 +56,9 @@ public class TrainerController : MonoBehaviour
     public void JugadorDetectado(Transform jugador)
     {
         if (batallaYaIniciada) return;
+        if (yaDerotado) return; // Ya fue derrotado, ignorar
         batallaYaIniciada = true;
+        
         StartCoroutine(SecuenciaEntrenador(jugador));
     }
 
@@ -64,9 +71,7 @@ public class TrainerController : MonoBehaviour
 
             if (distancia <= 0.6f)
             {
-                rb.linearVelocity = Vector2.zero;
-                // NUEVO: congelar posición para que no empuje al jugador
-                rb.constraints = RigidbodyConstraints2D.FreezeAll;
+                DetenerMovimiento();
                 yield break;
             }
 
@@ -74,7 +79,12 @@ public class TrainerController : MonoBehaviour
             yield return null;
         }
     }
-
+    public void DetenerMovimiento()
+    {
+        rb.linearVelocity = Vector2.zero;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll; // Congela la posición
+    }
+   
     private IEnumerator SecuenciaEntrenador(Transform jugador)
     {
         var movJugador = jugador.GetComponent<Movimiento>();
@@ -112,9 +122,10 @@ public class TrainerController : MonoBehaviour
 
         JugadorSpawn.posicion = jugador.position;
         JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
-        BattleData.TrainerPokemons = new List<Pokemon>(trainerParty.Pokemons); // Copia la lista
+        BattleData.TrainerPokemons = new List<Pokemon>(trainerParty.Pokemons);
         BattleData.EsEntrenador = true;
         BattleData.WildPokemon = null;
+        BattleData.NombreEntrenador = gameObject.name; // ← AÑADE ESTO
         SceneManager.LoadScene("Combate");
     }
 }

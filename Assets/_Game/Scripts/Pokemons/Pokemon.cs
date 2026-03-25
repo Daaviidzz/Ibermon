@@ -11,6 +11,8 @@ public class Pokemon
     {
         _base = pBase;
         level = pLevel;
+
+        Init();
     }
 
     // Propiedades básicas
