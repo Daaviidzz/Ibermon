@@ -2,13 +2,14 @@ using Assets.Scripts.Batalla;
 using DG.Tweening;
 using System;
 using System.Collections;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Estados posibles para controlar el flujo de la máquina de estados del combate
-public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, RUNNINGTURN, BUSY, PARTYSCREEN, BATTLEOVER,ABOUTTOUSE }
+public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, RUNNINGTURN, BUSY, PARTYSCREEN, BATTLEOVER,ABOUTTOUSE,MOVETOFORGET }
 public enum BattleAction {MOVE,SWITCHPOKEMON,USEITEM,RUN }
 
 public class BattleSystem : MonoBehaviour
@@ -22,6 +23,7 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] BattleDialogBox dialogBox;
 
     [SerializeField] GameObject pokeballSprite;
+    [SerializeField] MoveSelectionUI moveSelectionUI;
 
     // Índices para la navegación en los menús
     int currentAction;
@@ -88,6 +90,7 @@ public class BattleSystem : MonoBehaviour
     {
         this.playerParty = playerParty;
         this.wildPokemon = wildPokemon;
+        esTrainerBattle = false;
         StartCoroutine(SetupBattle());
     }
 
@@ -164,7 +167,16 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.ABOUTTOUSE;
         dialogBox.EnableChoiceBox(true);
     }
+    IEnumerator ChooseMoveToForget(Pokemon pokemon,MoveBase newMove)
+    {
+        state = BattleState.BUSY;
+        yield return dialogBox.TypeDialog($" Elige un movimiento para olvidar.");
+        
+        moveSelectionUI.gameObject.SetActive(true);
+        moveSelectionUI.SetMoveData(pokemon.Moves.Select(m => m.Base).ToList(), newMove);
 
+        state = BattleState.MOVETOFORGET;
+    }
     IEnumerator RunTurns(BattleAction playerAction)
     {
         state=BattleState.RUNNINGTURN;
@@ -226,6 +238,11 @@ public class BattleSystem : MonoBehaviour
                 {
                     yield break; 
                 }
+            }
+            else if(playerAction == BattleAction.RUN)
+            {
+                yield return TryToEscape();
+                if (state == BattleState.BATTLEOVER) yield break;
             }
 
         }
@@ -318,12 +335,14 @@ public class BattleSystem : MonoBehaviour
     {
         if (state == BattleState.BATTLEOVER) yield break;
         yield return new WaitUntil(() => state == BattleState.RUNNINGTURN);
+
         sourceUnit.Pokemon.OnAfterTurn();
         yield return ShowStatusChanges(sourceUnit.Pokemon);
         yield return sourceUnit.Hud.UpdateHP();
         if (sourceUnit.Pokemon.HP <= 0)
         {
             yield return HandlePokemonFainted(sourceUnit);
+            yield return new WaitUntil(() => state == BattleState.RUNNINGTURN);
         }
     }
     IEnumerator RunMoveEffects(MoveEffects effects, Pokemon source, Pokemon target,MoveTarget moveTarget)
@@ -450,6 +469,7 @@ public class BattleSystem : MonoBehaviour
         else if (state == BattleState.MOVESELECTION) HandleMoveSelection();
         else if (state == BattleState.PARTYSCREEN) HandlePartyScreenSelection();
         else if (state == BattleState.ABOUTTOUSE) HandleAboutToUseSelection();
+        else if (state == BattleState.MOVETOFORGET) moveSelectionUI.HandleMoveSelection(esMovil);
 
 
     }
@@ -582,7 +602,7 @@ public class BattleSystem : MonoBehaviour
             else if (currentAction == 3)
             {
                 dialogBox.EnableActionSelector(false);
-                StartCoroutine(TryToEscape()); // Huir
+                StartCoroutine(RunTurns(BattleAction.RUN)); // Huir
             }
         }
     }
@@ -673,8 +693,9 @@ public class BattleSystem : MonoBehaviour
             //Ganar Experiencia
             int expYield = faintedUnit.Pokemon.Base.ExpYield;
             int enemyLevel = faintedUnit.Pokemon.Level;
+            float trainerBonus = esTrainerBattle ? 1.5f : 1f; // Bonus por ser batalla de entrenador
             //Formula real
-            int expGain = Mathf.FloorToInt((enemyLevel * expYield) / 7);
+            int expGain = Mathf.FloorToInt((enemyLevel * expYield*trainerBonus) / 7);
             playerUnit.Pokemon.Exp += expGain;
             yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} ganó {expGain} de experiencia");
             yield return playerUnit.Hud.SetExpSmooth();
@@ -683,15 +704,35 @@ public class BattleSystem : MonoBehaviour
             {
                 playerUnit.Hud.SetLevel();
                 yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} subio a nivel {playerUnit.Pokemon.Level}");
+
+                //Aprender movimientos nuevos
+                var newMove = playerUnit.Pokemon.GetLearnableMoveAtCurrentLevel();
+                if (newMove != null)
+                {
+                    if(playerUnit.Pokemon.Moves.Count < PokemonBase.MaxNumOfMoves)
+                    {
+                        playerUnit.Pokemon.LearnMove(newMove);
+                        yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} aprendió {newMove.MoveBase.Name}!");
+                        dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
+                    }
+                    else
+                    {
+                        yield return dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} quiere aprender {newMove.MoveBase.Name}.");
+                        yield return dialogBox.TypeDialog($"Pero no puede aprender más de {PokemonBase.MaxNumOfMoves} movimientos.");
+                        yield return ChooseMoveToForget(playerUnit.Pokemon, newMove.MoveBase);
+                        yield return new WaitUntil(() => state != BattleState.MOVETOFORGET);
+                    }
+                }
+
+
                 yield return playerUnit.Hud.SetExpSmooth(true);
                 playerUnit.Pokemon.ResetHealth();
             }
-
-
+            yield return new WaitForSeconds(1f);
         }
 
         CheckBattleOver(faintedUnit);
-        yield return new WaitUntil(() => state == BattleState.RUNNINGTURN);
+        //yield return new WaitUntil(() => state == BattleState.RUNNINGTURN);
     }
 
     void HandleAboutToUseSelection()
@@ -756,6 +797,7 @@ public class BattleSystem : MonoBehaviour
         if (esTrainerBattle)
         {
             yield return dialogBox.TypeDialog($"No puedes usar una pokeball contra un entrenador!");
+            pokeballFallo = true; // Indicar que no se intentó capturar, para que el enemigo ataque normalmente
             state = BattleState.RUNNINGTURN;
             yield break;
         }
@@ -837,6 +879,13 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.BUSY;
 
+        if(esTrainerBattle)
+        {
+            yield return dialogBox.TypeDialog($"No puedes huir de un combate contra un entrenador!");
+            state = BattleState.RUNNINGTURN;
+            yield break;
+        }
+
         ++escapeAttempts;
         int playerSpeed = playerUnit.Pokemon.Speed;
         int enemySpeed = enemyUnit.Pokemon.Speed;
@@ -859,7 +908,7 @@ public class BattleSystem : MonoBehaviour
             else
             {
                 yield return dialogBox.TypeDialog($"No has podido huir!");
-                StartCoroutine(EnemyMove());
+                state= BattleState.RUNNINGTURN;
 
             }
         }
