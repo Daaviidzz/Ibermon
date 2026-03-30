@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class MoveSelectionUI : MonoBehaviour
         }
         moveTexts[currentMoves.Count].text = newMove.Name;
     }
-    public void HandleMoveSelection(bool esMovil)
+    public void HandleMoveSelection(bool esMovil,Action<int> onSelected)
     {
         if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
         {
@@ -30,20 +31,10 @@ public class MoveSelectionUI : MonoBehaviour
         currentSelection = Mathf.Clamp(currentSelection, 0, PokemonBase.MaxNumOfMoves);
         UpdateMoveSelection(currentSelection);
 
-        //if (Input.GetKeyDown(KeyCode.Return) || (esMovil && ControlesMoviles.Instance.botones[0].WasPressedThisFrame()))
-        //{
-        //    if (currentSelection == PokemonBase.MaxNumOfMoves)
-        //    {
-        //        Rechazar el nuevo movimiento
-
-        //       BattleSystem.Instance.MoveSelection(false);
-        //    }
-        //    else
-        //    {
-        //        Aceptar el nuevo movimiento y reemplazar el movimiento seleccionado
-        //        BattleSystem.Instance.MoveSelection(true, currentSelection);
-        //    }
-        //}
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            onSelected?.Invoke(currentSelection);
+        }
     }
     public void UpdateMoveSelection(int selection)
     {
