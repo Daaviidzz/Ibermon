@@ -19,8 +19,11 @@ MonoBehaviour:
   accuracy: 100
   alwaysHit: 0
   pp: 35
+  priority: 0
   category: 0
   effects:
     boosts: []
-    status: 1
+    status: 0
+    volatileStatus: 0
+  secondries: []
   target: 0
