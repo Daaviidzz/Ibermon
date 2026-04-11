@@ -3,6 +3,15 @@ using System.Collections.Generic;
 
 namespace ApiRest.Models
 {
+    // --- SUBMODELOS ---
+
+    [Serializable]
+    public class MovimientoAprendido
+    {
+        public int numero;
+        public int pp;   // PP actuales restantes del movimiento
+    }
+
     // --- REQUESTS ---
 
     [Serializable]
@@ -27,7 +36,7 @@ namespace ApiRest.Models
         public int? nivel;
         public int? experiencia;
         public int? hp_actual;
-        public List<int> movimientos_aprendidos;
+        public List<MovimientoAprendido> movimientos_aprendidos;
         public string nickname;
     }
 
@@ -44,6 +53,6 @@ namespace ApiRest.Models
         public int experiencia;
         public int hp_actual;
         public string ubicacion;
-        public List<int> movimientos_aprendidos = new List<int>();
+        public List<MovimientoAprendido> movimientos_aprendidos = new List<MovimientoAprendido>();
     }
 }

@@ -16,6 +16,13 @@ namespace ApiRest.Models
     }
 
     [Serializable]
+    public class MovimientoPosible
+    {
+        public int numero;
+        public int nivel;   // nivel mínimo al que el ibermon aprende el movimiento
+    }
+
+    [Serializable]
     public class IbermonCatalogoDetalle
     {
         public int numero;
@@ -29,10 +36,13 @@ namespace ApiRest.Models
         public int ataque_especial_base;
         public int defensa_especial_base;
         public int velocidad_base;
-        public List<int> movimientos_posibles = new List<int>();
+        public List<MovimientoPosible> movimientos_posibles = new List<MovimientoPosible>();
         public int? evoluciona_a;
         public int? nivel_evolucion;
         public string sprite;
+        public int catch_rate = 255;
+        public int exp_yield = 100;
+        public string growth_rate = "Medio";   // "Medio" o "Rapido"
     }
 
     // --- MOVIMIENTO CATALOGO ---
@@ -57,7 +67,11 @@ namespace ApiRest.Models
         public int precision;
         public int pp;
         public string descripcion;
-        public string efecto;    // puede ser null
+        public string efecto;           // puede ser null
+        public string categoria = "Fisico";     // "Fisico", "Especial" o "Estado"
+        public string objetivo = "Foe";         // "Foe" o "Self"
+        public bool siempre_acierta = false;
+        public int prioridad = 0;
     }
 
     // --- ITEM CATALOGO ---

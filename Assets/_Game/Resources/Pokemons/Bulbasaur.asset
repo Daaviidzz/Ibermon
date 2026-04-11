@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd6d3f625a7bbcd48a3d6304d09365e5, type: 3}
-  m_Name: Bulbasur
+  m_Name: Bulbasaur
   m_EditorClassIdentifier: Assembly-CSharp::PokemonBase
-  name: Bulbasur
+  name: Bulbasaur
   description: 
   frontSprite: {fileID: -1060509327, guid: 0f37bf3cf5680a64d863b5f155b2a597, type: 3}
   backSprite: {fileID: 21300000, guid: aacaae602a38f884ab9e02e43de3736d, type: 3}

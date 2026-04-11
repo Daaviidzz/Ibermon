@@ -96,16 +96,20 @@ public static class IbermonConverter
         if (ib.movimientos_aprendidos != null && ib.movimientos_aprendidos.Count > 0)
         {
             var movesRestaurados = new List<Move>();
-            foreach (int moveNum in ib.movimientos_aprendidos)
+            foreach (var movAprendido in ib.movimientos_aprendidos)
             {
-                string movNombre = catalogo.GetMovimientoNombre(moveNum);
+                string movNombre = catalogo.GetMovimientoNombre(movAprendido.numero);
                 if (movNombre == null)
                 {
-                    Debug.LogWarning($"[IbermonConverter] Movimiento número {moveNum} no encontrado en catálogo.");
+                    Debug.LogWarning($"[IbermonConverter] Movimiento número {movAprendido.numero} no encontrado en catálogo.");
                     continue;
                 }
                 if (_moveBases.TryGetValue(movNombre, out var mb))
-                    movesRestaurados.Add(new Move(mb));
+                {
+                    var move = new Move(mb);
+                    move.PP = movAprendido.pp;   // restaurar PP actuales guardados en la API
+                    movesRestaurados.Add(move);
+                }
                 else
                     Debug.LogWarning($"[IbermonConverter] MoveBase '{movNombre}' no encontrado en Resources. " +
                                      "Revisa que el nombre del asset coincide con el catálogo.");
@@ -139,24 +143,23 @@ public static class IbermonConverter
     /// </summary>
     public static IbermonJugadorActualizarRequest ToActualizarRequest(Pokemon pokemon, CatalogoCache catalogo)
     {
-        var moveNums = new List<int>();
+        var movimientos = new List<MovimientoAprendido>();
         if (pokemon.Moves != null)
         {
             foreach (var move in pokemon.Moves)
             {
                 int num = catalogo.GetMovimientoNumero(move.Base.Name);
-                if (num > 0) moveNums.Add(num);
+                if (num > 0)
+                    movimientos.Add(new MovimientoAprendido { numero = num, pp = move.PP });
             }
         }
 
-        // Nota: IbermonJugadorActualizarRequest usa int? pero JsonUtility
-        // serializa valores asignados correctamente.
         return new IbermonJugadorActualizarRequest
         {
             nivel                  = pokemon.Level,
             experiencia            = pokemon.Exp,
             hp_actual              = pokemon.HP,
-            movimientos_aprendidos = moveNums,
+            movimientos_aprendidos = movimientos,
         };
     }
 

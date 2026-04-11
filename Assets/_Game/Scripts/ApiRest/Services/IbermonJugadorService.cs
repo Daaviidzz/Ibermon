@@ -88,12 +88,18 @@ namespace ApiRest.Services
         //  PUT /partidas/{id}/ibermon/{ibermon_id}/movimientos
         // ------------------------------------------------------------------ //
 
-        public void ActualizarMovimientos(string partidaId, string ibermonId, List<int> movimientos,
+        public void ActualizarMovimientos(string partidaId, string ibermonId, List<MovimientoAprendido> movimientos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            // La API espera un JSON array directamente
-            string json = "[" + string.Join(",", movimientos) + "]";
-            Api.PutAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos", json,
+            // Serializar manualmente: [{\"numero\":1,\"pp\":10}, ...]
+            var sb = new System.Text.StringBuilder("[");
+            for (int i = 0; i < movimientos.Count; i++)
+            {
+                if (i > 0) sb.Append(",");
+                sb.Append($"{{\"numero\":{movimientos[i].numero},\"pp\":{movimientos[i].pp}}}");
+            }
+            sb.Append("]");
+            Api.PutAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos", sb.ToString(),
                 raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
                 onError);
         }
