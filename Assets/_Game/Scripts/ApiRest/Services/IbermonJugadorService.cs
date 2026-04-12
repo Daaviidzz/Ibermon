@@ -6,17 +6,12 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    /// <summary>
-    /// Endpoints bajo /partidas/{partida_id}/ibermon/
-    /// </summary>
+    // Endpoints bajo /partidas/{partida_id}/ibermon/
     public class IbermonJugadorService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;
 
-        // ------------------------------------------------------------------ //
-        //  GET /partidas/{id}/ibermon/equipo
-        // ------------------------------------------------------------------ //
-
+        // Los ibermon del equipo activo
         public void ObtenerEquipo(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
@@ -25,10 +20,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  GET /partidas/{id}/ibermon/centro
-        // ------------------------------------------------------------------ //
-
+        // Los ibermon guardados en el centro — no se usan en combate
         public void ObtenerCentro(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
@@ -37,10 +29,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  POST /partidas/{id}/ibermon/
-        // ------------------------------------------------------------------ //
-
+        // Capturar un ibermon nuevo
         public void AnadirIbermon(string partidaId, IbermonJugadorCrearRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -49,10 +38,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  PATCH /partidas/{id}/ibermon/{ibermon_id}/mover
-        // ------------------------------------------------------------------ //
-
+        // Mover un ibermon entre equipo y centro
         public void MoverIbermon(string partidaId, string ibermonId, string ubicacion,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -62,10 +48,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  PATCH /partidas/{id}/ibermon/{ibermon_id}
-        // ------------------------------------------------------------------ //
-
+        // Actualizar stats después de un combate (HP, nivel, exp, movimientos)
         public void ActualizarIbermon(string partidaId, string ibermonId, IbermonJugadorActualizarRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -74,24 +57,17 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  DELETE /partidas/{id}/ibermon/{ibermon_id}
-        // ------------------------------------------------------------------ //
-
         public void EliminarIbermon(string partidaId, string ibermonId,
             Action onSuccess, Action<string> onError)
         {
             Api.DeleteAuth($"/partidas/{partidaId}/ibermon/{ibermonId}", onSuccess, onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  PUT /partidas/{id}/ibermon/{ibermon_id}/movimientos
-        // ------------------------------------------------------------------ //
-
+        // Reemplaza la lista completa de movimientos de un ibermon
         public void ActualizarMovimientos(string partidaId, string ibermonId, List<MovimientoAprendido> movimientos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            // Serializar manualmente: [{\"numero\":1,\"pp\":10}, ...]
+            // JsonUtility no serializa listas sueltas, hay que construirlo a mano
             var sb = new System.Text.StringBuilder("[");
             for (int i = 0; i < movimientos.Count; i++)
             {
@@ -104,10 +80,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  POST /partidas/{id}/ibermon/{ibermon_id}/movimientos/{numero}
-        // ------------------------------------------------------------------ //
-
         public void AprenderMovimiento(string partidaId, string ibermonId, int numeroMovimiento,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -116,20 +88,12 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  DELETE /partidas/{id}/ibermon/{ibermon_id}/movimientos/{numero}
-        // ------------------------------------------------------------------ //
-
         public void OlvidarMovimiento(string partidaId, string ibermonId, int numeroMovimiento,
             Action onSuccess, Action<string> onError)
         {
             Api.DeleteAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos/{numeroMovimiento}",
                 onSuccess, onError);
         }
-
-        // ------------------------------------------------------------------ //
-        //  Helper
-        // ------------------------------------------------------------------ //
 
         private List<IbermonJugador> ParseList(string raw)
         {

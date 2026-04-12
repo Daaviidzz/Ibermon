@@ -21,9 +21,6 @@ namespace ApiRest.Services
     {
         private ApiManager Api => ApiManager.Instance;
 
-        // ------------------------------------------------------------------ //
-        //  IBERMON
-        // ------------------------------------------------------------------ //
 
         public void ListarIbermon(Action<List<IbermonCatalogoResumen>> onSuccess, Action<string> onError)
         {
@@ -44,9 +41,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  MOVIMIENTOS
-        // ------------------------------------------------------------------ //
+
 
         public void ListarMovimientos(Action<List<MovimientoCatalogoResumen>> onSuccess, Action<string> onError)
         {
@@ -67,9 +62,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  ITEMS
-        // ------------------------------------------------------------------ //
 
         public void ListarItems(Action<List<ItemCatalogoResumen>> onSuccess, Action<string> onError)
         {
@@ -90,9 +82,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  LOGROS
-        // ------------------------------------------------------------------ //
+
 
         public void ListarLogros(Action<List<LogroCatalogo>> onSuccess, Action<string> onError)
         {
@@ -113,9 +103,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  Wrappers privados
-        // ------------------------------------------------------------------ //
 
         [Serializable] private class IbermonResumenWrapper { public List<IbermonCatalogoResumen> items; }
         [Serializable] private class MovimientoResumenWrapper { public List<MovimientoCatalogoResumen> items; }

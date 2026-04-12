@@ -13,9 +13,9 @@ namespace ApiRest.Services
     {
         private ApiManager Api => ApiManager.Instance;
 
-        // ------------------------------------------------------------------ //
+   
         //  GET /partidas/{id}/items/
-        // ------------------------------------------------------------------ //
+   
 
         public void ObtenerInventario(string partidaId,
             Action<List<ItemJugador>> onSuccess, Action<string> onError)
@@ -29,9 +29,9 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
+   
         //  POST /partidas/{id}/items/
-        // ------------------------------------------------------------------ //
+   
 
         public void AnadirItem(string partidaId, int itemCatalogoId, int cantidad,
             Action<ItemJugador> onSuccess, Action<string> onError)
@@ -46,9 +46,9 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
+    
         //  PATCH /partidas/{id}/items/{item_id}
-        // ------------------------------------------------------------------ //
+      
 
         public void ActualizarItem(string partidaId, string itemId, int nuevaCantidad,
             Action<ItemJugador> onSuccess, Action<string> onError)
@@ -59,9 +59,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
         //  DELETE /partidas/{id}/items/{item_id}
-        // ------------------------------------------------------------------ //
 
         public void EliminarItem(string partidaId, string itemId,
             Action onSuccess, Action<string> onError)

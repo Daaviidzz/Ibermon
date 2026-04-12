@@ -7,34 +7,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// Controlador de la escena "Partidas".
-/// Lista las partidas del usuario desde la API y permite crear una nueva o cargar una existente.
-///
-/// ESTRUCTURA DE UI necesaria en la escena "Partidas":
-/// ─────────────────────────────────────────────────────
-///  Canvas
-///  ├── PanelListaPartidas
-///  │   ├── ScrollView → Viewport → Content   ← asignar a "contenedorPartidas"
-///  │   ├── Button "Nueva Partida"             ← asignar a "botonNueva"
-///  │   └── Button "Volver"                   ← asignar a "botonVolver"
-///  │
-///  ├── PanelNuevaPartida
-///  │   ├── Dropdown "Personaje" (Chico / Chica) ← asignar a "dropdownPersonaje"
-///  │   ├── Dropdown "Starter"  (3 opciones)     ← asignar a "dropdownStarter"
-///  │   ├── Button "Confirmar"                   ← asignar a "botonConfirmarNueva"
-///  │   └── Button "Cancelar"                    ← asignar a "botonCancelarNueva"
-///  │
-///  └── PanelCargando
-///      └── TextMeshProUGUI                      ← asignar a "textoCargando"
-///
-///  Prefab "PartidaEntry" con el componente PartidaEntryUI ← asignar a "prefabEntradaPartida"
-///  CrearYPosicionarPlayer en escena              ← asignar a "posicionarPlayer"
-/// </summary>
+// Controla la escena "Partidas": lista las partidas del usuario, deja crear una nueva
+// o cargar una existente.
+// Ver MANUAL_ESCENAS_UNITY.md → Sección "ESCENA 3 — Partidas" para la estructura de UI.
 public class MenuPartida : MonoBehaviour
 {
-    // ─── Referencias UI ───────────────────────────────────────────────────────
-
     [Header("Panel Lista")]
     public GameObject    panelLista;
     public Transform     contenedorPartidas;
@@ -49,29 +26,23 @@ public class MenuPartida : MonoBehaviour
     public Button        botonCancelarNueva;
 
     [Header("Panel Cargando")]
-    public GameObject    panelCargando;
+    public GameObject      panelCargando;
     public TextMeshProUGUI textoCargando;
 
     [Header("Prefab")]
     [Tooltip("Prefab con el componente PartidaEntryUI")]
-    public GameObject    prefabEntradaPartida;
+    public GameObject prefabEntradaPartida;
 
     [Header("Escenas")]
-    public string        escenaJuego = "PuebloFuenlabrada";
+    public string escenaJuego = "PuebloFuenlabrada";
 
     [Header("Referencia Player")]
-    [Tooltip("GameObject de la escena que crea y posiciona al jugador")]
+    [Tooltip("El SpawnHelper de la escena — solo se usa para partidas nuevas")]
     public CrearYPosicionarPlayer posicionarPlayer;
 
-    // ─── Starters disponibles ─────────────────────────────────────────────────
-    // Mapeados por índice del dropdown:
-    //   0 → Ignifor (catalogoId=1)
-    //   1 → Aquillo (catalogoId=4)
-    //   2 → Verdino (catalogoId=7)
-    // Ajusta los IDs si tu seed de la API usa otros números.
+    // IDs del catálogo de starters — ajustar si el seed de la API usa otros números
+    // 0 → Ignifor (1), 1 → Aquillo (4), 2 → Verdino (7)
     private readonly int[] _starterCatalogoIds = { 1, 4, 7 };
-
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     private void Start()
     {
@@ -80,17 +51,16 @@ public class MenuPartida : MonoBehaviour
         CargarListaPartidas();
     }
 
-    // ─── Lista de partidas ────────────────────────────────────────────────────
-
     private void CargarListaPartidas()
     {
         ApiSetup.Partida.ListarPartidas(
             lista =>
             {
                 LimpiarContenedor();
+
+                // Si no tiene partidas ir directo a crear una
                 if (lista.Count == 0)
                 {
-                    // Sin partidas: mostrar directamente el panel de nueva partida
                     MostrarPanelNueva();
                     return;
                 }
@@ -107,14 +77,16 @@ public class MenuPartida : MonoBehaviour
             err =>
             {
                 Debug.LogError($"[MenuPartida] Error listando partidas: {err}");
-                // Si el token expiró, volver al login
+
+                // Si el token expiró mandar al login
                 if (err.Contains("[401]"))
                 {
                     ApiSetup.Auth.Logout();
                     SceneManager.LoadScene("Login");
                     return;
                 }
-                MostrarPanelLista(); // Mostrar lista vacía con el botón Nueva
+
+                MostrarPanelLista();
             });
     }
 
@@ -135,8 +107,6 @@ public class MenuPartida : MonoBehaviour
             Destroy(child.gameObject);
     }
 
-    // ─── Cargar partida existente ─────────────────────────────────────────────
-
     private void CargarPartida(string partidaId)
     {
         MostrarCargando("Cargando partida...");
@@ -148,21 +118,21 @@ public class MenuPartida : MonoBehaviour
                 ApiSetup.IbermonJugador.ObtenerEquipo(partidaId,
                     equipo =>
                     {
-                        // Iniciar sesión con los datos cargados
                         SessionManager.Instance.IniciarConPartida(partida, equipo);
 
-                        // Posicionar al jugador en las coordenadas guardadas
-                        JugadorSpawn.posicion = new Vector2(partida.posicion.x, partida.posicion.y);
+                        // Guardar la posición exacta de la API y activar el flag para que
+                        // JugadorSpawn la use aunque sea (0,0)
+                        JugadorSpawn.posicion            = new Vector2(partida.posicion.x, partida.posicion.y);
+                        JugadorSpawn.usarPosicionGuardada = true;
 
-                        // Crear jugador y cargar escena del juego
-                        IniciarJuego(partida.mapa_actual);
+                        // Ojo: no usar posicionarPlayer aquí o sobreescribiría la posición guardada
+                        SpawnPlayerSiNoExiste();
+                        SceneManager.LoadScene(string.IsNullOrEmpty(partida.mapa_actual) ? escenaJuego : partida.mapa_actual);
                     },
                     err => ManejarErrorCarga(err));
             },
             err => ManejarErrorCarga(err));
     }
-
-    // ─── Nueva partida ────────────────────────────────────────────────────────
 
     public void MostrarPanelNueva()
     {
@@ -171,7 +141,7 @@ public class MenuPartida : MonoBehaviour
         panelCargando.SetActive(false);
     }
 
-    /// <summary>Conectado al botón "Confirmar" del panel nueva partida.</summary>
+    // Conectado al botón "Confirmar" del panel nueva partida
     public void OnClickConfirmarNueva()
     {
         string personaje  = dropdownPersonaje.value == 0 ? "chico" : "chica";
@@ -183,7 +153,6 @@ public class MenuPartida : MonoBehaviour
         ApiSetup.Partida.CrearPartida(personaje, starterId,
             partida =>
             {
-                // Partida nueva: equipo vacío (el starter lo crea la API internamente)
                 MostrarCargando("Cargando equipo inicial...");
                 ApiSetup.IbermonJugador.ObtenerEquipo(partida.id,
                     equipo =>
@@ -194,7 +163,7 @@ public class MenuPartida : MonoBehaviour
                     },
                     err =>
                     {
-                        // Si no tiene equipo aún, iniciar con lista vacía igualmente
+                        // A veces el starter tarda un poco en registrarse, arrancamos igual
                         SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
                         IniciarJuego(partida.mapa_actual ?? escenaJuego);
                     });
@@ -206,18 +175,16 @@ public class MenuPartida : MonoBehaviour
             });
     }
 
-    /// <summary>Conectado al botón "Cancelar" del panel nueva partida.</summary>
+    // Conectado al botón "Cancelar" del panel nueva partida
     public void OnClickCancelarNueva()
     {
         MostrarCargando("Cargando partidas...");
         CargarListaPartidas();
     }
 
-    // ─── Eliminar partida ─────────────────────────────────────────────────────
-
     private void EliminarPartida(string partidaId, GameObject entrada)
     {
-        // Aquí podrías mostrar un diálogo de confirmación antes de eliminar
+        // TODO: añadir un popup de confirmación antes de borrar
         MostrarCargando("Eliminando partida...");
         ApiSetup.Partida.EliminarPartida(partidaId,
             () =>
@@ -233,21 +200,31 @@ public class MenuPartida : MonoBehaviour
             });
     }
 
-    // ─── Botones ──────────────────────────────────────────────────────────────
-
     public void BotonNueva()  => MostrarPanelNueva();
     public void BotonVolver() => SceneManager.LoadScene("MenuPrincipal");
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
+    // Solo para partidas nuevas — usa posicionarPlayer para la posición inicial
+    // Para partidas cargadas se usa CargarPartida() directamente
     private void IniciarJuego(string escena)
     {
         string nombreEscena = string.IsNullOrEmpty(escena) ? escenaJuego : escena;
 
         if (posicionarPlayer != null)
+        {
+            posicionarPlayer.escenaDestino = nombreEscena;
             posicionarPlayer.crearEInstanciarPersonaje();
+        }
         else
+        {
             SceneManager.LoadScene(nombreEscena);
+        }
+    }
+
+    // Instancia el prefab del jugador solo si todavía no existe
+    private void SpawnPlayerSiNoExiste()
+    {
+        if (GameObject.FindWithTag("Player") == null && posicionarPlayer != null)
+            Instantiate(posicionarPlayer.personaje);
     }
 
     private void ManejarErrorCarga(string err)

@@ -5,36 +5,24 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
-/// <summary>
-/// Singleton DontDestroyOnLoad.
-/// Almacena el estado de la sesión de juego actual:
-/// la partida activa, el equipo (modelos API) y estadísticas de sesión.
-/// Se crea automáticamente por ApiSetup. No añadir manualmente a la escena.
-/// </summary>
+// Guarda el estado de la sesión actual: la partida activa y el equipo.
+// Se crea solo por ApiSetup, no añadir a ninguna escena manualmente.
 public class SessionManager : MonoBehaviour
 {
     public static SessionManager Instance { get; private set; }
 
-    // ─── Datos de partida ─────────────────────────────────────────────────────
-
-    public string PartidaId { get; private set; }
+    public string        PartidaId     { get; private set; }
     public PartidaCompleta PartidaActual { get; private set; }
-    public bool TienePartida => !string.IsNullOrEmpty(PartidaId);
-
-    // ─── Equipo (modelos API) ─────────────────────────────────────────────────
+    public bool          TienePartida  => !string.IsNullOrEmpty(PartidaId);
 
     private List<IbermonJugador> _equipo = new();
     public IReadOnlyList<IbermonJugador> EquipoAPI => _equipo;
-
-    // ─── Estadísticas de sesión ───────────────────────────────────────────────
 
     public int CombatesGanados  { get; set; }
     public int CombatesPerdidos { get; set; }
 
     private float _tiempoSesion   = 0f;
     private bool  _contandoTiempo = false;
-
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -49,24 +37,19 @@ public class SessionManager : MonoBehaviour
             _tiempoSesion += Time.deltaTime;
     }
 
-    // ─── API pública ──────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Llama esto después de obtener la PartidaCompleta y el equipo de la API.
-    /// Inicializa toda la sesión de juego.
-    /// </summary>
+    // Llámalo después de obtener la PartidaCompleta y el equipo de la API
     public void IniciarConPartida(PartidaCompleta partida, List<IbermonJugador> equipo)
     {
-        PartidaId       = partida.id;
-        PartidaActual   = partida;
-        _equipo         = equipo ?? new List<IbermonJugador>();
-        _tiempoSesion   = partida.tiempo_jugado;
+        PartidaId        = partida.id;
+        PartidaActual    = partida;
+        _equipo          = equipo ?? new List<IbermonJugador>();
+        _tiempoSesion    = partida.tiempo_jugado;
         CombatesGanados  = partida.combates_ganados;
         CombatesPerdidos = partida.combates_perdidos;
-        _contandoTiempo = true;
+        _contandoTiempo  = true;
     }
 
-    /// <summary>Limpia la sesión al hacer logout o volver al menú.</summary>
+    // Llámalo al hacer logout o al volver al menú principal
     public void CerrarSesion()
     {
         PartidaId        = null;
@@ -78,15 +61,13 @@ public class SessionManager : MonoBehaviour
         CombatesPerdidos = 0;
     }
 
-    /// <summary>Devuelve el IbermonJugador (API) en la posición dada del equipo.</summary>
     public IbermonJugador GetIbermonAPI(int index) =>
         index >= 0 && index < _equipo.Count ? _equipo[index] : null;
 
-    /// <summary>Reemplaza la lista del equipo (ej. tras recargar de la API).</summary>
     public void SetEquipoAPI(List<IbermonJugador> equipo) =>
         _equipo = equipo ?? new List<IbermonJugador>();
 
-    /// <summary>Añade un ibermon al equipo local (al capturar) y lo registra en la API.</summary>
+    // Capturar un ibermon: lo añade localmente y lo registra en la API
     public void AnadirIbermon(
         int    catalogoId,
         int    nivel,
@@ -115,10 +96,7 @@ public class SessionManager : MonoBehaviour
             onError);
     }
 
-    /// <summary>
-    /// Sincroniza el estado actual del equipo de Unity (Pokemon[]) hacia la API.
-    /// Actualiza HP, nivel, experiencia y movimientos de cada ibermon.
-    /// </summary>
+    // Sincronizar el equipo completo con la API después de un combate
     public void SincronizarEquipo(
         List<Pokemon>  pokemons,
         CatalogoCache  catalogo,
@@ -144,13 +122,13 @@ public class SessionManager : MonoBehaviour
 
             var request = IbermonConverter.ToActualizarRequest(pokemons[i], catalogo);
 
-            bool terminado = false;
+            bool   terminado    = false;
             string errorParcial = null;
 
             ApiSetup.IbermonJugador.ActualizarIbermon(
                 PartidaId, ibermonApi.id, request,
-                _    => terminado = true,
-                err  => { errorParcial = err; terminado = true; }
+                _   => terminado = true,
+                err => { errorParcial = err; terminado = true; }
             );
 
             yield return new WaitUntil(() => terminado);
@@ -166,10 +144,7 @@ public class SessionManager : MonoBehaviour
         else                 onDone?.Invoke();
     }
 
-    /// <summary>
-    /// Guarda el estado completo de la partida (mapa, posición, dinero, tiempo, stats).
-    /// Llama esto al guardar en Centro Ibermon.
-    /// </summary>
+    // Guardar mapa, posición, dinero y tiempo — llámalo en el centro ibermon o al salir
     public void GuardarPartida(
         string  mapaActual,
         Vector2 posicion,
@@ -189,7 +164,7 @@ public class SessionManager : MonoBehaviour
             combates_perdidos = CombatesPerdidos,
         };
 
-        // Conservar datos de la partida anterior si existen
+        // Conservar pokedex, medallas, logros y flags de la partida anterior
         if (PartidaActual != null)
         {
             datos.pokedex_visto     = PartidaActual.pokedex_visto;
@@ -204,6 +179,5 @@ public class SessionManager : MonoBehaviour
             onError);
     }
 
-    /// <summary>Devuelve el tiempo total jugado en esta sesión (segundos).</summary>
     public int TiempoJugadoSegundos => Mathf.RoundToInt(_tiempoSesion);
 }

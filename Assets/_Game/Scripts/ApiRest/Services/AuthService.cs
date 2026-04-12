@@ -5,16 +5,10 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    /// <summary>
-    /// Endpoints: POST /auth/registro, POST /auth/login, GET /auth/yo
-    /// </summary>
+    // Endpoints: POST /auth/registro, POST /auth/login, GET /auth/yo
     public class AuthService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;
-
-        // ------------------------------------------------------------------ //
-        //  POST /auth/registro
-        // ------------------------------------------------------------------ //
 
         public void Registrar(string username, string email, string password,
             Action<UsuarioPublico> onSuccess, Action<string> onError)
@@ -22,23 +16,18 @@ namespace ApiRest.Services
             var body = new UsuarioRegistroRequest
             {
                 username = username,
-                email = email,
+                email    = email,
                 password = password
             };
-            string json = JsonUtility.ToJson(body);
-            Api.Post("/auth/registro", json,
+            Api.Post("/auth/registro", JsonUtility.ToJson(body),
                 raw => onSuccess?.Invoke(JsonUtility.FromJson<UsuarioPublico>(raw)),
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  POST /auth/login  (OAuth2 form-data)
-        // ------------------------------------------------------------------ //
-
         public void Login(string username, string password,
             Action<TokenResponse> onSuccess, Action<string> onError)
         {
-            // FastAPI espera form-data (OAuth2PasswordRequestForm), no JSON
+            // FastAPI usa OAuth2PasswordRequestForm, que es form-data, no JSON
             var form = new UnityEngine.WWWForm();
             form.AddField("username", username);
             form.AddField("password", password);
@@ -53,10 +42,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  GET /auth/yo
-        // ------------------------------------------------------------------ //
-
         public void ObtenerUsuarioActual(Action<UsuarioPublico> onSuccess, Action<string> onError)
         {
             Api.GetAuth("/auth/yo",
@@ -64,10 +49,7 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // ------------------------------------------------------------------ //
-        //  Logout (local — borra el token)
-        // ------------------------------------------------------------------ //
-
+        // Logout es solo local — borra el token de memoria, no llama a la API
         public void Logout() => Api.ClearToken();
     }
 }

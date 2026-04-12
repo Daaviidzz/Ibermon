@@ -5,30 +5,19 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
-/// <summary>
-/// Singleton DontDestroyOnLoad.
-/// Pre-carga los catálogos de ibermon y movimientos desde la API y los mantiene
-/// en memoria para conversiones rápidas numero↔nombre.
-/// Se crea automáticamente por ApiSetup. No añadir manualmente a la escena.
-///
-/// Uso: después del login, llama CargarCatalogos(onDone, onError) una vez.
-/// A partir de ahí usa los getters directamente.
-/// </summary>
+// Carga los catálogos de ibermon y movimientos una vez tras el login y los deja
+// en memoria para no tener que ir a la API cada vez que necesites un nombre o un número.
+// Se crea solo por ApiSetup, no añadir a la escena manualmente.
 public class CatalogoCache : MonoBehaviour
 {
     public static CatalogoCache Instance { get; private set; }
-
-    // ─── Mapas numero ↔ nombre ────────────────────────────────────────────────
 
     private readonly Dictionary<int,    string> _ibermonNombres    = new();
     private readonly Dictionary<string, int>    _ibermonNumeros    = new();
     private readonly Dictionary<int,    string> _movimientoNombres = new();
     private readonly Dictionary<string, int>    _movimientoNumeros = new();
 
-    /// <summary>True cuando los catálogos han sido cargados correctamente.</summary>
     public bool EstaListo { get; private set; } = false;
-
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     private void Awake()
     {
@@ -37,13 +26,7 @@ public class CatalogoCache : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // ─── Carga ────────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Carga los catálogos de ibermon y movimientos desde la API.
-    /// Llama onDone cuando ambos estén listos, o onError si alguno falla.
-    /// Las peticiones son públicas (no requieren JWT).
-    /// </summary>
+    // Llámalo una vez después del login. Cuando termine llama onDone y ya puedes usar los getters.
     public void CargarCatalogos(Action onDone, Action<string> onError)
     {
         EstaListo = false;
@@ -52,12 +35,11 @@ public class CatalogoCache : MonoBehaviour
 
     private IEnumerator CargarCoroutine(Action onDone, Action<string> onError)
     {
-        bool ibermonListo      = false;
-        bool movimientosListo  = false;
-        string errorIbermon    = null;
-        string errorMov        = null;
+        bool   ibermonListo     = false;
+        bool   movimientosListo = false;
+        string errorIbermon     = null;
+        string errorMov         = null;
 
-        // ── Ibermon ──────────────────────────────────────────────────────────
         ApiSetup.Catalogo.ListarIbermon(
             lista =>
             {
@@ -74,7 +56,6 @@ public class CatalogoCache : MonoBehaviour
             err => { errorIbermon = err; ibermonListo = true; }
         );
 
-        // ── Movimientos ───────────────────────────────────────────────────────
         ApiSetup.Catalogo.ListarMovimientos(
             lista =>
             {
@@ -105,23 +86,15 @@ public class CatalogoCache : MonoBehaviour
         onDone?.Invoke();
     }
 
-    // ─── Lookups ibermon ──────────────────────────────────────────────────────
-
-    /// <summary>Devuelve el nombre del ibermon dado su número de catálogo. Null si no existe.</summary>
     public string GetIbermonNombre(int numero) =>
         _ibermonNombres.TryGetValue(numero, out var n) ? n : null;
 
-    /// <summary>Devuelve el número de catálogo del ibermon dado su nombre. -1 si no existe.</summary>
     public int GetIbermonNumero(string nombre) =>
         _ibermonNumeros.TryGetValue(nombre, out var n) ? n : -1;
 
-    // ─── Lookups movimientos ──────────────────────────────────────────────────
-
-    /// <summary>Devuelve el nombre del movimiento dado su número. Null si no existe.</summary>
     public string GetMovimientoNombre(int numero) =>
         _movimientoNombres.TryGetValue(numero, out var n) ? n : null;
 
-    /// <summary>Devuelve el número del movimiento dado su nombre. -1 si no existe.</summary>
     public int GetMovimientoNumero(string nombre) =>
         _movimientoNumeros.TryGetValue(nombre, out var n) ? n : -1;
 }
