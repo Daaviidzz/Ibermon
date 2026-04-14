@@ -21,7 +21,7 @@ namespace ApiRest.Managers
         private void Awake()
         {
             // Evitar que se duplique si la escena se recarga
-            if (FindObjectsByType<ApiSetup>(FindObjectsSortMode.None).Length > 1)
+            if (FindObjectsByType<ApiSetup>().Length > 1)
             {
                 Destroy(gameObject);
                 return;
