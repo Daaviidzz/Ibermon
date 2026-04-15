@@ -471,6 +471,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -902,7 +903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5615ee188a149b3448beebfd4b9d3925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlMenuPrincipal
-  escenaDestino: MenuPrincipal
+  escenaDestino: InicioCuenta
   textoPulsarEnter: {fileID: 260127935}
   velocidadParpadeo: 2
 --- !u!114 &1142878421
