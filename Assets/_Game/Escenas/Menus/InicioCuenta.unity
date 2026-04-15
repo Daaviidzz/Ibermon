@@ -1093,7 +1093,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 548084059}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: MostrarPanelLogin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &548084059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1549,7 +1561,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 643717166}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: MostrarPanelInicio
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &643717166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2950,7 +2974,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 992252208}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: OnClickRegistrar
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &992252208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3934,7 +3970,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1245949589}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: MostrarPanelRegistro
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1245949589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4258,7 +4306,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1422408925}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: Salir
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1422408925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5312,7 +5372,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1796493209}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: OnClickLogin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1796493209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5986,21 +6058,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1674bfdec72f5914087142b2c6017f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoginUI
+  panelInicio: {fileID: 660725396}
   panelLogin: {fileID: 1814434425}
   inputUsuarioLogin: {fileID: 804352439}
   inputPasswordLogin: {fileID: 1103859623}
-  botonLogin: {fileID: 1796493208}
-  botonIrRegistro: {fileID: 0}
   textoErrorLogin: {fileID: 1734005937}
   panelRegistro: {fileID: 2029790268}
+  inputCorreoRegistro: {fileID: 1534559231}
   inputUsuarioRegistro: {fileID: 643692959}
-  inputEmailRegistro: {fileID: 1534559231}
   inputPasswordRegistro: {fileID: 2020275166}
-  botonRegistrar: {fileID: 992252207}
-  botonIrLogin: {fileID: 0}
-  textoErrorRegistro: {fileID: 0}
-  panelCargando: {fileID: 0}
-  textoCargando: {fileID: 0}
+  textoErrorRegistro: {fileID: 828806266}
   escenaMenuPrincipal: MenuPrincipal
 --- !u!1 &1892868471
 GameObject:
@@ -6221,7 +6288,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1907726888}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1882955549}
+        m_TargetAssemblyTypeName: LoginUI, Assembly-CSharp
+        m_MethodName: MostrarPanelInicio
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1907726888
 MonoBehaviour:
   m_ObjectHideFlags: 0
