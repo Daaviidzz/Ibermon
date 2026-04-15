@@ -11,7 +11,8 @@ using UnityEngine.SceneManagement;
 ///   - Si el jugador pulsa "Iniciar Sesión" → se oculta PanelInicio y aparece PaneLogin
 ///   - Si el jugador pulsa "Registrarse"    → se oculta PanelInicio y aparece PaneRegistro
 ///   - En cualquier panel, el botón "Volver" regresa al PanelInicio
-///   - Si los datos son correctos y se pulsa "Continuar" → carga la escena del menú principal
+///   - Si los datos son correctos y se pulsa "Continuar" → aparece la pantalla de carga
+///     y después carga la escena del menú principal
 ///   - Si hay algún error (contraseña mal, usuario ya existe...) → aparece el mensaje en TextoError
 /// 
 /// ¿Cómo conectarlo en Unity?
@@ -62,6 +63,17 @@ public class LoginUI : MonoBehaviour
 
 
     // ─────────────────────────────────────────────────────────────────────────
+    // PANEL CARGANDO
+    // Aparece mientras se espera respuesta del servidor o se cargan los datos
+    // del juego. Muestra un mensaje de texto para que el jugador sepa qué está
+    // pasando (ej: "Iniciando sesión...", "Cargando catálogos...").
+    // ─────────────────────────────────────────────────────────────────────────
+    [Header("Panel Cargando")]
+    public GameObject panelCargando;
+    public TextMeshProUGUI textoCargando;  // Texto que indica qué se está cargando
+
+
+    // ─────────────────────────────────────────────────────────────────────────
     // CONFIGURACIÓN GENERAL
     // ─────────────────────────────────────────────────────────────────────────
     [Header("Configuración general")]
@@ -100,7 +112,10 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(true);
         panelLogin.SetActive(false);
         panelRegistro.SetActive(false);
+        panelCargando.SetActive(false);
 
+        // En el panel de inicio el cursor se oculta (el jugador navega con botones,
+        // no necesita ratón visible — igual que en el resto del juego)
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -117,7 +132,10 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(false);
         panelLogin.SetActive(true);
         panelRegistro.SetActive(false);
+        panelCargando.SetActive(false);
 
+        // En los paneles con campos de texto el cursor debe ser visible
+        // para que el jugador pueda hacer clic en los InputFields
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -133,11 +151,32 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(false);
         panelLogin.SetActive(false);
         panelRegistro.SetActive(true);
+        panelCargando.SetActive(false);
 
+        // Igual que en el login, necesitamos el cursor visible para los InputFields
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         LimpiarErrores();
+    }
+
+    /// <summary>
+    /// Muestra el panel de carga con un mensaje personalizado.
+    /// Se llama automáticamente mientras se espera respuesta del servidor.
+    /// </summary>
+    private void MostrarPanelCargando(string mensaje)
+    {
+        panelInicio.SetActive(false);
+        panelLogin.SetActive(false);
+        panelRegistro.SetActive(false);
+        panelCargando.SetActive(true);
+
+        // Actualizamos el texto para que el jugador sepa qué está pasando
+        if (textoCargando) textoCargando.text = mensaje;
+
+        // Mientras carga no hace falta el cursor, ocultamos para que quede más limpio
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     /// <summary>
@@ -178,9 +217,8 @@ public class LoginUI : MonoBehaviour
             return; // Salimos sin hacer nada más
         }
 
-        // Ocultamos los paneles mientras esperamos respuesta del servidor
-        // para que el jugador sepa que algo está pasando
-        MostrarEspera();
+        // Mostramos la pantalla de carga mientras esperamos respuesta del servidor
+        MostrarPanelCargando("Iniciando sesión...");
 
         // Llamamos a la API para iniciar sesión.
         // El primer bloque ( _ => ) se ejecuta si TODO va bien.
@@ -188,7 +226,8 @@ public class LoginUI : MonoBehaviour
         ApiSetup.Auth.Login(usuario, password,
             _ =>
             {
-                // Login correcto → ahora cargamos los datos del juego antes de entrar
+                // Login correcto → avisamos al jugador de que ahora cargamos los datos
+                MostrarPanelCargando("Cargando datos del juego...");
                 CargarDatosYEntrarAlJuego();
             },
             err =>
@@ -228,8 +267,8 @@ public class LoginUI : MonoBehaviour
             return; // Salimos sin hacer nada más
         }
 
-        // Ocultamos los paneles mientras esperamos respuesta del servidor
-        MostrarEspera();
+        // Mostramos la pantalla de carga mientras esperamos respuesta del servidor
+        MostrarPanelCargando("Registrando cuenta...");
 
         // Llamamos a la API para registrar la cuenta nueva
         ApiSetup.Auth.Registrar(usuario, correo, password,
@@ -237,10 +276,12 @@ public class LoginUI : MonoBehaviour
             {
                 // Registro correcto → hacemos login automático para no tener que
                 // pedirle al jugador que introduzca los datos otra vez
+                MostrarPanelCargando("Iniciando sesión...");
                 ApiSetup.Auth.Login(usuario, password,
                     __ =>
                     {
                         // Login automático correcto → cargamos datos y entramos al juego
+                        MostrarPanelCargando("Cargando datos del juego...");
                         CargarDatosYEntrarAlJuego();
                     },
                     err =>
@@ -268,18 +309,6 @@ public class LoginUI : MonoBehaviour
     // FUNCIONES AUXILIARES
     // Pequeñas funciones de apoyo usadas por las funciones principales.
     // =========================================================================
-
-    /// <summary>
-    /// Oculta todos los paneles para indicar que se está esperando respuesta del servidor.
-    /// El jugador verá la pantalla de fondo mientras espera.
-    /// Si quieres añadir un panel de "Cargando..." en el futuro, actívalo aquí.
-    /// </summary>
-    private void MostrarEspera()
-    {
-        panelInicio.SetActive(false);
-        panelLogin.SetActive(false);
-        panelRegistro.SetActive(false);
-    }
 
     /// <summary>
     /// Borra los mensajes de error de todos los paneles.
