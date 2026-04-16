@@ -75,6 +75,7 @@ public class ControlesMoviles : MonoBehaviour
     // Este método es más agresivo que simplemente resetear el estado
     public void BloquearControlesTemporalmente(float duracion = 0.5f)
     {
+        gameObject.SetActive(true);
         StartCoroutine(BloqueoTemporal(duracion));
     }
 

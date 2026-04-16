@@ -3,278 +3,273 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-// Controla la escena "Partidas": lista las partidas del usuario, deja crear una nueva
-// o cargar una existente.
-// Ver MANUAL_ESCENAS_UNITY.md → Sección "ESCENA 3 — Partidas" para la estructura de UI.
-public class MenuPartida : MonoBehaviour
+// Controla toda la escena de Partidas.
+// Flujo: carga partidas → si tiene, muestra lista → si no, va directo a crear nueva.
+// Para crear nueva: PanelPartida (nombre) → PanelEleccionDePersonaje → juego.
+public class MenuPartidas : MonoBehaviour
 {
-    [Header("Panel Lista")]
-    public GameObject    panelLista;
-    public Transform     contenedorPartidas;
-    public Button        botonNueva;
-    public Button        botonVolver;
+    [Header("Paneles (arrastra desde el Inspector)")]
+    public GameObject panelPartidas;            // El panel con la lista de partidas
+    public GameObject panelPartida;             // El panel con el InputField del nombre
+    public GameObject panelEleccionDePersonaje; // El panel con los dos botones de personaje
+    public GameObject panelCarga;               // Pantalla negra con "Cargando..."
 
-    [Header("Panel Nueva Partida")]
-    public GameObject    panelNuevaPartida;
-    public TMP_Dropdown  dropdownPersonaje;
-    public TMP_Dropdown  dropdownStarter;
-    public Button        botonConfirmarNueva;
-    public Button        botonCancelarNueva;
+    [Header("Lista de partidas")]
+    public Transform contenedorPartidas;        // El Content del ScrollView
+    public GameObject prefabPartida;            // El prefab de cada fila de partida
 
-    [Header("Panel Cargando")]
-    public GameObject      panelCargando;
-    public TextMeshProUGUI textoCargando;
+    [Header("Texto de carga")]
+    public TextMeshProUGUI textoCarga;          // El texto "Cargando..." del PanelCarga
 
-    [Header("Prefab")]
-    [Tooltip("Prefab con el componente PartidaEntryUI")]
-    public GameObject prefabEntradaPartida;
+    // Nombre que el jugador escribe en PanelPartida.
+    // Lo guarda el InputField llamando a GuardarNombre().
+    private string _nombrePartida = "Mi Partida";
 
-    [Header("Escenas")]
-    public string escenaJuego = "PuebloFuenlabrada";
+    [Header("Personaje")]
+    public CrearYPosicionarPlayer creadorPersonaje;
 
-    [Header("Referencia Player")]
-    [Tooltip("El SpawnHelper de la escena — solo se usa para partidas nuevas")]
-    public CrearYPosicionarPlayer posicionarPlayer;
-
-    // IDs del catálogo de starters — ajustar si el seed de la API usa otros números
-    // 0 → Ignifor (1), 1 → Aquillo (4), 2 → Verdino (7)
-    private readonly int[] _starterCatalogoIds = { 1, 4, 7 };
+    // ─────────────────────────────────────────────────────────
+    //  INICIO
+    // ─────────────────────────────────────────────────────────
 
     private void Start()
     {
-
+        // Liberar el cursor por si venía del juego
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        InicializarDropdowns();
-        MostrarCargando("Cargando partidas...");
-        CargarListaPartidas();
+        MostrarCarga("Cargando partidas...");
+        CargarPartidas();
     }
 
-    private void CargarListaPartidas()
+    // ─────────────────────────────────────────────────────────
+    //  CARGAR LISTA DE PARTIDAS
+    // ─────────────────────────────────────────────────────────
+
+    private void CargarPartidas()
     {
         ApiSetup.Partida.ListarPartidas(
-            lista =>
+            onSuccess: lista =>
             {
-                LimpiarContenedor();
+                // Vaciar el contenedor antes de rellenar
+                LimpiarLista();
 
-                // Si no tiene partidas ir directo a crear una
                 if (lista.Count == 0)
                 {
-                    MostrarPanelNueva();
+                    // Sin partidas → ir directo a crear una nueva
+                    MostrarPanel(panelPartida);
                     return;
                 }
 
-                MostrarPanelLista();
-                foreach (var resumen in lista)
-                    CrearEntradaPartida(resumen);
+                // Hay partidas → mostrar la lista
+                foreach (var partida in lista)
+                    CrearEntradaEnLista(partida);
 
-                EventSystem.current?.SetSelectedGameObject(
-                    contenedorPartidas.childCount > 0
-                        ? contenedorPartidas.GetChild(0).gameObject
-                        : null);
+                MostrarPanel(panelPartidas);
             },
-            err =>
+            onError: error =>
             {
-                Debug.LogError($"[MenuPartida] Error listando partidas: {err}");
+                Debug.LogError($"Error al cargar partidas: {error}");
 
-                // Si el token expiró mandar al login
-                if (err.Contains("[401]"))
+                // Si el token expiró, volver al login
+                if (error.Contains("401"))
                 {
-                    ApiSetup.Auth.Logout();
                     SceneManager.LoadScene("Login");
                     return;
                 }
 
-                MostrarPanelLista();
+                // Cualquier otro error: mostrar la lista vacía
+                MostrarPanel(panelPartidas);
             });
     }
 
-    private void CrearEntradaPartida(PartidaResumen resumen)
+    // Instancia un prefab por cada partida y lo configura
+    private void CrearEntradaEnLista(PartidaResumen partida)
     {
-        var go    = Instantiate(prefabEntradaPartida, contenedorPartidas);
-        var entry = go.GetComponent<PartidaEntryUI>();
-        entry.Inicializar(
-            resumen,
-            onSeleccionar: r => CargarPartida(r.id),
-            onEliminar:    r => EliminarPartida(r.id, go)
+        var entrada = Instantiate(prefabPartida, contenedorPartidas);
+        var script = entrada.GetComponent<PartidaEntryUI>();
+
+        script.Inicializar(
+            partida,
+            onSeleccionar: CargarPartida,   // Al pulsar la entrada → cargar esa partida
+            onEliminar: EliminarPartida  // Al pulsar la X → borrarla
         );
     }
 
-    private void LimpiarContenedor()
+    private void LimpiarLista()
     {
-        foreach (Transform child in contenedorPartidas)
-            Destroy(child.gameObject);
+        foreach (Transform hijo in contenedorPartidas)
+            Destroy(hijo.gameObject);
     }
 
-    private void CargarPartida(string partidaId)
+    // ─────────────────────────────────────────────────────────
+    //  CARGAR UNA PARTIDA EXISTENTE
+    // ─────────────────────────────────────────────────────────
+
+    private void CargarPartida(PartidaResumen resumen)
     {
-        MostrarCargando("Cargando partida...");
+        MostrarCarga("Cargando partida...");
 
-        ApiSetup.Partida.ObtenerPartida(partidaId,
-            partida =>
+        // Primero obtenemos los datos completos de la partida
+        ApiSetup.Partida.ObtenerPartida(resumen.id,
+            onSuccess: partida =>
             {
-                MostrarCargando("Cargando equipo...");
-                ApiSetup.IbermonJugador.ObtenerEquipo(partidaId,
-                    equipo =>
-                    {
-                        SessionManager.Instance.IniciarConPartida(partida, equipo);
+                MostrarCarga("Guardando progreso...");
 
-                        // Guardar la posición exacta de la API y activar el flag para que
-                        // JugadorSpawn la use aunque sea (0,0)
-                        JugadorSpawn.posicion            = new Vector2(partida.posicion.x, partida.posicion.y);
-                        JugadorSpawn.usarPosicionGuardada = true;
+                // Construimos el body del PUT con todos los campos que pide la API,
+                // solo incrementamos tiempo_jugado en 1 (lo usamos como contador de entradas)
+                var datosGuardar = new GuardarPartidaRequest
+                {
+                    mapa_actual = partida.mapa_actual,
+                    posicion = partida.posicion,
+                    dinero = partida.dinero,
+                    tiempo_jugado = partida.tiempo_jugado + 1, // +1 cada vez que se entra
+                    pokedex_visto = partida.pokedex_visto,
+                    pokedex_capturado = partida.pokedex_capturado,
+                    medallas = partida.medallas,
+                    logros = partida.logros,
+                    combates_ganados = partida.combates_ganados,
+                    combates_perdidos = partida.combates_perdidos,
+                    flags = partida.flags,
+                };
 
-                        // Ojo: no usar posicionarPlayer aquí o sobreescribiría la posición guardada
-                        SpawnPlayerSiNoExiste();
-                        SceneManager.LoadScene(string.IsNullOrEmpty(partida.mapa_actual) ? escenaJuego : partida.mapa_actual);
-                    },
-                    err => ManejarErrorCarga(err));
+                ApiSetup.Partida.GuardarPartida(partida.id, datosGuardar,
+onSuccess: partidaActualizada =>
+{
+    SessionManager.Instance.IniciarConPartida(partidaActualizada, new List<IbermonJugador>());
+    string escena = string.IsNullOrEmpty(partidaActualizada.mapa_actual) ? "CasaPersonaje" : partidaActualizada.mapa_actual;
+    creadorPersonaje.escenaDestino = escena; // por si la escena varía según la partida
+    creadorPersonaje.crearEInstanciarPersonaje();
+},
+onError: error =>
+{
+    Debug.LogWarning($"No se pudo incrementar el contador: {error}");
+    SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
+    string escena = string.IsNullOrEmpty(partida.mapa_actual) ? "CasaPersonaje" : partida.mapa_actual;
+    creadorPersonaje.escenaDestino = escena;
+    creadorPersonaje.crearEInstanciarPersonaje();
+});
             },
-            err => ManejarErrorCarga(err));
-    }
-
-    public void MostrarPanelNueva()
-    {
-        panelLista.SetActive(false);
-        panelNuevaPartida.SetActive(true);
-        panelCargando.SetActive(false);
-    }
-
-    // Conectado al botón "Confirmar" del panel nueva partida
-    public void OnClickConfirmarNueva()
-    {
-        string personaje  = dropdownPersonaje.value == 0 ? "chico" : "chica";
-        int    starterIdx = Mathf.Clamp(dropdownStarter.value, 0, _starterCatalogoIds.Length - 1);
-        int    starterId  = _starterCatalogoIds[starterIdx];
-
-        MostrarCargando("Creando partida...");
-
-        ApiSetup.Partida.CrearPartida(personaje, starterId,
-            partida =>
+            onError: error =>
             {
-                MostrarCargando("Cargando equipo inicial...");
-                ApiSetup.IbermonJugador.ObtenerEquipo(partida.id,
-                    equipo =>
-                    {
-                        SessionManager.Instance.IniciarConPartida(partida, equipo);
-                        JugadorSpawn.posicion = Vector2.zero;
-                        IniciarJuego(partida.mapa_actual ?? escenaJuego);
-                    },
-                    err =>
-                    {
-                        // A veces el starter tarda un poco en registrarse, arrancamos igual
-                        SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
-                        IniciarJuego(partida.mapa_actual ?? escenaJuego);
-                    });
-            },
-            err =>
-            {
-                MostrarPanelNueva();
-                Debug.LogError($"[MenuPartida] Error creando partida: {err}");
+                Debug.LogError($"Error al cargar partida: {error}");
+                MostrarPanel(panelPartidas);
             });
     }
 
-    // Conectado al botón "Cancelar" del panel nueva partida
-    public void OnClickCancelarNueva()
-    {
-        MostrarCargando("Cargando partidas...");
-        CargarListaPartidas();
-    }
+    // ─────────────────────────────────────────────────────────
+    //  ELIMINAR UNA PARTIDA
+    // ─────────────────────────────────────────────────────────
 
-    private void EliminarPartida(string partidaId, GameObject entrada)
+    private void EliminarPartida(PartidaResumen resumen)
     {
-        // TODO: añadir un popup de confirmación antes de borrar
-        MostrarCargando("Eliminando partida...");
-        ApiSetup.Partida.EliminarPartida(partidaId,
-            () =>
+        MostrarCarga("Eliminando partida...");
+
+        ApiSetup.Partida.EliminarPartida(resumen.id,
+            onSuccess: () =>
             {
-                Destroy(entrada);
-                MostrarCargando("Cargando partidas...");
-                CargarListaPartidas();
+                // Recargar la lista tras borrar
+                CargarPartidas();
             },
-            err =>
+            onError: error =>
             {
-                Debug.LogError($"[MenuPartida] Error eliminando: {err}");
-                MostrarPanelLista();
+                Debug.LogError($"Error al eliminar partida: {error}");
+                MostrarPanel(panelPartidas);
             });
     }
 
-    public void BotonNueva()  => MostrarPanelNueva();
-    public void BotonVolver() => SceneManager.LoadScene("MenuPrincipal");
+    // ─────────────────────────────────────────────────────────
+    //  CREAR NUEVA PARTIDA (flujo de 2 pasos)
+    // ─────────────────────────────────────────────────────────
 
-    // Solo para partidas nuevas — usa posicionarPlayer para la posición inicial
-    // Para partidas cargadas se usa CargarPartida() directamente
-    private void IniciarJuego(string escena)
+    // Llamado por el InputField del PanelPartida con OnValueChanged o por el botón Continuar.
+    // Conecta el InputField al Inspector o llama este método desde un botón con SendMessage.
+    public void GuardarNombre(string nombre)
     {
-        string nombreEscena = string.IsNullOrEmpty(escena) ? escenaJuego : escena;
-
-        if (posicionarPlayer != null)
-        {
-            posicionarPlayer.escenaDestino = nombreEscena;
-            posicionarPlayer.crearEInstanciarPersonaje();
-        }
-        else
-        {
-            SceneManager.LoadScene(nombreEscena);
-        }
+        // Guardamos el nombre aunque de momento no lo enviemos a la API
+        _nombrePartida = string.IsNullOrWhiteSpace(nombre) ? "Mi Partida" : nombre;
     }
 
-    // Instancia el prefab del jugador solo si todavía no existe
-    private void SpawnPlayerSiNoExiste()
+    // Botón "Continuar" del PanelPartida → ir a elegir personaje
+    public void OnContinuar()
     {
-        if (GameObject.FindWithTag("Player") == null && posicionarPlayer != null)
-            Instantiate(posicionarPlayer.personaje);
+        MostrarPanel(panelEleccionDePersonaje);
     }
 
-    private void ManejarErrorCarga(string err)
+    // Botón "Torrente" del PanelEleccionDePersonaje
+    public void OnElegirTorrente()
     {
-        Debug.LogError($"[MenuPartida] Error: {err}");
-        if (err.Contains("[401]"))
-        {
-            ApiSetup.Auth.Logout();
-            SceneManager.LoadScene("Login");
-            return;
-        }
-        MostrarPanelLista();
+        CrearPartidaConPersonaje("torrente");
     }
 
-    private void MostrarPanelLista()
+    // Botón "Personaje1" del PanelEleccionDePersonaje
+    public void OnElegirPersonaje1()
     {
-        panelLista.SetActive(true);
-        panelNuevaPartida.SetActive(false);
-        panelCargando.SetActive(false);
+        CrearPartidaConPersonaje("personaje1");
     }
 
-    private void MostrarCargando(string mensaje)
+    // Llama a la API para crear la partida y arranca el juego
+    private void CrearPartidaConPersonaje(string personaje)
     {
-        panelLista.SetActive(false);
-        panelNuevaPartida.SetActive(false);
-        panelCargando.SetActive(true);
-        if (textoCargando) textoCargando.text = mensaje;
-    }
+        MostrarCarga("Creando partida...");
 
-    private void InicializarDropdowns()
-    {
-        if (dropdownPersonaje != null)
-        {
-            dropdownPersonaje.ClearOptions();
-            dropdownPersonaje.AddOptions(new List<string> { "Chico", "Chica" });
-        }
+        // Starter hardcodeado a 1 de momento (luego lo haremos bien)
+        const int starterHardcodeado = 1;
 
-        if (dropdownStarter != null)
-        {
-            dropdownStarter.ClearOptions();
-            dropdownStarter.AddOptions(new List<string>
+        ApiSetup.Partida.CrearPartida(personaje, starterHardcodeado,
+onSuccess: partida =>
+{
+    SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
+    creadorPersonaje.escenaDestino = "CasaPersonaje";
+    creadorPersonaje.crearEInstanciarPersonaje();
+},
+            onError: error =>
             {
-                "Ignifor (Fuego)",
-                "Aquillo (Agua)",
-                "Verdino (Planta)"
+                Debug.LogError($"Error al crear partida: {error}");
+                MostrarPanel(panelEleccionDePersonaje);
             });
-        }
+    }
+
+    // ─────────────────────────────────────────────────────────
+    //  BOTONES GENERALES
+    // ─────────────────────────────────────────────────────────
+
+    // Botón "Nueva" del PanelPartidas → ir a escribir el nombre
+    public void OnNuevaPartida()
+    {
+        MostrarPanel(panelPartida);
+    }
+
+    // Botón "Volver" de cualquier panel → volver al menú principal
+    public void OnVolver()
+    {
+        SceneManager.LoadScene("MenuPrincipal");
+    }
+
+    // ─────────────────────────────────────────────────────────
+    //  HELPERS DE PANELES
+    // ─────────────────────────────────────────────────────────
+
+    // Muestra solo el panel indicado y oculta el resto
+    private void MostrarPanel(GameObject panel)
+    {
+        panelPartidas.SetActive(panel == panelPartidas);
+        panelPartida.SetActive(panel == panelPartida);
+        panelEleccionDePersonaje.SetActive(panel == panelEleccionDePersonaje);
+        panelCarga.SetActive(false);
+    }
+
+    // Muestra la pantalla de carga con el mensaje indicado
+    private void MostrarCarga(string mensaje)
+    {
+        panelPartidas.SetActive(false);
+        panelPartida.SetActive(false);
+        panelEleccionDePersonaje.SetActive(false);
+        panelCarga.SetActive(true);
+
+        if (textoCarga != null)
+            textoCarga.text = mensaje;
     }
 }

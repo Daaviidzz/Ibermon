@@ -4,75 +4,52 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Componente para el prefab de cada entrada de partida en la lista de partidas.
-///
-/// REQUISITOS del prefab "PartidaEntry":
-///   - Un Button (el fondo clicable)
-///   - TextMeshProUGUI textoPersonaje  (ej: "Jugador: Chico")
-///   - TextMeshProUGUI textoMapa       (ej: "Ubicación: PuebloFuenlabrada")
-///   - TextMeshProUGUI textoMedallas   (ej: "Medallas: 0")
-///   - TextMeshProUGUI textoTiempo     (ej: "Tiempo: 00:12:34")
-///   - (Opcional) Button botonEliminar con texto "X"
-/// </summary>
+// Componente del prefab de cada fila en la lista de partidas.
+//
+// Estructura mínima del prefab:
+//   - Button (el fondo, todo el prefab es clicable)
+//       - TextoNombre   (TextMeshProUGUI) → "Partida 1"
+//       - TextoFecha    (TextMeshProUGUI) → "Última vez: 16/04/2026"
+//       - BotonEliminar (Button)          → la X para borrar
 public class PartidaEntryUI : MonoBehaviour
 {
-    [Header("UI")]
-    public TextMeshProUGUI textoPersonaje;
-    public TextMeshProUGUI textoMapa;
-    public TextMeshProUGUI textoMedallas;
-    public TextMeshProUGUI textoTiempo;
-    public Button          botonEliminar;
+    [Header("UI del prefab")]
+    public TextMeshProUGUI textoNombre;   // Mostrará "Partida 1", "Partida 2"...
+    public TextMeshProUGUI textoFecha;    // Mostrará la fecha de última modificación
+    public Button botonEliminar; // El botón X para borrar
 
-    private PartidaResumen        _resumen;
+    // Guardamos los callbacks para usarlos al pulsar
     private Action<PartidaResumen> _onSeleccionar;
     private Action<PartidaResumen> _onEliminar;
+    private PartidaResumen _datos;
 
-    /// <summary>Inicializa la entrada con los datos de la partida y los callbacks.</summary>
+    // MenuPartidas llama a este método nada más instanciar el prefab
     public void Inicializar(
-        PartidaResumen        resumen,
+        PartidaResumen partida,
         Action<PartidaResumen> onSeleccionar,
-        Action<PartidaResumen> onEliminar = null)
+        Action<PartidaResumen> onEliminar)
     {
-        _resumen       = resumen;
+        _datos = partida;
         _onSeleccionar = onSeleccionar;
-        _onEliminar    = onEliminar;
+        _onEliminar = onEliminar;
 
-        // Rellenar textos
-        if (textoPersonaje) textoPersonaje.text = $"Jugador: {CapitalizarPrimera(resumen.personaje_elegido)}";
-        if (textoMapa)      textoMapa.text      = $"Ubicación: {resumen.mapa_actual}";
-        if (textoMedallas)  textoMedallas.text  = $"Medallas: {resumen.medallas?.Count ?? 0}";
-        if (textoTiempo)    textoTiempo.text     = $"Tiempo: {FormatearTiempo(resumen.tiempo_jugado)}";
+        int numero = transform.GetSiblingIndex() + 1;
+        textoNombre.text = $"Partida {numero}";
+        textoFecha.text = $"Veces jugada: {partida.tiempo_jugado}";
 
-        // Ocultar botón eliminar si no hay callback
-        if (botonEliminar) botonEliminar.gameObject.SetActive(onEliminar != null);
+        // Mostrar el botón de eliminar (si no quisiéramos mostrarlo en algún caso, aquí lo ocultaríamos)
+        botonEliminar.gameObject.SetActive(true);
     }
 
-    /// <summary>Conectado al Button principal del prefab (en Inspector).</summary>
+    // Conecta este método al OnClick del Button principal del prefab (el fondo)
     public void OnClickSeleccionar()
     {
-        _onSeleccionar?.Invoke(_resumen);
+        _onSeleccionar?.Invoke(_datos);
     }
 
-    /// <summary>Conectado al botonEliminar (en Inspector).</summary>
+    // Conecta este método al OnClick del BotonEliminar
     public void OnClickEliminar()
     {
-        _onEliminar?.Invoke(_resumen);
-    }
-
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
-    private static string FormatearTiempo(int segundos)
-    {
-        int h = segundos / 3600;
-        int m = (segundos % 3600) / 60;
-        int s = segundos % 60;
-        return $"{h:00}:{m:00}:{s:00}";
-    }
-
-    private static string CapitalizarPrimera(string texto)
-    {
-        if (string.IsNullOrEmpty(texto)) return texto;
-        return char.ToUpper(texto[0]) + texto.Substring(1);
+        _onEliminar?.Invoke(_datos);
     }
 }

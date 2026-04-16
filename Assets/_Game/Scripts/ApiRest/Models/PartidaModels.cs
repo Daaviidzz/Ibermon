@@ -52,10 +52,10 @@ namespace ApiRest.Models
         public string id;
         public string personaje_elegido;
         public string mapa_actual;
-        public int tiempo_jugado;
-        public List<string> medallas = new List<string>();
+        public int tiempo_jugado;     // lo usamos como contador de entradas
         public int combates_ganados;
         public int combates_perdidos;
+        // medallas puedes dejarlo o quitarlo, no lo usamos ahora
     }
 
     [Serializable]
