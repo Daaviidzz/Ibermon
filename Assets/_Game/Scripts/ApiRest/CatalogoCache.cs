@@ -12,16 +12,19 @@ public class CatalogoCache : MonoBehaviour
 {
     public static CatalogoCache Instance { get; private set; }
 
-    private readonly Dictionary<int,    string> _ibermonNombres    = new();
-    private readonly Dictionary<string, int>    _ibermonNumeros    = new();
-    private readonly Dictionary<int,    string> _movimientoNombres = new();
-    private readonly Dictionary<string, int>    _movimientoNumeros = new();
+    private readonly Dictionary<int,string> _ibermonNombres = new();
+    private readonly Dictionary<string,int> _ibermonNumeros = new();
+    private readonly Dictionary<int,string> _movimientoNombres = new();
+    private readonly Dictionary<string,int> _movimientoNumeros = new();
 
     public bool EstaListo { get; private set; } = false;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this) 
+        {
+            Destroy(gameObject); return;
+        }
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -35,10 +38,10 @@ public class CatalogoCache : MonoBehaviour
 
     private IEnumerator CargarCoroutine(Action onDone, Action<string> onError)
     {
-        bool   ibermonListo     = false;
-        bool   movimientosListo = false;
-        string errorIbermon     = null;
-        string errorMov         = null;
+        bool ibermonListo = false;
+        bool movimientosListo = false;
+        string errorIbermon = null;
+        string errorMov = null;
 
         ApiSetup.Catalogo.ListarIbermon(
             lista =>

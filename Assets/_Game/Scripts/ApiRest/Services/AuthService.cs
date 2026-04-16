@@ -16,7 +16,7 @@ namespace ApiRest.Services
             var body = new UsuarioRegistroRequest
             {
                 username = username,
-                email    = email,
+                email = email,
                 password = password
             };
             Api.Post("/auth/registro", JsonUtility.ToJson(body),

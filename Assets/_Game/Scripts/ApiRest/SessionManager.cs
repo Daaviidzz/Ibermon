@@ -11,14 +11,14 @@ public class SessionManager : MonoBehaviour
 {
     public static SessionManager Instance { get; private set; }
 
-    public string        PartidaId     { get; private set; }
+    public string PartidaId { get; private set; }
     public PartidaCompleta PartidaActual { get; private set; }
-    public bool          TienePartida  => !string.IsNullOrEmpty(PartidaId);
+    public bool TienePartida => !string.IsNullOrEmpty(PartidaId);
 
     private List<IbermonJugador> _equipo = new();
     public IReadOnlyList<IbermonJugador> EquipoAPI => _equipo;
 
-    public int CombatesGanados  { get; set; }
+    public int CombatesGanados { get; set; }
     public int CombatesPerdidos { get; set; }
 
     private float _tiempoSesion   = 0f;
@@ -40,24 +40,24 @@ public class SessionManager : MonoBehaviour
     // Llámalo después de obtener la PartidaCompleta y el equipo de la API
     public void IniciarConPartida(PartidaCompleta partida, List<IbermonJugador> equipo)
     {
-        PartidaId        = partida.id;
-        PartidaActual    = partida;
-        _equipo          = equipo ?? new List<IbermonJugador>();
-        _tiempoSesion    = partida.tiempo_jugado;
-        CombatesGanados  = partida.combates_ganados;
+        PartidaId = partida.id;
+        PartidaActual = partida;
+        _equipo = equipo ?? new List<IbermonJugador>();
+        _tiempoSesion = partida.tiempo_jugado;
+        CombatesGanados = partida.combates_ganados;
         CombatesPerdidos = partida.combates_perdidos;
-        _contandoTiempo  = true;
+        _contandoTiempo = true;
     }
 
     // Llámalo al hacer logout o al volver al menú principal
     public void CerrarSesion()
     {
-        PartidaId        = null;
-        PartidaActual    = null;
-        _equipo          = new List<IbermonJugador>();
-        _tiempoSesion    = 0f;
-        _contandoTiempo  = false;
-        CombatesGanados  = 0;
+        PartidaId = null;
+        PartidaActual = null;
+        _equipo = new List<IbermonJugador>();
+        _tiempoSesion = 0f;
+        _contandoTiempo = false;
+        CombatesGanados = 0;
         CombatesPerdidos = 0;
     }
 
@@ -69,22 +69,22 @@ public class SessionManager : MonoBehaviour
 
     // Capturar un ibermon: lo añade localmente y lo registra en la API
     public void AnadirIbermon(
-        int    catalogoId,
-        int    nivel,
-        int    hpActual,
+        int catalogoId,
+        int nivel,
+        int hpActual,
         List<int> movimientos,
         string ubicacion,
         Action<IbermonJugador> onSuccess,
-        Action<string>         onError)
+        Action<string> onError)
     {
         if (!TienePartida) { onError?.Invoke("No hay partida activa"); return; }
 
         var req = new IbermonJugadorCrearRequest
         {
             ibermon_catalogo_id = catalogoId,
-            nivel               = nivel,
-            hp_actual           = hpActual,
-            ubicacion           = ubicacion,
+            nivel = nivel,
+            hp_actual = hpActual,
+            ubicacion = ubicacion,
         };
 
         ApiSetup.IbermonJugador.AnadirIbermon(PartidaId, req,
@@ -98,9 +98,9 @@ public class SessionManager : MonoBehaviour
 
     // Sincronizar el equipo completo con la API después de un combate
     public void SincronizarEquipo(
-        List<Pokemon>  pokemons,
-        CatalogoCache  catalogo,
-        Action         onDone,
+        List<Pokemon> pokemons,
+        CatalogoCache catalogo,
+        Action onDone,
         Action<string> onError)
     {
         if (!TienePartida) { onError?.Invoke("No hay partida activa"); return; }
@@ -108,9 +108,9 @@ public class SessionManager : MonoBehaviour
     }
 
     private IEnumerator SincronizarEquipoCoroutine(
-        List<Pokemon>  pokemons,
-        CatalogoCache  catalogo,
-        Action         onDone,
+        List<Pokemon> pokemons,
+        CatalogoCache catalogo,
+        Action onDone,
         Action<string> onError)
     {
         bool hubieronErrores = false;
@@ -122,12 +122,12 @@ public class SessionManager : MonoBehaviour
 
             var request = IbermonConverter.ToActualizarRequest(pokemons[i], catalogo);
 
-            bool   terminado    = false;
+            bool terminado    = false;
             string errorParcial = null;
 
             ApiSetup.IbermonJugador.ActualizarIbermon(
                 PartidaId, ibermonApi.id, request,
-                _   => terminado = true,
+                _  => terminado = true,
                 err => { errorParcial = err; terminado = true; }
             );
 
@@ -141,37 +141,37 @@ public class SessionManager : MonoBehaviour
         }
 
         if (hubieronErrores) onError?.Invoke("Algunos ibermon no se pudieron sincronizar");
-        else                 onDone?.Invoke();
+        else onDone?.Invoke();
     }
 
     // Guardar mapa, posición, dinero y tiempo — llámalo en el centro ibermon o al salir
     public void GuardarPartida(
-        string  mapaActual,
+        string mapaActual,
         Vector2 posicion,
-        int     dinero,
-        Action         onDone,
+        int dinero,
+        Action onDone,
         Action<string> onError)
     {
         if (!TienePartida) { onError?.Invoke("No hay partida activa"); return; }
 
         var datos = new GuardarPartidaRequest
         {
-            mapa_actual       = mapaActual,
-            posicion          = new Posicion { x = posicion.x, y = posicion.y },
-            dinero            = dinero,
-            tiempo_jugado     = Mathf.RoundToInt(_tiempoSesion),
-            combates_ganados  = CombatesGanados,
+            mapa_actual = mapaActual,
+            posicion = new Posicion { x = posicion.x, y = posicion.y },
+            dinero = dinero,
+            tiempo_jugado = Mathf.RoundToInt(_tiempoSesion),
+            combates_ganados = CombatesGanados,
             combates_perdidos = CombatesPerdidos,
         };
 
         // Conservar pokedex, medallas, logros y flags de la partida anterior
         if (PartidaActual != null)
         {
-            datos.pokedex_visto     = PartidaActual.pokedex_visto;
+            datos.pokedex_visto = PartidaActual.pokedex_visto;
             datos.pokedex_capturado = PartidaActual.pokedex_capturado;
-            datos.medallas          = PartidaActual.medallas;
-            datos.logros            = PartidaActual.logros;
-            datos.flags             = PartidaActual.flags;
+            datos.medallas = PartidaActual.medallas;
+            datos.logros = PartidaActual.logros;
+            datos.flags = PartidaActual.flags;
         }
 
         ApiSetup.Partida.GuardarPartida(PartidaId, datos,

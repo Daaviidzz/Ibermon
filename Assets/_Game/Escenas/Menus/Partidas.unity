@@ -5787,7 +5787,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PartidaEntryUI
   textoNombre: {fileID: 1483908605}
   textoFecha: {fileID: 1177175909}
-  botonEliminar: {fileID: 0}
+  botonEliminar: {fileID: 1130264467}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

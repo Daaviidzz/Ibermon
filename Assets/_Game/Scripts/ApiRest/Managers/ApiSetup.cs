@@ -3,20 +3,18 @@ using UnityEngine;
 
 namespace ApiRest.Managers
 {
-    // Ponlo en un GameObject vacío en la escena Portada y no lo toques más.
-    // Crea todos los singletons de la API con DontDestroyOnLoad, así que solo
-    // hace falta que esté una vez en todo el juego.
+
     [DefaultExecutionOrder(-100)]
     public class ApiSetup : MonoBehaviour
     {
         [Header("URL del servidor FastAPI")]
         [SerializeField] private string baseUrl = "http://localhost:8000";
 
-        public static AuthService          Auth          { get; private set; }
-        public static PartidaService       Partida       { get; private set; }
+        public static AuthService Auth { get; private set; }
+        public static PartidaService Partida { get; private set; }
         public static IbermonJugadorService IbermonJugador { get; private set; }
-        public static ItemJugadorService   ItemJugador   { get; private set; }
-        public static CatalogoService      Catalogo      { get; private set; }
+        public static ItemJugadorService ItemJugador { get; private set; }
+        public static CatalogoService Catalogo { get; private set; }
 
         private void Awake()
         {
@@ -39,11 +37,11 @@ namespace ApiRest.Managers
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             field?.SetValue(mgr, baseUrl);
 
-            Auth           = go.AddComponent<AuthService>();
-            Partida        = go.AddComponent<PartidaService>();
+            Auth = go.AddComponent<AuthService>();
+            Partida = go.AddComponent<PartidaService>();
             IbermonJugador = go.AddComponent<IbermonJugadorService>();
-            ItemJugador    = go.AddComponent<ItemJugadorService>();
-            Catalogo       = go.AddComponent<CatalogoService>();
+            ItemJugador = go.AddComponent<ItemJugadorService>();
+            Catalogo = go.AddComponent<CatalogoService>();
 
             go.AddComponent<SessionManager>();
             go.AddComponent<CatalogoCache>();
