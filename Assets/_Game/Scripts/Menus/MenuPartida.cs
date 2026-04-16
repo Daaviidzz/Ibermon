@@ -46,6 +46,10 @@ public class MenuPartida : MonoBehaviour
 
     private void Start()
     {
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         InicializarDropdowns();
         MostrarCargando("Cargando partidas...");
         CargarListaPartidas();
