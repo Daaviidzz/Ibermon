@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace ApiRest.Managers
 {
-    // Ponlo en un GameObject vacío en la escena Portada y no lo toques más.
-    // Crea todos los singletons de la API con DontDestroyOnLoad, así que solo
-    // hace falta que esté una vez en todo el juego.
     [DefaultExecutionOrder(-100)]
     public class ApiSetup : MonoBehaviour
     {
@@ -29,11 +26,9 @@ namespace ApiRest.Managers
 
             DontDestroyOnLoad(gameObject);
 
-            // Un solo GameObject agrupa todos los servicios para mantener la jerarquía limpia
             var go = new GameObject("_ApiInfrastructure");
             DontDestroyOnLoad(go);
 
-            // ApiManager necesita la baseUrl, que está en el Inspector de este componente
             var mgr = go.AddComponent<ApiManager>();
             var field = typeof(ApiManager).GetField("baseUrl",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

@@ -112,7 +112,7 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(true);
         panelLogin.SetActive(false);
         panelRegistro.SetActive(false);
-        panelCargando.SetActive(false);
+        if (panelCargando) panelCargando.SetActive(false);
 
         // En el panel de inicio el cursor se oculta (el jugador navega con botones,
         // no necesita ratón visible — igual que en el resto del juego)
@@ -132,7 +132,7 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(false);
         panelLogin.SetActive(true);
         panelRegistro.SetActive(false);
-        panelCargando.SetActive(false);
+        if (panelCargando) panelCargando.SetActive(false);
 
         // En los paneles con campos de texto el cursor debe ser visible
         // para que el jugador pueda hacer clic en los InputFields
@@ -151,7 +151,7 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(false);
         panelLogin.SetActive(false);
         panelRegistro.SetActive(true);
-        panelCargando.SetActive(false);
+        if (panelCargando) panelCargando.SetActive(false);
 
         // Igual que en el login, necesitamos el cursor visible para los InputFields
         Cursor.lockState = CursorLockMode.None;
@@ -169,7 +169,7 @@ public class LoginUI : MonoBehaviour
         panelInicio.SetActive(false);
         panelLogin.SetActive(false);
         panelRegistro.SetActive(false);
-        panelCargando.SetActive(true);
+        if (panelCargando) panelCargando.SetActive(true);
 
         // Actualizamos el texto para que el jugador sepa qué está pasando
         if (textoCargando) textoCargando.text = mensaje;

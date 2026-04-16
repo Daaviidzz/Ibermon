@@ -5,9 +5,6 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
-// Carga los catálogos de ibermon y movimientos una vez tras el login y los deja
-// en memoria para no tener que ir a la API cada vez que necesites un nombre o un número.
-// Se crea solo por ApiSetup, no añadir a la escena manualmente.
 public class CatalogoCache : MonoBehaviour
 {
     public static CatalogoCache Instance { get; private set; }
@@ -26,7 +23,6 @@ public class CatalogoCache : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Llámalo una vez después del login. Cuando termine llama onDone y ya puedes usar los getters.
     public void CargarCatalogos(Action onDone, Action<string> onError)
     {
         EstaListo = false;

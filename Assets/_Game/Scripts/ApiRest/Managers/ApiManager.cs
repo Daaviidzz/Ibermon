@@ -6,8 +6,6 @@ using UnityEngine.Networking;
 
 namespace ApiRest.Managers
 {
-    // Todas las peticiones HTTP pasan por aquí.
-    // Guarda el JWT después del login y lo mete solo en cada cabecera.
     public class ApiManager : MonoBehaviour
     {
         public static ApiManager Instance { get; private set; }
@@ -34,35 +32,27 @@ namespace ApiRest.Managers
         public void SetToken(string token) => _token = token;
         public void ClearToken() => _token = null;
 
-        // GET público (catálogos, etc.)
         public Coroutine Get(string endpoint, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Get(Url(endpoint)), false, onSuccess, onError));
 
-        // GET con JWT
         public Coroutine GetAuth(string endpoint, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Get(Url(endpoint)), true, onSuccess, onError));
 
-        // POST JSON con JWT
         public Coroutine PostAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("POST", endpoint, jsonBody), true, onSuccess, onError));
 
-        // POST JSON sin JWT — solo para registro
         public Coroutine Post(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("POST", endpoint, jsonBody), false, onSuccess, onError));
 
-        // POST form-data sin JWT — el login de FastAPI usa OAuth2 form-data, no JSON
         public Coroutine PostForm(string endpoint, WWWForm form, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Post(Url(endpoint), form), false, onSuccess, onError));
 
-        // PUT JSON con JWT
         public Coroutine PutAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("PUT", endpoint, jsonBody), true, onSuccess, onError));
 
-        // PATCH JSON con JWT
         public Coroutine PatchAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("PATCH", endpoint, jsonBody), true, onSuccess, onError));
 
-        // DELETE con JWT
         public Coroutine DeleteAuth(string endpoint, Action onSuccess, Action<string> onError)
             => StartCoroutine(SendDelete(Url(endpoint), onSuccess, onError));
 

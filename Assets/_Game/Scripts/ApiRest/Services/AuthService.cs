@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    // Endpoints: POST /auth/registro, POST /auth/login, GET /auth/yo
     public class AuthService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;

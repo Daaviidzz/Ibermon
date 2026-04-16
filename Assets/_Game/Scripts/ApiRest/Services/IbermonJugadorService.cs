@@ -6,12 +6,10 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    // Endpoints bajo /partidas/{partida_id}/ibermon/
     public class IbermonJugadorService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;
 
-        // Los ibermon del equipo activo
         public void ObtenerEquipo(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
@@ -20,7 +18,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // Los ibermon guardados en el centro — no se usan en combate
         public void ObtenerCentro(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
@@ -29,7 +26,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // Capturar un ibermon nuevo
         public void AnadirIbermon(string partidaId, IbermonJugadorCrearRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -38,7 +34,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // Mover un ibermon entre equipo y centro
         public void MoverIbermon(string partidaId, string ibermonId, string ubicacion,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -48,7 +43,6 @@ namespace ApiRest.Services
                 onError);
         }
 
-        // Actualizar stats después de un combate (HP, nivel, exp, movimientos)
         public void ActualizarIbermon(string partidaId, string ibermonId, IbermonJugadorActualizarRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
@@ -63,7 +57,6 @@ namespace ApiRest.Services
             Api.DeleteAuth($"/partidas/{partidaId}/ibermon/{ibermonId}", onSuccess, onError);
         }
 
-        // Reemplaza la lista completa de movimientos de un ibermon
         public void ActualizarMovimientos(string partidaId, string ibermonId, List<MovimientoAprendido> movimientos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {

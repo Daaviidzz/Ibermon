@@ -2,17 +2,13 @@ using System.Collections.Generic;
 using ApiRest.Models;
 using UnityEngine;
 
-// Convierte entre los modelos de la API (IbermonJugador) y los objetos del juego (Pokemon).
-//
-// Importante: los ScriptableObjects de PokemonBase tienen que estar en Resources/Pokemons/
-// y sus nombres deben coincidir exactamente con el campo "nombre" del catálogo de la API.
-// Lo mismo para MoveBase en Resources/Moves/. Si no coinciden, los ibermon no cargan.
+// Los nombres de los assets en Resources/Pokemons/ y Resources/Moves/ tienen que coincidir
+// exactamente con el campo "nombre" del catálogo de la API o los ibermon no cargan.
 public static class IbermonConverter
 {
     private static Dictionary<string, PokemonBase> _pokemonBases;
     private static Dictionary<string, MoveBase>    _moveBases;
 
-    // Carga todos los ScriptableObjects desde Resources la primera vez que se necesitan
     private static void EnsureResourcesLoaded()
     {
         if (_pokemonBases != null) return;
@@ -25,7 +21,6 @@ public static class IbermonConverter
             if (pb == null) continue;
             _pokemonBases[pb.Name] = pb;
 
-            // Aprovechar para indexar también los movimientos que tiene aprendibles
             if (pb.LearnableMoves == null) continue;
             foreach (var lm in pb.LearnableMoves)
             {
@@ -34,7 +29,6 @@ public static class IbermonConverter
             }
         }
 
-        // También cargar movimientos que sean assets sueltos en Resources/Moves/
         foreach (var mb in Resources.LoadAll<MoveBase>("Moves"))
         {
             if (mb != null && !_moveBases.ContainsKey(mb.Name))
@@ -44,7 +38,6 @@ public static class IbermonConverter
         Debug.Log($"[IbermonConverter] PokemonBase: {_pokemonBases.Count} | MoveBase: {_moveBases.Count}");
     }
 
-    // API → Unity: convierte un IbermonJugador en un Pokemon listo para combatir
     public static Pokemon ToPokemon(IbermonJugador ib, CatalogoCache catalogo)
     {
         EnsureResourcesLoaded();
@@ -52,27 +45,23 @@ public static class IbermonConverter
         string nombre = catalogo.GetIbermonNombre(ib.ibermon_catalogo_id);
         if (string.IsNullOrEmpty(nombre))
         {
-            Debug.LogError($"[IbermonConverter] No se encontró el ibermon con id={ib.ibermon_catalogo_id} en el catálogo. " +
-                           "¿Se cargaron los catálogos? ¿Tiene datos el servidor?");
+            Debug.LogError($"[IbermonConverter] ibermon id={ib.ibermon_catalogo_id} no encontrado en catálogo");
             return null;
         }
 
         if (!_pokemonBases.TryGetValue(nombre, out var pBase))
         {
-            Debug.LogError($"[IbermonConverter] No existe el PokemonBase '{nombre}' en Resources/Pokemons/. " +
-                           "El nombre del asset debe coincidir exactamente con el del catálogo.");
+            Debug.LogError($"[IbermonConverter] No existe PokemonBase '{nombre}' en Resources/Pokemons/");
             return null;
         }
 
-        // Init() calcula stats, HP máximo y movimientos según el nivel
         var pokemon = new Pokemon(pBase, ib.nivel);
         pokemon.Init();
 
-        // Sobreescribir con los valores reales guardados en la API
         pokemon.HP  = Mathf.Clamp(ib.hp_actual, 0, pokemon.MaxHp);
         pokemon.Exp = ib.experiencia;
 
-        // Restaurar los movimientos guardados si los hay
+        // Restaurar movimientos guardados si los hay
         if (ib.movimientos_aprendidos != null && ib.movimientos_aprendidos.Count > 0)
         {
             var movesRestaurados = new List<Move>();
@@ -91,13 +80,11 @@ public static class IbermonConverter
                     movesRestaurados.Add(move);
                 }
                 else
-                    Debug.LogWarning($"[IbermonConverter] No existe el MoveBase '{movNombre}' en Resources. " +
-                                     "Comprueba que el nombre del asset coincide con el catálogo.");
+                    Debug.LogWarning($"[IbermonConverter] No existe MoveBase '{movNombre}' en Resources/Moves/");
             }
 
             if (movesRestaurados.Count > 0)
                 pokemon.Moves = movesRestaurados;
-            // Si no se restauró ninguno, se quedan los que asignó Init() por nivel
         }
 
         return pokemon;
@@ -114,7 +101,6 @@ public static class IbermonConverter
         return result;
     }
 
-    // Unity → API: prepara el request para sincronizar un pokemon después de un combate
     public static IbermonJugadorActualizarRequest ToActualizarRequest(Pokemon pokemon, CatalogoCache catalogo)
     {
         var movimientos = new List<MovimientoAprendido>();
@@ -142,7 +128,6 @@ public static class IbermonConverter
         return catalogo.GetIbermonNumero(pokemon.Base.Name);
     }
 
-    // Útil en desarrollo si añades nuevos assets sin reiniciar Unity
     public static void InvalidarCache()
     {
         _pokemonBases = null;

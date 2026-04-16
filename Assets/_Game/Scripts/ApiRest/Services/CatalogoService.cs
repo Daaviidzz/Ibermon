@@ -6,17 +6,6 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    /// <summary>
-    /// Endpoints públicos bajo /catalogo/ (sin autenticación).
-    ///   GET /catalogo/ibermon
-    ///   GET /catalogo/ibermon/{numero}
-    ///   GET /catalogo/movimientos
-    ///   GET /catalogo/movimientos/{numero}
-    ///   GET /catalogo/items
-    ///   GET /catalogo/items/{numero}
-    ///   GET /catalogo/logros
-    ///   GET /catalogo/logros/{codigo}
-    /// </summary>
     public class CatalogoService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;

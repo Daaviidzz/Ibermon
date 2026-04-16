@@ -5,8 +5,6 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
-// Guarda el estado de la sesión actual: la partida activa y el equipo.
-// Se crea solo por ApiSetup, no añadir a ninguna escena manualmente.
 public class SessionManager : MonoBehaviour
 {
     public static SessionManager Instance { get; private set; }
@@ -37,7 +35,6 @@ public class SessionManager : MonoBehaviour
             _tiempoSesion += Time.deltaTime;
     }
 
-    // Llámalo después de obtener la PartidaCompleta y el equipo de la API
     public void IniciarConPartida(PartidaCompleta partida, List<IbermonJugador> equipo)
     {
         PartidaId        = partida.id;
@@ -49,7 +46,6 @@ public class SessionManager : MonoBehaviour
         _contandoTiempo  = true;
     }
 
-    // Llámalo al hacer logout o al volver al menú principal
     public void CerrarSesion()
     {
         PartidaId        = null;
@@ -67,7 +63,6 @@ public class SessionManager : MonoBehaviour
     public void SetEquipoAPI(List<IbermonJugador> equipo) =>
         _equipo = equipo ?? new List<IbermonJugador>();
 
-    // Capturar un ibermon: lo añade localmente y lo registra en la API
     public void AnadirIbermon(
         int    catalogoId,
         int    nivel,
@@ -96,7 +91,6 @@ public class SessionManager : MonoBehaviour
             onError);
     }
 
-    // Sincronizar el equipo completo con la API después de un combate
     public void SincronizarEquipo(
         List<Pokemon>  pokemons,
         CatalogoCache  catalogo,
@@ -144,7 +138,6 @@ public class SessionManager : MonoBehaviour
         else                 onDone?.Invoke();
     }
 
-    // Guardar mapa, posición, dinero y tiempo — llámalo en el centro ibermon o al salir
     public void GuardarPartida(
         string  mapaActual,
         Vector2 posicion,

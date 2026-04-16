@@ -6,13 +6,6 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    // Endpoints:
-    //   POST   /partidas/
-    //   GET    /partidas/
-    //   GET    /partidas/{id}
-    //   PUT    /partidas/{id}/guardar
-    //   PATCH  /partidas/{id}/posicion
-    //   DELETE /partidas/{id}
     public class PartidaService : MonoBehaviour
     {
         private ApiManager Api => ApiManager.Instance;
