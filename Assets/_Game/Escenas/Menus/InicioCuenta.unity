@@ -6282,6 +6282,8 @@ MonoBehaviour:
   inputUsuarioRegistro: {fileID: 643692959}
   inputPasswordRegistro: {fileID: 2020275166}
   textoErrorRegistro: {fileID: 828806266}
+  panelCargando: {fileID: 1161586299}
+  textoCargando: {fileID: 1014726389}
   escenaMenuPrincipal: MenuPrincipal
 --- !u!1 &1892868471
 GameObject:
