@@ -3,110 +3,60 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Este script controla toda la pantalla de inicio de sesión y registro del juego.
-/// 
-/// ¿Cómo funciona la navegación?
-///   - Al arrancar la escena, se muestra el PanelInicio (con los 3 botones principales)
-///   - Si el jugador pulsa "Iniciar Sesión" → se oculta PanelInicio y aparece PaneLogin
-///   - Si el jugador pulsa "Registrarse"    → se oculta PanelInicio y aparece PaneRegistro
-///   - En cualquier panel, el botón "Volver" regresa al PanelInicio
-///   - Si los datos son correctos y se pulsa "Continuar" → aparece la pantalla de carga
-///     y después carga la escena del menú principal
-///   - Si hay algún error (contraseña mal, usuario ya existe...) → aparece el mensaje en TextoError
-/// 
-/// ¿Cómo conectarlo en Unity?
-///   1. Adjunta este script a cualquier GameObject vacío de la escena (por ejemplo, uno llamado "UIManager")
-///   2. Arrastra cada objeto de la jerarquía al hueco correspondiente en el Inspector
-///   3. Conecta los botones: en el evento OnClick() de cada botón, arrastra el GameObject
-///      que tiene este script y selecciona la función correspondiente
-/// </summary>
+// Este script controla toda la pantalla de inicio de sesion y registro del juego
+// Se encarga de cambiar entre los paneles de inicio, login, registro y carga
+// Y tambien de llamar a la API para iniciar sesion o crear una cuenta nueva
 public class LoginUI : MonoBehaviour
 {
-    // ─────────────────────────────────────────────────────────────────────────
-    // PANEL INICIO
-    // Es el primer panel que ve el jugador, con tres botones: Iniciar Sesión,
-    // Registrarse y Salir.
-    // ─────────────────────────────────────────────────────────────────────────
-    [Header("Panel Inicio - El menú principal con los 3 botones")]
+    // Panel de inicio que es el primero que ve el jugador
+    // Tiene los tres botones principales de Iniciar Sesion, Registrarse y Salir
+    [Header("Panel Inicio")]
     public GameObject panelInicio;
-    // Nota: los botones IniciarSesion, Registrarse y Salir se conectan
-    // directamente desde el Inspector de Unity (OnClick), no hace falta
-    // declararlos aquí porque solo cambian de panel.
 
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // PANEL LOGIN
-    // Aparece cuando el jugador pulsa "Iniciar Sesión".
-    // Contiene: campo usuario, campo contraseña, botón Continuar,
-    // botón Volver y un texto para mostrar errores.
-    // ─────────────────────────────────────────────────────────────────────────
-    [Header("Panel Login - Pantalla de inicio de sesión")]
+    // Panel de login que aparece cuando el jugador pulsa Iniciar Sesion
+    // Contiene los campos de usuario y contrasena mas un texto de error
+    [Header("Panel Login")]
     public GameObject panelLogin;
-    public TMP_InputField inputUsuarioLogin;    // Campo donde se escribe el nombre de usuario
-    public TMP_InputField inputPasswordLogin;   // Campo donde se escribe la contraseña
-    public TextMeshProUGUI textoErrorLogin;      // Texto rojo que aparece si algo sale mal
+    public TMP_InputField inputUsuarioLogin;
+    public TMP_InputField inputPasswordLogin;
+    public TextMeshProUGUI textoErrorLogin;
 
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // PANEL REGISTRO
-    // Aparece cuando el jugador pulsa "Registrarse".
-    // Contiene: campo correo, campo usuario, campo contraseña, botón Continuar,
-    // botón Volver y un texto para mostrar errores.
-    // ─────────────────────────────────────────────────────────────────────────
-    [Header("Panel Registro - Pantalla de creación de cuenta")]
+    // Panel de registro que aparece cuando el jugador pulsa Registrarse
+    // Contiene los campos de correo, usuario y contrasena mas un texto de error
+    [Header("Panel Registro")]
     public GameObject panelRegistro;
-    public TMP_InputField inputCorreoRegistro;   // Campo donde se escribe el correo electrónico
-    public TMP_InputField inputUsuarioRegistro;  // Campo donde se escribe el nombre de usuario
-    public TMP_InputField inputPasswordRegistro; // Campo donde se escribe la contraseña
-    public TextMeshProUGUI textoErrorRegistro;    // Texto rojo que aparece si algo sale mal
+    public TMP_InputField inputCorreoRegistro;
+    public TMP_InputField inputUsuarioRegistro;
+    public TMP_InputField inputPasswordRegistro;
+    public TextMeshProUGUI textoErrorRegistro;
 
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // PANEL CARGANDO
-    // Aparece mientras se espera respuesta del servidor o se cargan los datos
-    // del juego. Muestra un mensaje de texto para que el jugador sepa qué está
-    // pasando (ej: "Iniciando sesión...", "Cargando catálogos...").
-    // ─────────────────────────────────────────────────────────────────────────
+    // Panel que se muestra mientras se espera una respuesta del servidor
+    // Incluye un texto que le dice al jugador que esta pasando
     [Header("Panel Cargando")]
     public GameObject panelCargando;
-    public TextMeshProUGUI textoCargando;  // Texto que indica qué se está cargando
+    public TextMeshProUGUI textoCargando;
 
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // CONFIGURACIÓN GENERAL
-    // ─────────────────────────────────────────────────────────────────────────
-    [Header("Configuración general")]
-    [Tooltip("Escribe aquí el nombre exacto de la escena del menú principal (tal como aparece en Build Settings)")]
+    // Nombre de la escena del menu principal a la que se pasa tras hacer login
+    [Header("Configuracion general")]
+    [Tooltip("Nombre exacto de la escena del menu principal tal y como aparece en Build Settings")]
     public string escenaMenuPrincipal = "MenuPrincipal";
 
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // START - Se ejecuta automáticamente cuando arranca la escena
-    // ─────────────────────────────────────────────────────────────────────────
+    // Se ejecuta automaticamente al arrancar la escena
     private void Start()
     {
-        // Al iniciar, mostramos solo el panel de inicio y ocultamos el resto
+        // Al iniciar mostramos solo el panel de inicio y ocultamos el resto
         MostrarPanelInicio();
 
-        // Comprobamos que la conexión con la API esté disponible
-        // Si no lo está, aparecerá un aviso en la consola de Unity
+        // Comprobamos que el ApiManager exista para poder llamar a la API
         if (ApiManager.Instance == null)
-            Debug.LogError("[LoginUI] No se encontró el ApiManager. " +
-                           "Asegúrate de que el objeto ApiSetup está en la escena anterior (Portada).");
+        {
+            Debug.LogError("[LoginUI] No se encontro el ApiManager. " +
+                           "Asegurate de que el objeto ApiSetup esta en la escena anterior (Portada).");
+        }
     }
 
-
-    // =========================================================================
-    // NAVEGACIÓN ENTRE PANELES
-    // Estas funciones simplemente muestran un panel y ocultan los demás.
-    // Conéctalas a los botones desde el Inspector de Unity.
-    // =========================================================================
-
-    /// <summary>
-    /// Muestra el panel de inicio (los 3 botones principales).
-    /// Conéctala al botón "Volver" de los paneles Login y Registro.
-    /// </summary>
+    // Muestra el panel de inicio con los tres botones principales
+    // Se conecta al boton Volver de los paneles de login y registro
     public void MostrarPanelInicio()
     {
         panelInicio.SetActive(true);
@@ -114,19 +64,16 @@ public class LoginUI : MonoBehaviour
         panelRegistro.SetActive(false);
         panelCargando.SetActive(false);
 
-        // En el panel de inicio el cursor se oculta (el jugador navega con botones,
-        // no necesita ratón visible — igual que en el resto del juego)
+        // En el panel de inicio el cursor se oculta porque el jugador navega con botones
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Limpiamos los errores por si acaso quedaron del intento anterior
+        // Limpiamos los mensajes de error por si quedaron de un intento anterior
         LimpiarErrores();
     }
 
-    /// <summary>
-    /// Muestra el panel de inicio de sesión.
-    /// Conéctala al botón "Iniciar Sesión" del panel de inicio.
-    /// </summary>
+    // Muestra el panel de inicio de sesion
+    // Se conecta al boton Iniciar Sesion del panel de inicio
     public void MostrarPanelLogin()
     {
         panelInicio.SetActive(false);
@@ -134,18 +81,15 @@ public class LoginUI : MonoBehaviour
         panelRegistro.SetActive(false);
         panelCargando.SetActive(false);
 
-        // En los paneles con campos de texto el cursor debe ser visible
-        // para que el jugador pueda hacer clic en los InputFields
+        // En los paneles con campos de texto el cursor debe ser visible para hacer clic
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         LimpiarErrores();
     }
 
-    /// <summary>
-    /// Muestra el panel de registro.
-    /// Conéctala al botón "Registrarse" del panel de inicio.
-    /// </summary>
+    // Muestra el panel de registro
+    // Se conecta al boton Registrarse del panel de inicio
     public void MostrarPanelRegistro()
     {
         panelInicio.SetActive(false);
@@ -153,17 +97,15 @@ public class LoginUI : MonoBehaviour
         panelRegistro.SetActive(true);
         panelCargando.SetActive(false);
 
-        // Igual que en el login, necesitamos el cursor visible para los InputFields
+        // Igual que en el login necesitamos el cursor visible para los campos de texto
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         LimpiarErrores();
     }
 
-    /// <summary>
-    /// Muestra el panel de carga con un mensaje personalizado.
-    /// Se llama automáticamente mientras se espera respuesta del servidor.
-    /// </summary>
+    // Muestra el panel de carga con un mensaje personalizado
+    // Se llama mientras se espera la respuesta del servidor
     private void MostrarPanelCargando(string mensaje)
     {
         panelInicio.SetActive(false);
@@ -171,183 +113,202 @@ public class LoginUI : MonoBehaviour
         panelRegistro.SetActive(false);
         panelCargando.SetActive(true);
 
-        // Actualizamos el texto para que el jugador sepa qué está pasando
-        if (textoCargando) textoCargando.text = mensaje;
+        // Actualizamos el texto para que el jugador sepa que esta pasando
+        if (textoCargando != null)
+        {
+            textoCargando.text = mensaje;
+        }
 
-        // Mientras carga no hace falta el cursor, ocultamos para que quede más limpio
+        // Mientras carga no hace falta el cursor, lo ocultamos para que quede mas limpio
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    /// <summary>
-    /// Cierra el juego.
-    /// Conéctala al botón "Salir" del panel de inicio.
-    /// </summary>
+    // Cierra el juego
+    // Se conecta al boton Salir del panel de inicio
     public void Salir()
     {
         Application.Quit();
 
-        // Esta línea solo funciona dentro del editor de Unity (no en el juego final)
-        // Es útil para probar que el botón funciona sin tener que cerrar Unity a mano
+        // Esta linea solo funciona dentro del editor de Unity
+        // Es util para probar que el boton funciona sin cerrar Unity a mano
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
 
-
-    // =========================================================================
-    // INICIO DE SESIÓN
-    // Se ejecuta cuando el jugador pulsa "Continuar" en el panel de Login.
-    // =========================================================================
-
-    /// <summary>
-    /// Intenta iniciar sesión con los datos introducidos.
-    /// Conéctala al botón "Continuar" del panel Login.
-    /// </summary>
+    // Intenta iniciar sesion con los datos que ha escrito el jugador
+    // Se conecta al boton Continuar del panel de Login
     public void OnClickLogin()
     {
-        // Recogemos lo que ha escrito el jugador (Trim() elimina espacios al principio y al final)
-        string usuario = inputUsuarioLogin.text.Trim();
-        string password = inputPasswordLogin.text;
+        // Recogemos lo que ha escrito el jugador
+        // Trim elimina los espacios del principio y del final del usuario
+        string usuarioIntroducido = inputUsuarioLogin.text.Trim();
+        string passwordIntroducida = inputPasswordLogin.text;
 
-        // Comprobamos que no haya dejado ningún campo vacío
-        if (string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
+        // Comprobamos que no haya dejado ningun campo vacio
+        if (string.IsNullOrEmpty(usuarioIntroducido) || string.IsNullOrEmpty(passwordIntroducida))
         {
-            textoErrorLogin.text = "Por favor, introduce tu usuario y contraseña.";
-            return; // Salimos sin hacer nada más
+            textoErrorLogin.text = "Por favor, introduce tu usuario y contrasena.";
+            return;
         }
 
-        // Mostramos la pantalla de carga mientras esperamos respuesta del servidor
-        MostrarPanelCargando("Iniciando sesión...");
+        // Mostramos la pantalla de carga mientras esperamos la respuesta del servidor
+        MostrarPanelCargando("Iniciando sesion...");
 
-        // Llamamos a la API para iniciar sesión.
-        // El primer bloque ( _ => ) se ejecuta si TODO va bien.
-        // El segundo bloque ( err => ) se ejecuta si algo falla.
-        ApiSetup.Auth.Login(usuario, password,
-            _ =>
-            {
-                // Login correcto → avisamos al jugador de que ahora cargamos los datos
-                MostrarPanelCargando("Cargando datos del juego...");
-                CargarDatosYEntrarAlJuego();
-            },
-            err =>
-            {
-                // Algo salió mal → volvemos al panel de login y mostramos el error
-                MostrarPanelLogin();
+        // Llamamos a la API para iniciar sesion pasandole dos funciones
+        // Una se ejecuta si todo va bien y la otra si ocurre un error
+        ApiSetup.Auth.Login(usuarioIntroducido, passwordIntroducida,
+            ManejarLoginExitoso, ManejarLoginFallido);
 
-                // Dependiendo del tipo de error, mostramos un mensaje u otro
-                if (err.Contains("[401]") || err.Contains("[422]"))
-                    textoErrorLogin.text = "Usuario o contraseña incorrectos.";
-                else
-                    textoErrorLogin.text = "Error de conexión. Inténtalo de nuevo.";
-            });
+        // Funcion local que se ejecuta si el login fue correcto
+        // El parametro tokenRecibido no se usa aqui porque el ApiManager ya lo guarda
+        void ManejarLoginExitoso(ApiRest.Models.TokenResponse tokenRecibido)
+        {
+            MostrarPanelCargando("Cargando datos del juego...");
+            CargarDatosYEntrarAlJuego();
+        }
+
+        // Funcion local que se ejecuta si el login fallo
+        // Muestra un mensaje distinto segun el codigo de error que devuelva el servidor
+        void ManejarLoginFallido(string mensajeError)
+        {
+            MostrarPanelLogin();
+
+            bool credencialesIncorrectas =
+                mensajeError.Contains("[401]") || mensajeError.Contains("[422]");
+
+            if (credencialesIncorrectas)
+            {
+                textoErrorLogin.text = "Usuario o contrasena incorrectos.";
+            }
+            else
+            {
+                textoErrorLogin.text = "Error de conexion. Intentalo de nuevo.";
+            }
+        }
     }
 
-
-    // =========================================================================
-    // REGISTRO
-    // Se ejecuta cuando el jugador pulsa "Continuar" en el panel de Registro.
-    // =========================================================================
-
-    /// <summary>
-    /// Intenta crear una cuenta nueva con los datos introducidos.
-    /// Conéctala al botón "Continuar" del panel Registro.
-    /// </summary>
+    // Intenta crear una cuenta nueva con los datos introducidos
+    // Se conecta al boton Continuar del panel de Registro
     public void OnClickRegistrar()
     {
-        // Recogemos lo que ha escrito el jugador
-        string correo = inputCorreoRegistro.text.Trim();
-        string usuario = inputUsuarioRegistro.text.Trim();
-        string password = inputPasswordRegistro.text;
+        // Recogemos los tres campos del formulario de registro
+        string correoIntroducido = inputCorreoRegistro.text.Trim();
+        string usuarioIntroducido = inputUsuarioRegistro.text.Trim();
+        string passwordIntroducida = inputPasswordRegistro.text;
 
-        // Comprobamos que no haya dejado ningún campo vacío
-        if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(usuario) || string.IsNullOrEmpty(password))
+        // Comprobamos que no haya ningun campo vacio
+        bool faltaAlgunCampo =
+            string.IsNullOrEmpty(correoIntroducido) ||
+            string.IsNullOrEmpty(usuarioIntroducido) ||
+            string.IsNullOrEmpty(passwordIntroducida);
+
+        if (faltaAlgunCampo)
         {
             textoErrorRegistro.text = "Por favor, rellena todos los campos.";
-            return; // Salimos sin hacer nada más
+            return;
         }
 
-        // Mostramos la pantalla de carga mientras esperamos respuesta del servidor
+        // Mostramos la pantalla de carga mientras se crea la cuenta
         MostrarPanelCargando("Registrando cuenta...");
 
         // Llamamos a la API para registrar la cuenta nueva
-        ApiSetup.Auth.Registrar(usuario, correo, password,
-            _ =>
-            {
-                // Registro correcto → hacemos login automático para no tener que
-                // pedirle al jugador que introduzca los datos otra vez
-                MostrarPanelCargando("Iniciando sesión...");
-                ApiSetup.Auth.Login(usuario, password,
-                    __ =>
-                    {
-                        // Login automático correcto → cargamos datos y entramos al juego
-                        MostrarPanelCargando("Cargando datos del juego...");
-                        CargarDatosYEntrarAlJuego();
-                    },
-                    err =>
-                    {
-                        // El registro fue bien pero el login automático falló
-                        // Mandamos al jugador al login para que entre manualmente
-                        MostrarPanelLogin();
-                        textoErrorLogin.text = "¡Cuenta creada! Ahora inicia sesión con tus datos.";
-                    });
-            },
-            err =>
-            {
-                // El registro falló → volvemos al panel de registro y mostramos el error
-                MostrarPanelRegistro();
+        ApiSetup.Auth.Registrar(usuarioIntroducido, correoIntroducido, passwordIntroducida,
+            ManejarRegistroExitoso, ManejarRegistroFallido);
 
-                if (err.Contains("[400]") || err.Contains("[409]") || err.Contains("[422]"))
-                    textoErrorRegistro.text = "Ese usuario o correo ya está en uso. Prueba con otro.";
-                else
-                    textoErrorRegistro.text = "Error de conexión. Inténtalo de nuevo.";
-            });
+        // Funcion local que se ejecuta si el registro fue correcto
+        // Despues del registro intentamos hacer login automaticamente
+        // para no pedirle al jugador que introduzca los datos otra vez
+        void ManejarRegistroExitoso(ApiRest.Models.UsuarioPublico usuarioCreado)
+        {
+            MostrarPanelCargando("Iniciando sesion...");
+
+            ApiSetup.Auth.Login(usuarioIntroducido, passwordIntroducida,
+                ManejarLoginAutomaticoExitoso, ManejarLoginAutomaticoFallido);
+        }
+
+        // Funcion local que se ejecuta cuando el login automatico tras el registro va bien
+        void ManejarLoginAutomaticoExitoso(ApiRest.Models.TokenResponse tokenRecibido)
+        {
+            MostrarPanelCargando("Cargando datos del juego...");
+            CargarDatosYEntrarAlJuego();
+        }
+
+        // Funcion local que se ejecuta si el login automatico fallo
+        // El registro ya fue bien asi que mandamos al jugador al login manual
+        void ManejarLoginAutomaticoFallido(string mensajeError)
+        {
+            MostrarPanelLogin();
+            textoErrorLogin.text = "Cuenta creada. Ahora inicia sesion con tus datos.";
+        }
+
+        // Funcion local que se ejecuta si el registro fallo
+        // Muestra un mensaje distinto segun el codigo de error del servidor
+        void ManejarRegistroFallido(string mensajeError)
+        {
+            MostrarPanelRegistro();
+
+            bool usuarioOCorreoYaExiste =
+                mensajeError.Contains("[400]") ||
+                mensajeError.Contains("[409]") ||
+                mensajeError.Contains("[422]");
+
+            if (usuarioOCorreoYaExiste)
+            {
+                textoErrorRegistro.text = "Ese usuario o correo ya esta en uso. Prueba con otro.";
+            }
+            else
+            {
+                textoErrorRegistro.text = "Error de conexion. Intentalo de nuevo.";
+            }
+        }
     }
 
-
-    // =========================================================================
-    // FUNCIONES AUXILIARES
-    // Pequeñas funciones de apoyo usadas por las funciones principales.
-    // =========================================================================
-
-    /// <summary>
-    /// Borra los mensajes de error de todos los paneles.
-    /// Se llama automáticamente cada vez que se cambia de panel.
-    /// </summary>
+    // Borra los mensajes de error de todos los paneles
+    // Se llama cada vez que se cambia de panel para empezar limpios
     private void LimpiarErrores()
     {
-        if (textoErrorLogin) textoErrorLogin.text = "";
-        if (textoErrorRegistro) textoErrorRegistro.text = "";
+        if (textoErrorLogin != null)
+        {
+            textoErrorLogin.text = "";
+        }
+        if (textoErrorRegistro != null)
+        {
+            textoErrorRegistro.text = "";
+        }
     }
 
-    /// <summary>
-    /// Una vez que el login o registro es correcto, cargamos los datos del juego
-    /// (catálogos de Pokémon, objetos, etc.) y después pasamos al menú principal.
-    /// </summary>
+    // Una vez que el login o el registro son correctos cargamos los catalogos del juego
+    // Cuando terminan de cargar pasamos a la escena del menu principal
     private void CargarDatosYEntrarAlJuego()
     {
-        // Comprobamos que el sistema de caché de datos esté disponible
+        // Comprobamos que el sistema de cache de catalogos este disponible
         if (CatalogoCache.Instance == null)
         {
-            Debug.LogError("[LoginUI] CatalogoCache no encontrado. Revisa que ApiSetup está bien configurado.");
+            Debug.LogError("[LoginUI] CatalogoCache no encontrado. Revisa que ApiSetup esta bien configurado.");
             MostrarPanelLogin();
             textoErrorLogin.text = "Error interno del juego. Contacta con el equipo.";
             return;
         }
 
-        // Cargamos los catálogos (datos del juego) desde el servidor
-        CatalogoCache.Instance.CargarCatalogos(
-            () =>
-            {
-                // Todo cargado correctamente → pasamos a la escena del menú principal
-                SceneManager.LoadScene(escenaMenuPrincipal);
-            },
-            err =>
-            {
-                // Error al cargar datos → volvemos al login con un mensaje explicativo
-                MostrarPanelLogin();
-                textoErrorLogin.text = "Error al cargar los datos del juego. Inténtalo de nuevo.";
-                Debug.LogError($"[LoginUI] Error cargando catálogos: {err}");
-            });
+        // Llamamos al cache para que descargue los catalogos desde el servidor
+        CatalogoCache.Instance.CargarCatalogos(ManejarCatalogosCargados, ManejarErrorCargandoCatalogos);
+
+        // Funcion local que se ejecuta cuando los catalogos terminan de descargarse
+        // Pasamos a la escena del menu principal
+        void ManejarCatalogosCargados()
+        {
+            SceneManager.LoadScene(escenaMenuPrincipal);
+        }
+
+        // Funcion local que se ejecuta si hubo un error descargando los catalogos
+        // Volvemos al login con un mensaje explicativo
+        void ManejarErrorCargandoCatalogos(string mensajeError)
+        {
+            MostrarPanelLogin();
+            textoErrorLogin.text = "Error al cargar los datos del juego. Intentalo de nuevo.";
+            Debug.LogError($"[LoginUI] Error cargando catalogos: {mensajeError}");
+        }
     }
 }

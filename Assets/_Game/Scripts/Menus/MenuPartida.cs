@@ -5,38 +5,42 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Controla toda la escena de Partidas.
-// Flujo: carga partidas → si tiene, muestra lista → si no, va directo a crear nueva.
-// Para crear nueva: PanelPartida (nombre) → PanelEleccionDePersonaje → juego.
+// Este script controla la escena donde el jugador elige que partida cargar
+// o crea una nueva eligiendo nombre y personaje
+// Flujo general:
+//   1. Al entrar pide al servidor la lista de partidas
+//   2. Si hay partidas muestra la lista, si no va directo a crear una nueva
+//   3. Para crear una nueva pasa por el panel de nombre y luego por el de eleccion de personaje
 public class MenuPartidas : MonoBehaviour
 {
-    [Header("Paneles (arrastra desde el Inspector)")]
-    public GameObject panelPartidas;            // El panel con la lista de partidas
-    public GameObject panelPartida;             // El panel con el InputField del nombre
-    public GameObject panelEleccionDePersonaje; // El panel con los dos botones de personaje
-    public GameObject panelCarga;               // Pantalla negra con "Cargando..."
+    // Paneles que se activan o desactivan segun lo que vaya haciendo el jugador
+    [Header("Paneles")]
+    public GameObject panelPartidas;
+    public GameObject panelPartida;
+    public GameObject panelEleccionDePersonaje;
+    public GameObject panelCarga;
 
+    // Componentes necesarios para mostrar la lista de partidas del jugador
     [Header("Lista de partidas")]
-    public Transform contenedorPartidas;        // El Content del ScrollView
-    public GameObject prefabPartida;            // El prefab de cada fila de partida
+    public Transform contenedorPartidas;
+    public GameObject prefabPartida;
 
+    // Texto que aparece en el panel de carga con el mensaje actual
     [Header("Texto de carga")]
-    public TextMeshProUGUI textoCarga;          // El texto "Cargando..." del PanelCarga
+    public TextMeshProUGUI textoCarga;
 
-    // Nombre que el jugador escribe en PanelPartida.
-    // Lo guarda el InputField llamando a GuardarNombre().
-    private string _nombrePartida = "Mi Partida";
+    // Nombre que el jugador escribe en el panel de partida
+    // Lo guarda el InputField llamando a GuardarNombre
+    private string nombrePartidaActual = "Mi Partida";
 
+    // Componente que se encarga de instanciar al personaje y cambiar de escena
     [Header("Personaje")]
     public CrearYPosicionarPlayer creadorPersonaje;
 
-    // ─────────────────────────────────────────────────────────
-    //  INICIO
-    // ─────────────────────────────────────────────────────────
-
+    // Se ejecuta automaticamente al arrancar la escena
     private void Start()
     {
-        // Liberar el cursor por si venía del juego
+        // Liberamos el cursor por si venia bloqueado desde el juego
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -44,224 +48,249 @@ public class MenuPartidas : MonoBehaviour
         CargarPartidas();
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CARGAR LISTA DE PARTIDAS
-    // ─────────────────────────────────────────────────────────
-
+    // Pide al servidor la lista de partidas del usuario y monta la interfaz segun el resultado
     private void CargarPartidas()
     {
-        ApiSetup.Partida.ListarPartidas(
-            onSuccess: lista =>
+        ApiSetup.Partida.ListarPartidas(ManejarListaPartidasRecibida, ManejarErrorListaPartidas);
+
+        // Funcion local que se ejecuta cuando el servidor devuelve la lista de partidas
+        // Si esta vacia pasa directo al panel de creacion de partida
+        // Si tiene partidas crea una entrada por cada una y muestra la lista
+        void ManejarListaPartidasRecibida(List<PartidaResumen> listaRecibida)
+        {
+            LimpiarLista();
+
+            bool noTienePartidas = listaRecibida.Count == 0;
+            if (noTienePartidas)
             {
-                // Vaciar el contenedor antes de rellenar
-                LimpiarLista();
+                MostrarPanel(panelPartida);
+                return;
+            }
 
-                if (lista.Count == 0)
-                {
-                    // Sin partidas → ir directo a crear una nueva
-                    MostrarPanel(panelPartida);
-                    return;
-                }
-
-                // Hay partidas → mostrar la lista
-                foreach (var partida in lista)
-                    CrearEntradaEnLista(partida);
-
-                MostrarPanel(panelPartidas);
-            },
-            onError: error =>
+            foreach (PartidaResumen partida in listaRecibida)
             {
-                Debug.LogError($"Error al cargar partidas: {error}");
+                CrearEntradaEnLista(partida);
+            }
 
-                // Si el token expiró, volver al login
-                if (error.Contains("401"))
-                {
-                    SceneManager.LoadScene("Login");
-                    return;
-                }
+            MostrarPanel(panelPartidas);
+        }
 
-                // Cualquier otro error: mostrar la lista vacía
-                MostrarPanel(panelPartidas);
-            });
+        // Funcion local que se ejecuta si hubo un error al pedir la lista al servidor
+        // Si el token ha caducado volvemos al login, si no mostramos la lista vacia
+        void ManejarErrorListaPartidas(string mensajeError)
+        {
+            Debug.LogError($"Error al cargar partidas: {mensajeError}");
+
+            bool tokenExpirado = mensajeError.Contains("401");
+            if (tokenExpirado)
+            {
+                SceneManager.LoadScene("Login");
+                return;
+            }
+
+            MostrarPanel(panelPartidas);
+        }
     }
 
-    // Instancia un prefab por cada partida y lo configura
+    // Instancia el prefab de una partida en el contenedor y le pasa los callbacks
     private void CrearEntradaEnLista(PartidaResumen partida)
     {
-        var entrada = Instantiate(prefabPartida, contenedorPartidas);
-        var script = entrada.GetComponent<PartidaEntryUI>();
+        GameObject entradaInstanciada = Instantiate(prefabPartida, contenedorPartidas);
+        PartidaEntryUI controladorEntrada = entradaInstanciada.GetComponent<PartidaEntryUI>();
 
-        script.Inicializar(
-            partida,
-            onSeleccionar: CargarPartida,   // Al pulsar la entrada → cargar esa partida
-            onEliminar: EliminarPartida  // Al pulsar la X → borrarla
-        );
+        // Al pulsar la entrada se llama a CargarPartida
+        // Al pulsar el boton de la X se llama a EliminarPartida
+        controladorEntrada.Inicializar(partida, CargarPartida, EliminarPartida);
     }
 
+    // Destruye todos los hijos del contenedor de la lista
+    // Se usa para vaciar la lista antes de volver a rellenarla
     private void LimpiarLista()
     {
         foreach (Transform hijo in contenedorPartidas)
+        {
             Destroy(hijo.gameObject);
+        }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CARGAR UNA PARTIDA EXISTENTE
-    // ─────────────────────────────────────────────────────────
-
-    private void CargarPartida(PartidaResumen resumen)
+    // Carga una partida existente a partir de su resumen
+    // Hace dos llamadas al servidor, primero pide los datos completos y despues guarda
+    // la partida para incrementar el contador de veces que se ha entrado
+    private void CargarPartida(PartidaResumen resumenPartida)
     {
         MostrarCarga("Cargando partida...");
 
-        // Primero obtenemos los datos completos de la partida
-        ApiSetup.Partida.ObtenerPartida(resumen.id,
-            onSuccess: partida =>
-            {
-                MostrarCarga("Guardando progreso...");
+        ApiSetup.Partida.ObtenerPartida(resumenPartida.id,
+            ManejarPartidaCompletaRecibida, ManejarErrorObtenerPartida);
 
-                // Construimos el body del PUT con todos los campos que pide la API,
-                // solo incrementamos tiempo_jugado en 1 (lo usamos como contador de entradas)
-                var datosGuardar = new GuardarPartidaRequest
-                {
-                    mapa_actual = partida.mapa_actual,
-                    posicion = partida.posicion,
-                    dinero = partida.dinero,
-                    tiempo_jugado = partida.tiempo_jugado + 1, // +1 cada vez que se entra
-                    pokedex_visto = partida.pokedex_visto,
-                    pokedex_capturado = partida.pokedex_capturado,
-                    medallas = partida.medallas,
-                    logros = partida.logros,
-                    combates_ganados = partida.combates_ganados,
-                    combates_perdidos = partida.combates_perdidos,
-                    flags = partida.flags,
-                };
+        // Funcion local que se ejecuta cuando se reciben los datos completos de la partida
+        // Prepara la peticion de guardado para incrementar el contador y llama a la API
+        void ManejarPartidaCompletaRecibida(PartidaCompleta partidaRecibida)
+        {
+            MostrarCarga("Guardando progreso...");
 
-                ApiSetup.Partida.GuardarPartida(partida.id, datosGuardar,
-onSuccess: partidaActualizada =>
-{
-    SessionManager.Instance.IniciarConPartida(partidaActualizada, new List<IbermonJugador>());
-    string escena = string.IsNullOrEmpty(partidaActualizada.mapa_actual) ? "CasaPersonaje" : partidaActualizada.mapa_actual;
-    creadorPersonaje.escenaDestino = escena; // por si la escena varía según la partida
-    creadorPersonaje.crearEInstanciarPersonaje();
-},
-onError: error =>
-{
-    Debug.LogWarning($"No se pudo incrementar el contador: {error}");
-    SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
-    string escena = string.IsNullOrEmpty(partida.mapa_actual) ? "CasaPersonaje" : partida.mapa_actual;
-    creadorPersonaje.escenaDestino = escena;
-    creadorPersonaje.crearEInstanciarPersonaje();
-});
-            },
-            onError: error =>
+            // Construimos la peticion de guardado copiando todos los datos actuales
+            // y sumando uno al tiempo jugado como contador de entradas
+            GuardarPartidaRequest datosGuardar = new GuardarPartidaRequest
             {
-                Debug.LogError($"Error al cargar partida: {error}");
-                MostrarPanel(panelPartidas);
-            });
+                mapa_actual = partidaRecibida.mapa_actual,
+                posicion = partidaRecibida.posicion,
+                dinero = partidaRecibida.dinero,
+                tiempo_jugado = partidaRecibida.tiempo_jugado + 1,
+                pokedex_visto = partidaRecibida.pokedex_visto,
+                pokedex_capturado = partidaRecibida.pokedex_capturado,
+                medallas = partidaRecibida.medallas,
+                logros = partidaRecibida.logros,
+                combates_ganados = partidaRecibida.combates_ganados,
+                combates_perdidos = partidaRecibida.combates_perdidos,
+                flags = partidaRecibida.flags,
+            };
+
+            ApiSetup.Partida.GuardarPartida(partidaRecibida.id, datosGuardar,
+                ManejarGuardadoExitoso, ManejarGuardadoFallido);
+
+            // Funcion local que se ejecuta cuando el guardado con el contador incrementado va bien
+            // Iniciamos la sesion con la partida ya actualizada y cambiamos de escena
+            void ManejarGuardadoExitoso(PartidaCompleta partidaActualizada)
+            {
+                SessionManager.Instance.IniciarConPartida(partidaActualizada, new List<IbermonJugador>());
+
+                string escenaDestino = ElegirEscenaDestino(partidaActualizada.mapa_actual);
+                creadorPersonaje.escenaDestino = escenaDestino;
+                creadorPersonaje.crearEInstanciarPersonaje();
+            }
+
+            // Funcion local que se ejecuta si el guardado fallo
+            // Aunque no se haya actualizado el contador, arrancamos la partida con los datos originales
+            void ManejarGuardadoFallido(string mensajeError)
+            {
+                Debug.LogWarning($"No se pudo incrementar el contador: {mensajeError}");
+
+                SessionManager.Instance.IniciarConPartida(partidaRecibida, new List<IbermonJugador>());
+
+                string escenaDestino = ElegirEscenaDestino(partidaRecibida.mapa_actual);
+                creadorPersonaje.escenaDestino = escenaDestino;
+                creadorPersonaje.crearEInstanciarPersonaje();
+            }
+        }
+
+        // Funcion local que se ejecuta si no se pudo obtener la partida del servidor
+        // Volvemos a mostrar la lista de partidas
+        void ManejarErrorObtenerPartida(string mensajeError)
+        {
+            Debug.LogError($"Error al cargar partida: {mensajeError}");
+            MostrarPanel(panelPartidas);
+        }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  ELIMINAR UNA PARTIDA
-    // ─────────────────────────────────────────────────────────
+    // Devuelve la escena a la que se debe ir segun el mapa guardado
+    // Si no hay mapa guardado va a CasaPersonaje por defecto
+    private string ElegirEscenaDestino(string mapaGuardado)
+    {
+        bool mapaVacio = string.IsNullOrEmpty(mapaGuardado);
+        return mapaVacio ? "CasaPersonaje" : mapaGuardado;
+    }
 
-    private void EliminarPartida(PartidaResumen resumen)
+    // Borra una partida del servidor y recarga la lista
+    private void EliminarPartida(PartidaResumen resumenPartida)
     {
         MostrarCarga("Eliminando partida...");
 
-        ApiSetup.Partida.EliminarPartida(resumen.id,
-            onSuccess: () =>
-            {
-                // Recargar la lista tras borrar
-                CargarPartidas();
-            },
-            onError: error =>
-            {
-                Debug.LogError($"Error al eliminar partida: {error}");
-                MostrarPanel(panelPartidas);
-            });
+        ApiSetup.Partida.EliminarPartida(resumenPartida.id,
+            ManejarEliminacionExitosa, ManejarEliminacionFallida);
+
+        // Funcion local que se ejecuta cuando la partida se borra bien
+        // Recargamos la lista para que el jugador vea el cambio
+        void ManejarEliminacionExitosa()
+        {
+            CargarPartidas();
+        }
+
+        // Funcion local que se ejecuta si no se pudo borrar la partida
+        void ManejarEliminacionFallida(string mensajeError)
+        {
+            Debug.LogError($"Error al eliminar partida: {mensajeError}");
+            MostrarPanel(panelPartidas);
+        }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CREAR NUEVA PARTIDA (flujo de 2 pasos)
-    // ─────────────────────────────────────────────────────────
-
-    // Llamado por el InputField del PanelPartida con OnValueChanged o por el botón Continuar.
-    // Conecta el InputField al Inspector o llama este método desde un botón con SendMessage.
-    public void GuardarNombre(string nombre)
+    // Metodo que llama el InputField del panel de partida cuando el jugador escribe el nombre
+    // Si el jugador no escribe nada dejamos el nombre por defecto
+    public void GuardarNombre(string nombreIntroducido)
     {
-        // Guardamos el nombre aunque de momento no lo enviemos a la API
-        _nombrePartida = string.IsNullOrWhiteSpace(nombre) ? "Mi Partida" : nombre;
+        bool nombreVacio = string.IsNullOrWhiteSpace(nombreIntroducido);
+        nombrePartidaActual = nombreVacio ? "Mi Partida" : nombreIntroducido;
     }
 
-    // Botón "Continuar" del PanelPartida → ir a elegir personaje
+    // Boton Continuar del panel de partida que lleva al panel de eleccion de personaje
     public void OnContinuar()
     {
         MostrarPanel(panelEleccionDePersonaje);
     }
 
-    // Botón "Torrente" del PanelEleccionDePersonaje
+    // Boton del panel de eleccion para elegir al personaje Torrente
     public void OnElegirTorrente()
     {
         CrearPartidaConPersonaje("torrente");
     }
 
-    // Botón "Personaje1" del PanelEleccionDePersonaje
+    // Boton del panel de eleccion para elegir al otro personaje
     public void OnElegirPersonaje1()
     {
         CrearPartidaConPersonaje("personaje1");
     }
 
-    // Llama a la API para crear la partida y arranca el juego
-    private void CrearPartidaConPersonaje(string personaje)
+    // Llama a la API para crear la partida con el personaje elegido y arranca el juego
+    private void CrearPartidaConPersonaje(string personajeElegido)
     {
         MostrarCarga("Creando partida...");
 
-        // Starter hardcodeado a 1 de momento (luego lo haremos bien)
+        // De momento el starter esta fijado al valor 1
+        // En el futuro se hara una pantalla para elegirlo
         const int starterHardcodeado = 1;
 
-        ApiSetup.Partida.CrearPartida(personaje, starterHardcodeado,
-onSuccess: partida =>
-{
-    SessionManager.Instance.IniciarConPartida(partida, new List<IbermonJugador>());
-    creadorPersonaje.escenaDestino = "CasaPersonaje";
-    creadorPersonaje.crearEInstanciarPersonaje();
-},
-            onError: error =>
-            {
-                Debug.LogError($"Error al crear partida: {error}");
-                MostrarPanel(panelEleccionDePersonaje);
-            });
+        ApiSetup.Partida.CrearPartida(personajeElegido, starterHardcodeado,
+            ManejarPartidaCreada, ManejarErrorCreacion);
+
+        // Funcion local que se ejecuta cuando el servidor crea la partida correctamente
+        // Inicia la sesion con los datos recibidos y carga la casa del personaje
+        void ManejarPartidaCreada(PartidaCompleta partidaCreada)
+        {
+            SessionManager.Instance.IniciarConPartida(partidaCreada, new List<IbermonJugador>());
+            creadorPersonaje.escenaDestino = "CasaPersonaje";
+            creadorPersonaje.crearEInstanciarPersonaje();
+        }
+
+        // Funcion local que se ejecuta si el servidor devuelve error al crear la partida
+        void ManejarErrorCreacion(string mensajeError)
+        {
+            Debug.LogError($"Error al crear partida: {mensajeError}");
+            MostrarPanel(panelEleccionDePersonaje);
+        }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  BOTONES GENERALES
-    // ─────────────────────────────────────────────────────────
-
-    // Botón "Nueva" del PanelPartidas → ir a escribir el nombre
+    // Boton Nueva del panel de partidas que lleva al panel donde se escribe el nombre
     public void OnNuevaPartida()
     {
         MostrarPanel(panelPartida);
     }
 
-    // Botón "Volver" de cualquier panel → volver al menú principal
+    // Boton Volver que devuelve al jugador al menu principal
     public void OnVolver()
     {
         SceneManager.LoadScene("MenuPrincipal");
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  HELPERS DE PANELES
-    // ─────────────────────────────────────────────────────────
-
-    // Muestra solo el panel indicado y oculta el resto
-    private void MostrarPanel(GameObject panel)
+    // Activa solo el panel indicado y desactiva los demas
+    private void MostrarPanel(GameObject panelAMostrar)
     {
-        panelPartidas.SetActive(panel == panelPartidas);
-        panelPartida.SetActive(panel == panelPartida);
-        panelEleccionDePersonaje.SetActive(panel == panelEleccionDePersonaje);
+        panelPartidas.SetActive(panelAMostrar == panelPartidas);
+        panelPartida.SetActive(panelAMostrar == panelPartida);
+        panelEleccionDePersonaje.SetActive(panelAMostrar == panelEleccionDePersonaje);
         panelCarga.SetActive(false);
     }
 
-    // Muestra la pantalla de carga con el mensaje indicado
+    // Muestra el panel de carga con un mensaje concreto y oculta los demas
     private void MostrarCarga(string mensaje)
     {
         panelPartidas.SetActive(false);
@@ -270,6 +299,8 @@ onSuccess: partida =>
         panelCarga.SetActive(true);
 
         if (textoCarga != null)
+        {
             textoCarga.text = mensaje;
+        }
     }
 }

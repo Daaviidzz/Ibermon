@@ -6,57 +6,92 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    // Endpoints bajo /partidas/{partida_id}/ibermon/
+    // Servicio que gestiona los ibermon del jugador dentro de una partida
+    // Todos los endpoints estan bajo /partidas/{partida_id}/ibermon/
     public class IbermonJugadorService : MonoBehaviour
     {
+        // Acceso rapido al ApiManager
         private ApiManager Api => ApiManager.Instance;
 
-        // Los ibermon del equipo activo
+        // Obtiene la lista de ibermon que estan en el equipo activo del jugador
         public void ObtenerEquipo(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
-            Api.GetAuth($"/partidas/{partidaId}/ibermon/equipo",
-                raw => onSuccess?.Invoke(ParseList(raw)),
-                onError);
+            Api.GetAuth($"/partidas/{partidaId}/ibermon/equipo", ManejarListaEquipo, onError);
+
+            // Funcion local que convierte el JSON en una lista de ibermon
+            void ManejarListaEquipo(string respuestaJson)
+            {
+                List<IbermonJugador> equipo = ParsearLista(respuestaJson);
+                onSuccess?.Invoke(equipo);
+            }
         }
 
-        // Los ibermon guardados en el centro — no se usan en combate
+        // Obtiene la lista de ibermon guardados en el centro
+        // Estos ibermon no pueden usarse en combate hasta que se muevan al equipo
         public void ObtenerCentro(string partidaId,
             Action<List<IbermonJugador>> onSuccess, Action<string> onError)
         {
-            Api.GetAuth($"/partidas/{partidaId}/ibermon/centro",
-                raw => onSuccess?.Invoke(ParseList(raw)),
-                onError);
+            Api.GetAuth($"/partidas/{partidaId}/ibermon/centro", ManejarListaCentro, onError);
+
+            // Funcion local que convierte el JSON en una lista de ibermon
+            void ManejarListaCentro(string respuestaJson)
+            {
+                List<IbermonJugador> centro = ParsearLista(respuestaJson);
+                onSuccess?.Invoke(centro);
+            }
         }
 
-        // Capturar un ibermon nuevo
+        // Anade un ibermon nuevo al jugador cuando lo captura en un combate
         public void AnadirIbermon(string partidaId, IbermonJugadorCrearRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
             Api.PostAuth($"/partidas/{partidaId}/ibermon/", JsonUtility.ToJson(datos),
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
-                onError);
+                ManejarIbermonCreado, onError);
+
+            // Funcion local que deserializa el ibermon creado y lo pasa al callback
+            void ManejarIbermonCreado(string respuestaJson)
+            {
+                IbermonJugador ibermonNuevo = JsonUtility.FromJson<IbermonJugador>(respuestaJson);
+                onSuccess?.Invoke(ibermonNuevo);
+            }
         }
 
-        // Mover un ibermon entre equipo y centro
+        // Mueve un ibermon entre el equipo y el centro
         public void MoverIbermon(string partidaId, string ibermonId, string ubicacion,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            var body = new IbermonJugadorMoverRequest { ubicacion = ubicacion };
-            Api.PatchAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/mover", JsonUtility.ToJson(body),
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
-                onError);
+            // Preparamos la peticion con la nueva ubicacion
+            IbermonJugadorMoverRequest peticion = new IbermonJugadorMoverRequest { ubicacion = ubicacion };
+
+            Api.PatchAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/mover",
+                JsonUtility.ToJson(peticion), ManejarIbermonMovido, onError);
+
+            // Funcion local que deserializa el ibermon con la ubicacion actualizada
+            void ManejarIbermonMovido(string respuestaJson)
+            {
+                IbermonJugador ibermonActualizado = JsonUtility.FromJson<IbermonJugador>(respuestaJson);
+                onSuccess?.Invoke(ibermonActualizado);
+            }
         }
 
-        // Actualizar stats después de un combate (HP, nivel, exp, movimientos)
+        // Actualiza las estadisticas de un ibermon despues de un combate
+        // Se envia el HP actual, nivel, experiencia y los movimientos aprendidos
         public void ActualizarIbermon(string partidaId, string ibermonId, IbermonJugadorActualizarRequest datos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            Api.PatchAuth($"/partidas/{partidaId}/ibermon/{ibermonId}", JsonUtility.ToJson(datos),
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
-                onError);
+            Api.PatchAuth($"/partidas/{partidaId}/ibermon/{ibermonId}",
+                JsonUtility.ToJson(datos), ManejarIbermonActualizado, onError);
+
+            // Funcion local que deserializa el ibermon con los nuevos datos
+            void ManejarIbermonActualizado(string respuestaJson)
+            {
+                IbermonJugador ibermonActualizado = JsonUtility.FromJson<IbermonJugador>(respuestaJson);
+                onSuccess?.Invoke(ibermonActualizado);
+            }
         }
 
+        // Libera un ibermon borrandolo de la partida
         public void EliminarIbermon(string partidaId, string ibermonId,
             Action onSuccess, Action<string> onError)
         {
@@ -64,30 +99,41 @@ namespace ApiRest.Services
         }
 
         // Reemplaza la lista completa de movimientos de un ibermon
-        public void ActualizarMovimientos(string partidaId, string ibermonId, List<MovimientoAprendido> movimientos,
+        // Se usa por ejemplo cuando el jugador decide cambiar los movimientos tras subir de nivel
+        public void ActualizarMovimientos(string partidaId, string ibermonId,
+            List<MovimientoAprendido> movimientos,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            // JsonUtility no serializa listas sueltas, hay que construirlo a mano
-            var sb = new System.Text.StringBuilder("[");
-            for (int i = 0; i < movimientos.Count; i++)
+            // JsonUtility no puede serializar listas sueltas, asi que construimos el JSON a mano
+            string jsonMovimientos = ConstruirJsonMovimientos(movimientos);
+
+            Api.PutAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos",
+                jsonMovimientos, ManejarMovimientosActualizados, onError);
+
+            // Funcion local que deserializa el ibermon con los nuevos movimientos
+            void ManejarMovimientosActualizados(string respuestaJson)
             {
-                if (i > 0) sb.Append(",");
-                sb.Append($"{{\"numero\":{movimientos[i].numero},\"pp\":{movimientos[i].pp}}}");
+                IbermonJugador ibermonActualizado = JsonUtility.FromJson<IbermonJugador>(respuestaJson);
+                onSuccess?.Invoke(ibermonActualizado);
             }
-            sb.Append("]");
-            Api.PutAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos", sb.ToString(),
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
-                onError);
         }
 
+        // Hace que un ibermon aprenda un movimiento nuevo por su numero
         public void AprenderMovimiento(string partidaId, string ibermonId, int numeroMovimiento,
             Action<IbermonJugador> onSuccess, Action<string> onError)
         {
-            Api.PostAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos/{numeroMovimiento}", "{}",
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<IbermonJugador>(raw)),
-                onError);
+            Api.PostAuth($"/partidas/{partidaId}/ibermon/{ibermonId}/movimientos/{numeroMovimiento}",
+                "{}", ManejarMovimientoAprendido, onError);
+
+            // Funcion local que deserializa el ibermon con el movimiento anadido
+            void ManejarMovimientoAprendido(string respuestaJson)
+            {
+                IbermonJugador ibermonActualizado = JsonUtility.FromJson<IbermonJugador>(respuestaJson);
+                onSuccess?.Invoke(ibermonActualizado);
+            }
         }
 
+        // Hace que un ibermon olvide un movimiento por su numero
         public void OlvidarMovimiento(string partidaId, string ibermonId, int numeroMovimiento,
             Action onSuccess, Action<string> onError)
         {
@@ -95,13 +141,42 @@ namespace ApiRest.Services
                 onSuccess, onError);
         }
 
-        private List<IbermonJugador> ParseList(string raw)
+        // Metodo auxiliar que envuelve el JSON y lo convierte en una lista de IbermonJugador
+        private List<IbermonJugador> ParsearLista(string respuestaJson)
         {
-            var w = JsonUtility.FromJson<Wrapper>("{\"items\":" + raw + "}");
-            return w.items;
+            // Envolvemos la lista en un objeto para que JsonUtility pueda leerla
+            string jsonEnvuelto = "{\"items\":" + respuestaJson + "}";
+            EnvoltorioLista envoltorio = JsonUtility.FromJson<EnvoltorioLista>(jsonEnvuelto);
+            return envoltorio.items;
         }
 
+        // Metodo auxiliar que construye a mano el JSON de una lista de movimientos
+        // Se hace asi porque JsonUtility no sabe serializar listas en la raiz del JSON
+        private string ConstruirJsonMovimientos(List<MovimientoAprendido> movimientos)
+        {
+            System.Text.StringBuilder constructorJson = new System.Text.StringBuilder("[");
+
+            for (int indice = 0; indice < movimientos.Count; indice++)
+            {
+                // Si no es el primero anadimos una coma para separar los elementos
+                if (indice > 0)
+                {
+                    constructorJson.Append(",");
+                }
+
+                MovimientoAprendido movimientoActual = movimientos[indice];
+                constructorJson.Append($"{{\"numero\":{movimientoActual.numero},\"pp\":{movimientoActual.pp}}}");
+            }
+
+            constructorJson.Append("]");
+            return constructorJson.ToString();
+        }
+
+        // Clase envoltorio privada para deserializar la lista de ibermon
         [Serializable]
-        private class Wrapper { public List<IbermonJugador> items; }
+        private class EnvoltorioLista
+        {
+            public List<IbermonJugador> items;
+        }
     }
 }
