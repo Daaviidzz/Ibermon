@@ -78,8 +78,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1322852105
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5336810217464923478, guid: 6ebc57cc5cd1c63429eb1f0bff75f033, type: 3}
@@ -126,6 +126,9 @@ GameObject:
   - component: {fileID: 240094060352948532}
   - component: {fileID: 1733736266520160308}
   - component: {fileID: 8662402556250563169}
+  - component: {fileID: 3250796333561274649}
+  - component: {fileID: 6886886233399424399}
+  - component: {fileID: -4419854742043416425}
   m_Layer: 0
   m_Name: Personaje1
   m_TagString: Player
@@ -142,8 +145,8 @@ Transform:
   m_GameObject: {fileID: 6019570471271983842}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.3, y: -4.88, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -33.3, y: -4.88, z: 0.71937}
+  m_LocalScale: {x: 1.107871, y: 1.0861481, z: 1.0861481}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1638880088318444381}
@@ -162,6 +165,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 466feb8e7579f7241b11ecc2ca157ee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movimiento
+  grassLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  probabilidad: 60
+  tiempoEntreChequeos: 0.5
+  estaEnInteraccion: 0
+  joystick: {fileID: 0}
+  botonCorrer: {fileID: 0}
+  botonMenuOpciones: {fileID: 0}
 --- !u!70 &1733736266520160308
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -196,8 +208,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.008401871, y: 0.042452097}
-  m_Size: {x: 0.31916428, y: 0.6853576}
+  m_Offset: {x: 0.0032615662, y: 0.0016233921}
+  m_Size: {x: 0.6691284, y: 1.0003238}
   m_Direction: 0
 --- !u!50 &8662402556250563169
 Rigidbody2D:
@@ -226,6 +238,49 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &3250796333561274649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019570471271983842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9596569de8971f41a0504ee8005489f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::JugadorSpawn
+--- !u!114 &6886886233399424399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019570471271983842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0085f10bf9a207b4bb1f4a38d91f1b18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PokemonParty
+  pokemons: []
+  esEquipoJugador: 1
+--- !u!114 &-4419854742043416425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019570471271983842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d1ae3ce09a0eba429d487b9033cc406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacterController
+  grassLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  probabilidad: 60
+  tiempoEntreChequeos: 0.5
 --- !u!1 &7430362879569147850
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +348,7 @@ Camera:
     height: 1
   near clip plane: 4
   far clip plane: 5000
-  field of view: 93.9
+  field of view: 60
   orthographic: 0
   orthographic size: 9
   m_Depth: -1
