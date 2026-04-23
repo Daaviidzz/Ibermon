@@ -1,30 +1,70 @@
+ï»¿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CrearYPosicionarPlayer : MonoBehaviour
 {
-    //Variable que almacena el número de la escena de destino
-    //también podría ser un String y poner el nombre de la escena
+    // Escena a la que se navegara despues de instanciar al personaje
     public string escenaDestino;
-    //Variable que guarda donde aparecerá el personaje
+
+    // Posicion donde aparecera el personaje al entrar en la escena
     public Vector2 posicionSpawn;
 
-    //El personaje a cargar
-    public GameObject personaje;
+    // Lista de personajes disponibles, asignar desde el editor en el mismo orden
+    // que los identificadores de personaje que devuelve la API
+    // Ejemplo: indice 0 â†’ "torrente", indice 1 â†’ "personaje1"
+    public List<GameObject> personajes;
+
+    // Identificador del personaje activo, se asigna antes de llamar a crearEInstanciarPersonaje
+    // Debe coincidir con el valor de personaje_elegido que devuelve la API
+    [HideInInspector]
+    public string personajeElegido;
+
+    // Devuelve el prefab que corresponde al identificador dado
+    // Si no se reconoce el identificador usa el primero de la lista como fallback
+    private GameObject ObtenerPrefabPersonaje(string identificador)
+    {
+        // Mapeamos el nombre del personaje a su indice en la lista
+        // El orden debe coincidir con el que hayas puesto en el inspector
+        Dictionary<string, int> indicesPorNombre = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "torrente",    0 },
+            { "personaje1",  1 },
+        };
+
+        bool encontrado = indicesPorNombre.TryGetValue(identificador, out int indice);
+
+        if (!encontrado || indice >= personajes.Count)
+        {
+            Debug.LogWarning($"[CrearYPosicionarPlayer] Personaje '{identificador}' no reconocido, usando el primero de la lista");
+            return personajes.Count > 0 ? personajes[0] : null;
+        }
+
+        return personajes[indice];
+    }
 
     public void crearEInstanciarPersonaje()
     {
-        // Instanciamos el personaje SOLO si no existe ya
-        if (GameObject.FindWithTag("Player") == null)
+        // Obtenemos el prefab que corresponde al personaje elegido en la partida
+        GameObject prefab = ObtenerPrefabPersonaje(personajeElegido);
+
+        if (prefab == null)
         {
-            Instantiate(personaje);
+            Debug.LogError("[CrearYPosicionarPlayer] No hay personajes en la lista, no se puede instanciar");
+            return;
         }
 
-        //Le asignamos la posición al jugador
+        // Instanciamos el personaje solo si no existe ya en la escena
+        if (GameObject.FindWithTag("Player") == null)
+        {
+            Instantiate(prefab);
+        }
+
+        // Asignamos la posicion donde aparecera el jugador
         JugadorSpawn.posicion = posicionSpawn;
 
-        //Como esta escena sería la 0 la del menú principal y queremos acceder a la del juego que sería la siguiente
-        //la escena a la que queremos acceder será la 1 (la de la casa del personaje)
+        // Navegamos a la escena de destino
         SceneManager.LoadScene(escenaDestino);
     }
 }

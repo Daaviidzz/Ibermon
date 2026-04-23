@@ -6,24 +6,24 @@ using UnityEngine.UI;
 
 // Componente del prefab de cada fila en la lista de partidas.
 //
-// Estructura mínima del prefab:
+// Estructura minima del prefab:
 //   - Button (el fondo, todo el prefab es clicable)
-//       - TextoNombre   (TextMeshProUGUI) → "Partida 1"
-//       - TextoFecha    (TextMeshProUGUI) → "Última vez: 16/04/2026"
+//       - TextoNombre   (TextMeshProUGUI) → nombre de la partida
+//       - TextoTiempo   (TextMeshProUGUI) → tiempo jugado formateado
 //       - BotonEliminar (Button)          → la X para borrar
 public class PartidaEntryUI : MonoBehaviour
 {
     [Header("UI del prefab")]
-    public TextMeshProUGUI textoNombre;   // Mostrará "Partida 1", "Partida 2"...
-    public TextMeshProUGUI textoFecha;    // Mostrará la fecha de última modificación
-    public Button botonEliminar; // El botón X para borrar
+    public TextMeshProUGUI textoNombre;  // Mostrara el nombre de la partida
+    public TextMeshProUGUI textoTiempo; // Mostrara el tiempo jugado formateado
+    public Button botonEliminar;        // El boton X para borrar
 
     // Guardamos los callbacks para usarlos al pulsar
     private Action<PartidaResumen> _onSeleccionar;
     private Action<PartidaResumen> _onEliminar;
     private PartidaResumen _datos;
 
-    // MenuPartidas llama a este método nada más instanciar el prefab
+    // MenuPartidas llama a este metodo nada mas instanciar el prefab
     public void Inicializar(
         PartidaResumen partida,
         Action<PartidaResumen> onSeleccionar,
@@ -33,23 +33,24 @@ public class PartidaEntryUI : MonoBehaviour
         _onSeleccionar = onSeleccionar;
         _onEliminar = onEliminar;
 
-        int numero = transform.GetSiblingIndex() + 1;
-        textoNombre.text = $"Partida {numero}";
-        textoFecha.text = $"Veces jugada: {partida.tiempo_jugado}";
+        textoNombre.text = partida.nombre;
+        textoTiempo.text = FormatearTiempo(partida.tiempo_jugado);
 
-        // Mostrar el botón de eliminar (si no quisiéramos mostrarlo en algún caso, aquí lo ocultaríamos)
+        // Mostrar el boton de eliminar (si no quisieramos mostrarlo en algun caso, aqui lo ocultariamos)
         botonEliminar.gameObject.SetActive(true);
     }
 
-    // Conecta este método al OnClick del Button principal del prefab (el fondo)
-    public void OnClickSeleccionar()
+    // Formatea los segundos en horas y minutos para mostrar al jugador
+    private string FormatearTiempo(int segundos)
     {
-        _onSeleccionar?.Invoke(_datos);
+        int horas = segundos / 3600;
+        int minutos = (segundos % 3600) / 60;
+        return $"{horas}h {minutos}m jugadas";
     }
 
-    // Conecta este método al OnClick del BotonEliminar
-    public void OnClickEliminar()
-    {
-        _onEliminar?.Invoke(_datos);
-    }
+    // Conecta este metodo al OnClick del Button principal del prefab (el fondo)
+    public void OnClickSeleccionar() => _onSeleccionar?.Invoke(_datos);
+
+    // Conecta este metodo al OnClick del BotonEliminar
+    public void OnClickEliminar() => _onEliminar?.Invoke(_datos);
 }

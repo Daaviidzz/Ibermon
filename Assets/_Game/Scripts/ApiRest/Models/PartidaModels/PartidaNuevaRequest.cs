@@ -1,12 +1,12 @@
 using System;
 
+//para la nueva partida (la petición post basicamente)
 namespace ApiRest.Models
 {
-    // Datos para crear una nueva partida
-    [Serializable]
-    public class PartidaNuevaRequest
-    {
-        public string personaje_elegido;
-        public int starter_elegido;
-    }
+        [Serializable]
+        public class PartidaNuevaRequest
+        {
+            public string nombre;
+            public string personaje_elegido;
+        }
 }

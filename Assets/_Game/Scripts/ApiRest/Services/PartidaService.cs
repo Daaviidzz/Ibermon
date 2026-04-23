@@ -9,6 +9,7 @@ namespace ApiRest.Services
     // Servicio que gestiona las partidas del jugador en el servidor
     // Endpoints:
     //   POST   /partidas/
+    //   POST   /partidas/{id}/starter
     //   GET    /partidas/
     //   GET    /partidas/{id}
     //   PUT    /partidas/{id}/guardar
@@ -19,15 +20,16 @@ namespace ApiRest.Services
         // Acceso rapido al ApiManager
         private ApiManager Api => ApiManager.Instance;
 
-        // Crea una partida nueva en el servidor con el personaje y starter elegidos
-        public void CrearPartida(string personajeElegido, int starterElegido,
+        // Crea una partida nueva en el servidor con el nombre y personaje elegidos
+        // El starter se elige despues en un endpoint separado
+        public void CrearPartida(string nombre, string personajeElegido,
             Action<PartidaCompleta> onSuccess, Action<string> onError)
         {
             // Preparamos la peticion con los datos iniciales de la partida
             PartidaNuevaRequest peticion = new PartidaNuevaRequest
             {
-                personaje_elegido = personajeElegido,
-                starter_elegido = starterElegido
+                nombre = nombre,
+                personaje_elegido = personajeElegido
             };
 
             Api.PostAuth("/partidas/", JsonUtility.ToJson(peticion),
@@ -38,6 +40,25 @@ namespace ApiRest.Services
             {
                 PartidaCompleta partidaNueva = JsonUtility.FromJson<PartidaCompleta>(respuestaJson);
                 onSuccess?.Invoke(partidaNueva);
+            }
+        }
+
+        // Asigna el starter a una partida ya creada
+        // Solo se puede llamar una vez por partida, el servidor devuelve 400 si ya tiene starter
+        public void ElegirStarter(string partidaId, int starterNumero,
+            Action<PartidaCompleta> onSuccess, Action<string> onError)
+        {
+            // Construimos el body manualmente porque es un objeto muy simple
+            string body = $"{{\"starter_elegido\":{starterNumero}}}";
+
+            Api.PostAuth($"/partidas/{partidaId}/starter", body,
+                ManejarStarterElegido, onError);
+
+            // Funcion local que deserializa la partida con el starter ya asignado
+            void ManejarStarterElegido(string respuestaJson)
+            {
+                PartidaCompleta partidaActualizada = JsonUtility.FromJson<PartidaCompleta>(respuestaJson);
+                onSuccess?.Invoke(partidaActualizada);
             }
         }
 

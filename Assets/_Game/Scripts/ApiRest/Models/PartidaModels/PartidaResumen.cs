@@ -1,5 +1,4 @@
 using System;
-
 namespace ApiRest.Models
 {
     // Resumen de una partida para mostrarla en la lista de partidas guardadas
@@ -8,11 +7,13 @@ namespace ApiRest.Models
     public class PartidaResumen
     {
         public string id;
+        public string nombre;
         public string personaje_elegido;
         public string mapa_actual;
-        // Se usa como contador de veces que se ha entrado en la partida
         public int tiempo_jugado;
         public int combates_ganados;
         public int combates_perdidos;
+        public string fecha_creacion;
+        public string ultima_conexion;
     }
 }
