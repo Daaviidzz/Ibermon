@@ -40,12 +40,13 @@ public class PartidaEntryUI : MonoBehaviour
         botonEliminar.gameObject.SetActive(true);
     }
 
-    // Formatea los segundos en horas y minutos para mostrar al jugador
+    // Formatea los segundos en horas,minutos y segundos para mostrar al jugador
     private string FormatearTiempo(int segundos)
     {
         int horas = segundos / 3600;
         int minutos = (segundos % 3600) / 60;
-        return $"{horas}h {minutos}m jugadas";
+        int segs = segundos % 60;
+        return $"{horas}h {minutos}m {segs}s jugadas";
     }
 
     // Conecta este metodo al OnClick del Button principal del prefab (el fondo)

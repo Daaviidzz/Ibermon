@@ -1,5 +1,6 @@
 using ApiRest.Managers;
 using ApiRest.Models;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -125,8 +126,6 @@ public class MenuOpciones : MonoBehaviour
             return;
         }
 
-        // Usamos GuardarPosicionAnterior que se asigna justo al abrir el menu
-        // es la posicion exacta donde estaba el jugador antes de entrar a opciones
         string escena = GuardarPosicionAnterior.escenaAnterior;
         float x = GuardarPosicionAnterior.posicionAnterior.x;
         float y = GuardarPosicionAnterior.posicionAnterior.y;
@@ -138,8 +137,11 @@ public class MenuOpciones : MonoBehaviour
         }
 
         string partidaId = SessionManager.Instance.PartidaId;
+        int tiempoJugado = SessionManager.Instance.TiempoJugadoSegundos;
+        // Generamos la fecha actual en formato ISO 8601 para enviarla al servidor
+        string ultimaConexion = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-        ApiSetup.Partida.ActualizarPosicion(partidaId, escena, x, y,
+        ApiSetup.Partida.ActualizarPosicion(partidaId, escena, x, y, tiempoJugado, ultimaConexion,
             ManejarGuardadoExitoso, ManejarGuardadoFallido);
     }
 

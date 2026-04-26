@@ -110,16 +110,19 @@ namespace ApiRest.Services
             }
         }
 
-        // Actualiza solo la posicion del jugador en el mapa
+        // Actualiza la posicion del jugador en el mapa, el tiempo jugado y la ultima conexion
         // Es una llamada mas ligera que guardar toda la partida
         public void ActualizarPosicion(string partidaId, string mapaActual, float x, float y,
+            int tiempoJugado, string ultimaConexion,
             Action<PartidaCompleta> onSuccess, Action<string> onError)
         {
-            // Preparamos la peticion con el mapa y la nueva posicion
+            // Preparamos la peticion con el mapa, la nueva posicion, el tiempo y la fecha
             ActualizarPosicionRequest peticion = new ActualizarPosicionRequest
             {
                 mapa_actual = mapaActual,
-                posicion = new Posicion { x = x, y = y }
+                posicion = new Posicion { x = x, y = y },
+                tiempo_jugado = tiempoJugado,
+                ultima_conexion = ultimaConexion
             };
 
             Api.PatchAuth($"/partidas/{partidaId}/posicion", JsonUtility.ToJson(peticion),

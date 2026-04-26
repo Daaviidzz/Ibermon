@@ -324,7 +324,8 @@ public class MenuPartidas : MonoBehaviour
     {
         int horas = segundos / 3600;
         int minutos = (segundos % 3600) / 60;
-        return $"{horas}h {minutos}m jugadas";
+        int segs = segundos % 60;
+        return $"{horas}h {minutos}m {segs}s jugadas";
     }
 
     // Convierte una fecha ISO 8601 del servidor en formato dd/MM/yyyy HH:mm
@@ -338,7 +339,9 @@ public class MenuPartidas : MonoBehaviour
 
         if (DateTime.TryParse(fechaIso, out DateTime dt))
         {
-            return dt.ToString("dd/MM/yyyy HH:mm");
+            // Convertimos de UTC a hora local del dispositivo
+            DateTime horaLocal = dt.ToLocalTime();
+            return horaLocal.ToString("dd/MM/yyyy HH:mm");
         }
 
         return fechaIso;
