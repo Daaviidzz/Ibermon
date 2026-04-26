@@ -75,11 +75,6 @@ public class Movimiento : MonoBehaviour
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
-
-        // Guardamos continuamente la posicion y escena actuales por si el jugador guarda la partida
-        PosicionActual.escena = SceneManager.GetActiveScene().name;
-        PosicionActual.posicion = transform.position;
-
         if (!estaEnInteraccion)
         {
             //llamamos a detectar correr para saber si está corriendo o no

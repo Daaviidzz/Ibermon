@@ -46,7 +46,6 @@ public class CrearYPosicionarPlayer : MonoBehaviour
 
     public void crearEInstanciarPersonaje()
     {
-        // Obtenemos el prefab que corresponde al personaje elegido en la partida
         GameObject prefab = ObtenerPrefabPersonaje(personajeElegido);
 
         if (prefab == null)
@@ -61,10 +60,13 @@ public class CrearYPosicionarPlayer : MonoBehaviour
             Instantiate(prefab);
         }
 
-        // Asignamos la posicion donde aparecera el jugador
-        JugadorSpawn.posicion = posicionSpawn;
+        // Solo sobreescribimos la posicion si NO hay una posicion guardada de la API esperando
+        // Si usarPosicionGuardada es true significa que MenuPartidas ya asigno la posicion correcta
+        if (!JugadorSpawn.usarPosicionGuardada)
+        {
+            JugadorSpawn.posicion = posicionSpawn;
+        }
 
-        // Navegamos a la escena de destino
         SceneManager.LoadScene(escenaDestino);
     }
 }

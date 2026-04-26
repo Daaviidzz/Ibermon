@@ -119,24 +119,25 @@ public class MenuOpciones : MonoBehaviour
     // Envia la posicion y escena actuales del jugador a la API
     private void GuardarPartida()
     {
-        // Comprobamos que hay una sesion activa antes de intentar guardar
         if (!SessionManager.Instance.TienePartida)
         {
             Debug.LogWarning("[MenuOpciones] No hay partida activa, no se puede guardar");
             return;
         }
 
-        string partidaId = SessionManager.Instance.PartidaId;
-        string escena = PosicionActual.escena;
-        float x = PosicionActual.posicion.x;
-        float y = PosicionActual.posicion.y;
+        // Usamos GuardarPosicionAnterior que se asigna justo al abrir el menu
+        // es la posicion exacta donde estaba el jugador antes de entrar a opciones
+        string escena = GuardarPosicionAnterior.escenaAnterior;
+        float x = GuardarPosicionAnterior.posicionAnterior.x;
+        float y = GuardarPosicionAnterior.posicionAnterior.y;
 
-        // Si la posicion no se ha registrado todavia no guardamos
         if (string.IsNullOrEmpty(escena))
         {
-            Debug.LogWarning("[MenuOpciones] La posicion actual no esta registrada todavia");
+            Debug.LogWarning("[MenuOpciones] La escena anterior no esta registrada todavia");
             return;
         }
+
+        string partidaId = SessionManager.Instance.PartidaId;
 
         ApiSetup.Partida.ActualizarPosicion(partidaId, escena, x, y,
             ManejarGuardadoExitoso, ManejarGuardadoFallido);

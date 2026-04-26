@@ -75,8 +75,11 @@ public class ControlesMoviles : MonoBehaviour
     // Este método es más agresivo que simplemente resetear el estado
     public void BloquearControlesTemporalmente(float duracion = 0.5f)
     {
+        #if UNITY_ANDROID || UNITY_IOS
         gameObject.SetActive(true);
         StartCoroutine(BloqueoTemporal(duracion));
+        #endif
+        // En PC no hacemos nada, los controles moviles estan desactivados
     }
 
     private IEnumerator BloqueoTemporal(float duracion)

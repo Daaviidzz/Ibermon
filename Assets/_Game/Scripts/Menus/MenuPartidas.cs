@@ -186,7 +186,6 @@ public class MenuPartidas : MonoBehaviour
 
         creadorPersonaje.personajeElegido = partidaRecibida.personaje_elegido;
 
-        // Si no hay mapa guardado arrancamos en la casa del personaje por defecto
         if (string.IsNullOrEmpty(partidaRecibida.mapa_actual))
         {
             creadorPersonaje.escenaDestino = "CasaPersonaje";
@@ -195,6 +194,11 @@ public class MenuPartidas : MonoBehaviour
         {
             creadorPersonaje.escenaDestino = partidaRecibida.mapa_actual;
         }
+
+        // Cargamos la posicion exacta donde estaba el jugador al guardar
+        JugadorSpawn.posicion = new Vector2(partidaRecibida.posicion.x, partidaRecibida.posicion.y);
+        // Le decimos a JugadorSpawn que use esa posicion en vez del spawn por defecto
+        JugadorSpawn.usarPosicionGuardada = true;
 
         creadorPersonaje.crearEInstanciarPersonaje();
     }
