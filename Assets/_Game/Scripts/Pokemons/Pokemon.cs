@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Clase principal que representa una instancia individual de un Pokémon.
@@ -11,6 +12,8 @@ public class Pokemon
     {
         _base = pBase;
         level = pLevel;
+
+        Init();
     }
 
     // Propiedades básicas
@@ -44,7 +47,7 @@ public class Pokemon
             if (learnableMove.Level <= Level)
                 Moves.Add(new Move(learnableMove.MoveBase));
 
-            if (Moves.Count >= 4) break; // Límite clásico de 4 movimientos.
+            if (Moves.Count >= PokemonBase.MaxNumOfMoves) break; 
         }
         Exp=Base.GetExpForLevel(Level);
 
@@ -240,6 +243,16 @@ public class Pokemon
             return true;
         }
         return false;
+    }
+    public LearnableMove GetLearnableMoveAtCurrentLevel()
+    {
+         return Base.LearnableMoves.Where(lm => lm.Level == level).FirstOrDefault();
+    }
+    public void LearnMove(LearnableMove moveToLearn)
+    {
+        if (Moves.Count > PokemonBase.MaxNumOfMoves)
+            return;
+        Moves.Add(new Move(moveToLearn.MoveBase));
     }
 }
 

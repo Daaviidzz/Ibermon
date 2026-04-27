@@ -15,6 +15,15 @@ MonoBehaviour:
   name: Cola Dragon
   description: ataque efectivo
   type: 15
-  power: 14
+  power: 50
   accuracy: 78
+  alwaysHit: 0
   pp: 10
+  priority: 0
+  category: 1
+  effects:
+    boosts: []
+    status: 3
+    volatileStatus: 0
+  secondries: []
+  target: 0

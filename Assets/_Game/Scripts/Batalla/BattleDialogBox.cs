@@ -15,6 +15,7 @@ public class BattleDialogBox : MonoBehaviour
     [SerializeField] GameObject actionSelector;
     [SerializeField] GameObject moveSelector;
     [SerializeField] GameObject moveDetails;
+    [SerializeField] GameObject choiceBox;
 
     // Listas de textos
     [SerializeField] List<TextMeshProUGUI> actionTexts;
@@ -23,6 +24,9 @@ public class BattleDialogBox : MonoBehaviour
     // Textos de detalle (PP y Tipo)
     [SerializeField] TextMeshProUGUI ppText;
     [SerializeField] TextMeshProUGUI typeText;
+
+    [SerializeField] TextMeshProUGUI yesText;
+    [SerializeField] TextMeshProUGUI noText;
 
     // --- MÉTODOS PÚBLICOS ---
 
@@ -52,6 +56,7 @@ public class BattleDialogBox : MonoBehaviour
         moveSelector.SetActive(enabled);
         moveDetails.SetActive(enabled);
     }
+    public void EnableChoiceBox(bool enabled) => choiceBox.SetActive(enabled);
 
     public void UpdateActionSelection(int selectedAction)
     {
@@ -98,5 +103,12 @@ public class BattleDialogBox : MonoBehaviour
             // Si hay movimiento asignamos nombre, si no, ponemos un guion
             moveTexts[i].text = (i < moves.Count) ? moves[i].Base.Name : "-";
         }
+    }
+    public void UpdateChoiceBox(bool yesSelected)
+    {
+
+        yesText.color = yesSelected ? highlightedColor : Color.black;
+        noText.color = yesSelected ? Color.black : highlightedColor;
+        
     }
 }

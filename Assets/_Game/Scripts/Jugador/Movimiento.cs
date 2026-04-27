@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
+public enum GameState { FreeRoam,Menu}
 public class Movimiento : MonoBehaviour
 {
     //Variable para la velocidad del personaje
@@ -28,8 +29,8 @@ public class Movimiento : MonoBehaviour
 
     //Para saber si el personaje está en interacción o no
     public bool estaEnInteraccion = false;
-
-
+    GameState state;
+    MenuController menuController;
     //Parte movil
     [Header("Controles Móviles (Opcional)")]
     [SerializeField] private JoystickVirtual joystick; // Referencia al joystick
@@ -58,7 +59,7 @@ public class Movimiento : MonoBehaviour
             //Y ahora le quitamos la visibilidad
             Cursor.visible = false;
         }
-
+        menuController = GetComponent<MenuController>();
     }
 
     // Añade este método Start después del Awake
@@ -70,68 +71,102 @@ public class Movimiento : MonoBehaviour
         {
             ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
         }
+        menuController.onBack += () =>
+        {
+            state = GameState.FreeRoam;
+        };
+        menuController.onMenuSelected += OnMenuSelected;
+    }
+    void OnMenuSelected(int selectedItem)
+    {
+        if (selectedItem == 0)
+        {
+            //Pokemons
+        }
+        else if (selectedItem == 1)
+        {
+            //Mochila
+        }
+        else if (selectedItem == 2)
+        {
+            //Pokedex
+        }
+        state = GameState.FreeRoam;
     }
 
     //Este método es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
-        if (!estaEnInteraccion)
-        {
-            //llamamos a detectar correr para saber si está corriendo o no
-            if (DetectarCorrer())
+        if(state == GameState.FreeRoam) { 
+            
+            if (!estaEnInteraccion)
             {
-                velocidad = velocidadMaxima;
+                //llamamos a detectar correr para saber si está corriendo o no
+                if (DetectarCorrer())
+                {
+                    velocidad = velocidadMaxima;
+                }
+                else
+                {
+                    velocidad = velocidadMinima;
+                }
+                if (Input.GetKeyDown(KeyCode.M))
+                {
+                    menuController?.OpenMenu();
+                    state = GameState.Menu;
+
+                }
+                //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
+                entradaMovimiento.x = ObtenerInputHorizontal();//Horizontal   
+                entradaMovimiento.y = ObtenerInputVertical();//Vertical
+
+                //para normalizarlo
+                entradaMovimiento = entradaMovimiento.normalized;
+
+                //para que salten las distintas animaciones 
+                animacion.SetFloat("Horizontal", entradaMovimiento.x);
+                animacion.SetFloat("Vertical", entradaMovimiento.y);
+                animacion.SetFloat("Velocidad", entradaMovimiento.magnitude);
+
+                // --- Llamada a la función de chequeo de hierba ---
+                // Solo chequeamos si el jugador se está moviendo realmente
+                if (entradaMovimiento.magnitude > 0.1f)
+                {
+                    ChequearHierba();
+                }
+
+                // llamada al metodo para detectar abrirMenu
+                if (DetectarMenuOpciones())
+                {
+                    GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+                    GuardarPosicionAnterior.posicionAnterior = transform.position;
+
+                    // Deshabilitar AudioListener del Player ANTES de cargar la escena
+                    var listener = GetComponentInChildren<AudioListener>();
+                    if (listener) listener.enabled = false;
+
+
+                    //ahora cargamos de manera asincrona para que la musica no se pare (o de menos sensacion de que lo hace)
+                    SceneManager.LoadSceneAsync("Opciones");
+                }
             }
-            else
-            {
-                velocidad = velocidadMinima;
-            }
-
-            //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
-            entradaMovimiento.x = ObtenerInputHorizontal();//Horizontal   
-            entradaMovimiento.y = ObtenerInputVertical();//Vertical
-
-            //para normalizarlo
-            entradaMovimiento = entradaMovimiento.normalized;
-
-            //para que salten las distintas animaciones 
-            animacion.SetFloat("Horizontal", entradaMovimiento.x);
-            animacion.SetFloat("Vertical", entradaMovimiento.y);
-            animacion.SetFloat("Velocidad", entradaMovimiento.magnitude);
-
-            // --- Llamada a la función de chequeo de hierba ---
-            // Solo chequeamos si el jugador se está moviendo realmente
-            if (entradaMovimiento.magnitude > 0.1f)
-            {
-                ChequearHierba();
-            }
-
-            // llamada al metodo para detectar abrirMenu
-            if (DetectarMenuOpciones())
-            {
-                GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
-                GuardarPosicionAnterior.posicionAnterior = transform.position;
-
-                // Deshabilitar AudioListener del Player ANTES de cargar la escena
-                var listener = GetComponentInChildren<AudioListener>();
-                if (listener) listener.enabled = false;
-
-                //  SceneManager.LoadScene("Opciones");
-
-
-                //ahora cargamos de manera asincrona para que la musica no se pare (o de menos sensacion de que lo hace)
-                SceneManager.LoadSceneAsync("Opciones");
-            }
+            
         }
-           
+        else if (state == GameState.Menu)
+        {
+            menuController.HandleUpdate();
+
+        }
+        
+
     }
 
     private void FixedUpdate()
     {
-        if (!estaEnInteraccion)
+        if (state == GameState.FreeRoam && !estaEnInteraccion)
             rigidbody2D.linearVelocity = entradaMovimiento * velocidad;
         else
-            rigidbody2D.linearVelocity = Vector2.zero; // frena en seco
+            rigidbody2D.linearVelocity = Vector2.zero;
     }
 
     // --- Método para chequear encuentros en hierba ---
