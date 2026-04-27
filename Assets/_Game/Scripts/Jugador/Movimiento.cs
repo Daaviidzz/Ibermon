@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public enum GameState { FreeRoam,Menu}
+public enum GameState { FreeRoam,Menu,PartyScreen}
 public class Movimiento : MonoBehaviour
 {
     //Variable para la velocidad del personaje
@@ -31,6 +31,8 @@ public class Movimiento : MonoBehaviour
     public bool estaEnInteraccion = false;
     GameState state;
     MenuController menuController;
+    [SerializeField] PartyScreen partyScreen;
+    PokemonParty pokemonParty;
     //Parte movil
     [Header("Controles Móviles (Opcional)")]
     [SerializeField] private JoystickVirtual joystick; // Referencia al joystick
@@ -60,6 +62,7 @@ public class Movimiento : MonoBehaviour
             Cursor.visible = false;
         }
         menuController = GetComponent<MenuController>();
+        pokemonParty = GetComponent<PokemonParty>();
     }
 
     // Añade este método Start después del Awake
@@ -76,22 +79,28 @@ public class Movimiento : MonoBehaviour
             state = GameState.FreeRoam;
         };
         menuController.onMenuSelected += OnMenuSelected;
+        partyScreen.Init();
     }
     void OnMenuSelected(int selectedItem)
     {
         if (selectedItem == 0)
         {
             //Pokemons
+            partyScreen.gameObject.SetActive(true);
+            partyScreen.SetPartyData(pokemonParty.Pokemons);
+            state=GameState.PartyScreen;
         }
         else if (selectedItem == 1)
         {
             //Mochila
+            state = GameState.FreeRoam;
         }
         else if (selectedItem == 2)
         {
             //Pokedex
+            state = GameState.FreeRoam;
         }
-        state = GameState.FreeRoam;
+        
     }
 
     //Este método es el que se usa para hacer el movimiento del personaje
@@ -135,20 +144,7 @@ public class Movimiento : MonoBehaviour
                     ChequearHierba();
                 }
 
-                // llamada al metodo para detectar abrirMenu
-                if (DetectarMenuOpciones())
-                {
-                    GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
-                    GuardarPosicionAnterior.posicionAnterior = transform.position;
-
-                    // Deshabilitar AudioListener del Player ANTES de cargar la escena
-                    var listener = GetComponentInChildren<AudioListener>();
-                    if (listener) listener.enabled = false;
-
-
-                    //ahora cargamos de manera asincrona para que la musica no se pare (o de menos sensacion de que lo hace)
-                    SceneManager.LoadSceneAsync("Opciones");
-                }
+                
             }
             
         }
@@ -157,7 +153,31 @@ public class Movimiento : MonoBehaviour
             menuController.HandleUpdate();
 
         }
-        
+        else if (state == GameState.PartyScreen)
+        {
+            partyScreen.HandleUpdate(
+                onSelected: () => { },  // de momento vacío
+                onBack: () =>
+                {
+                    partyScreen.gameObject.SetActive(false);
+                    state = GameState.FreeRoam;
+                }
+            );
+        }
+        // llamada al metodo para detectar abrirMenu
+        if (DetectarMenuOpciones())
+        {
+            GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+            GuardarPosicionAnterior.posicionAnterior = transform.position;
+
+            // Deshabilitar AudioListener del Player ANTES de cargar la escena
+            var listener = GetComponentInChildren<AudioListener>();
+            if (listener) listener.enabled = false;
+
+
+            //ahora cargamos de manera asincrona para que la musica no se pare (o de menos sensacion de que lo hace)
+            SceneManager.LoadSceneAsync("Opciones");
+        }
 
     }
 
@@ -253,7 +273,7 @@ public class Movimiento : MonoBehaviour
         }
         else
         {
-            // Usar tecla espacio en PC
+            // Usar tecla esc en PC
             return Input.GetKeyDown(KeyCode.X);
         }
     }
