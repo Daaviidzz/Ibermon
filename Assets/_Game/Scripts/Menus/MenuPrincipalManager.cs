@@ -19,7 +19,7 @@ public class MenuPrincipalManager : MonoBehaviour
         SceneManager.LoadScene("Partidas");
     }
 
-    // 2. Botón OPCIONES
+    // 2. Botón OPCIONESz
     public void BotonOpciones()
     {
         //Guardar esta escena

@@ -5,69 +5,84 @@ using UnityEngine;
 
 namespace ApiRest.Services
 {
-    /// <summary>
-    /// Endpoints: POST /auth/registro, POST /auth/login, GET /auth/yo
-    /// </summary>
+    // Servicio que se encarga de la autenticacion del usuario
+    // Habla con los endpoints POST /auth/registro, POST /auth/login y GET /auth/yo
     public class AuthService : MonoBehaviour
     {
+        // Propiedad corta para acceder al ApiManager
         private ApiManager Api => ApiManager.Instance;
 
-        // ------------------------------------------------------------------ //
-        //  POST /auth/registro
-        // ------------------------------------------------------------------ //
-
+        // Registra un usuario nuevo en el servidor
+        // Recibe el username, email y password del formulario de registro
+        // Llama a onSuccess con los datos publicos del usuario creado
+        // Llama a onError con un mensaje si algo falla
         public void Registrar(string username, string email, string password,
             Action<UsuarioPublico> onSuccess, Action<string> onError)
         {
-            var body = new UsuarioRegistroRequest
+            // Preparamos el objeto con los datos del nuevo usuario
+            UsuarioRegistroRequest datosRegistro = new UsuarioRegistroRequest
             {
                 username = username,
                 email = email,
                 password = password
             };
-            string json = JsonUtility.ToJson(body);
-            Api.Post("/auth/registro", json,
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<UsuarioPublico>(raw)),
-                onError);
+
+            // Enviamos la peticion POST con el cuerpo en formato JSON
+            Api.Post("/auth/registro", JsonUtility.ToJson(datosRegistro),
+                ManejarRespuestaRegistro, onError);
+
+            // Funcion local que convierte la respuesta JSON en un UsuarioPublico
+            // y la pasa al callback de exito
+            void ManejarRespuestaRegistro(string respuestaJson)
+            {
+                UsuarioPublico usuarioCreado = JsonUtility.FromJson<UsuarioPublico>(respuestaJson);
+                onSuccess?.Invoke(usuarioCreado);
+            }
         }
 
-        // ------------------------------------------------------------------ //
-        //  POST /auth/login  (OAuth2 form-data)
-        // ------------------------------------------------------------------ //
-
+        // Inicia sesion en el servidor y guarda el token JWT en el ApiManager
+        // FastAPI usa OAuth2PasswordRequestForm que requiere form-data, no JSON
+        // Por eso se usa WWWForm en vez de enviar un objeto serializado
         public void Login(string username, string password,
             Action<TokenResponse> onSuccess, Action<string> onError)
         {
-            // FastAPI espera form-data (OAuth2PasswordRequestForm), no JSON
-            var form = new UnityEngine.WWWForm();
-            form.AddField("username", username);
-            form.AddField("password", password);
+            // Preparamos el formulario con los campos username y password
+            WWWForm formularioLogin = new WWWForm();
+            formularioLogin.AddField("username", username);
+            formularioLogin.AddField("password", password);
 
-            Api.PostForm("/auth/login", form,
-                raw =>
-                {
-                    var token = JsonUtility.FromJson<TokenResponse>(raw);
-                    Api.SetToken(token.access_token);
-                    onSuccess?.Invoke(token);
-                },
-                onError);
+            // Enviamos el formulario al endpoint de login
+            Api.PostForm("/auth/login", formularioLogin, ManejarRespuestaLogin, onError);
+
+            // Funcion local que guarda el token y avisa al callback
+            void ManejarRespuestaLogin(string respuestaJson)
+            {
+                TokenResponse token = JsonUtility.FromJson<TokenResponse>(respuestaJson);
+                // Guardamos el token en el ApiManager para que se envie en las proximas peticiones
+                Api.SetToken(token.access_token);
+                onSuccess?.Invoke(token);
+            }
         }
 
-        // ------------------------------------------------------------------ //
-        //  GET /auth/yo
-        // ------------------------------------------------------------------ //
-
+        // Pide al servidor los datos del usuario que esta conectado ahora mismo
+        // Necesita que ya haya un token JWT guardado
         public void ObtenerUsuarioActual(Action<UsuarioPublico> onSuccess, Action<string> onError)
         {
-            Api.GetAuth("/auth/yo",
-                raw => onSuccess?.Invoke(JsonUtility.FromJson<UsuarioPublico>(raw)),
-                onError);
+            Api.GetAuth("/auth/yo", ManejarRespuestaUsuario, onError);
+
+            // Funcion local que convierte el JSON recibido en un UsuarioPublico
+            void ManejarRespuestaUsuario(string respuestaJson)
+            {
+                UsuarioPublico usuario = JsonUtility.FromJson<UsuarioPublico>(respuestaJson);
+                onSuccess?.Invoke(usuario);
+            }
         }
 
-        // ------------------------------------------------------------------ //
-        //  Logout (local — borra el token)
-        // ------------------------------------------------------------------ //
-
-        public void Logout() => Api.ClearToken();
+        // Cierra la sesion de forma local borrando el token guardado
+        // No hace ninguna llamada a la API porque el JWT es autocontenido
+        public void Logout()
+        {
+            Api.ClearToken();
+        }
     }
 }

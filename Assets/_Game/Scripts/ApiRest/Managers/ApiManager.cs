@@ -6,10 +6,8 @@ using UnityEngine.Networking;
 
 namespace ApiRest.Managers
 {
-    /// <summary>
-    /// Singleton que gestiona todas las peticiones HTTP a la API de Ibermon.
-    /// Almacena el JWT y lo añade automáticamente en las cabeceras.
-    /// </summary>
+    // Todas las peticiones HTTP pasan por aquí.
+    // Guarda el JWT después del login y lo mete solo en cada cabecera.
     public class ApiManager : MonoBehaviour
     {
         public static ApiManager Instance { get; private set; }
@@ -22,10 +20,6 @@ namespace ApiRest.Managers
         public bool IsLoggedIn => !string.IsNullOrEmpty(_token);
         public string BaseUrl => baseUrl;
 
-        // ------------------------------------------------------------------ //
-        //  Lifecycle
-        // ------------------------------------------------------------------ //
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -37,52 +31,40 @@ namespace ApiRest.Managers
             DontDestroyOnLoad(gameObject);
         }
 
-        // ------------------------------------------------------------------ //
-        //  Token
-        // ------------------------------------------------------------------ //
-
         public void SetToken(string token) => _token = token;
         public void ClearToken() => _token = null;
 
-        // ------------------------------------------------------------------ //
-        //  HTTP helpers
-        // ------------------------------------------------------------------ //
-
-        /// <summary>GET sin autenticación.</summary>
+        // GET público (catálogos, etc.)
         public Coroutine Get(string endpoint, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Get(Url(endpoint)), false, onSuccess, onError));
 
-        /// <summary>GET con JWT.</summary>
+        // GET con JWT
         public Coroutine GetAuth(string endpoint, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Get(Url(endpoint)), true, onSuccess, onError));
 
-        /// <summary>POST JSON con JWT.</summary>
+        // POST JSON con JWT
         public Coroutine PostAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("POST", endpoint, jsonBody), true, onSuccess, onError));
 
-        /// <summary>POST JSON sin JWT (registro).</summary>
+        // POST JSON sin JWT — solo para registro
         public Coroutine Post(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("POST", endpoint, jsonBody), false, onSuccess, onError));
 
-        /// <summary>POST form-data sin JWT (login OAuth2).</summary>
+        // POST form-data sin JWT — el login de FastAPI usa OAuth2 form-data, no JSON
         public Coroutine PostForm(string endpoint, WWWForm form, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(UnityWebRequest.Post(Url(endpoint), form), false, onSuccess, onError));
 
-        /// <summary>PUT JSON con JWT.</summary>
+        // PUT JSON con JWT
         public Coroutine PutAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("PUT", endpoint, jsonBody), true, onSuccess, onError));
 
-        /// <summary>PATCH JSON con JWT.</summary>
+        // PATCH JSON con JWT
         public Coroutine PatchAuth(string endpoint, string jsonBody, Action<string> onSuccess, Action<string> onError)
             => StartCoroutine(SendRequest(BuildJsonRequest("PATCH", endpoint, jsonBody), true, onSuccess, onError));
 
-        /// <summary>DELETE con JWT.</summary>
+        // DELETE con JWT
         public Coroutine DeleteAuth(string endpoint, Action onSuccess, Action<string> onError)
             => StartCoroutine(SendDelete(Url(endpoint), onSuccess, onError));
-
-        // ------------------------------------------------------------------ //
-        //  Internals
-        // ------------------------------------------------------------------ //
 
         private string Url(string endpoint) => baseUrl.TrimEnd('/') + "/" + endpoint.TrimStart('/');
 
@@ -90,7 +72,7 @@ namespace ApiRest.Managers
         {
             byte[] body = Encoding.UTF8.GetBytes(json);
             var req = new UnityWebRequest(Url(endpoint), method);
-            req.uploadHandler = new UploadHandlerRaw(body);
+            req.uploadHandler   = new UploadHandlerRaw(body);
             req.downloadHandler = new DownloadHandlerBuffer();
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
@@ -131,6 +113,7 @@ namespace ApiRest.Managers
 
             yield return req.SendWebRequest();
 
+            // 204 No Content es éxito en un DELETE
             if (req.result == UnityWebRequest.Result.Success || req.responseCode == 204)
                 onSuccess?.Invoke();
             else
