@@ -1,29 +1,33 @@
+using ApiRest.Managers;
+using ApiRest.Models;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MenuOpciones : MonoBehaviour
 {
-    //Objeto que hace refencia al panel de opciones
+    // Objeto que hace referencia al panel de opciones
     public GameObject panelOpciones;
-
-    //boton volver del panel opciones
+    // Boton volver del panel opciones
     public Button botonVolverPanelOpciones;
-
-    //boton ir a controles
+    // Boton ir a controles
     public Button botonControles;
     public Button botonSalirJuego;
+    // Boton para guardar la partida
+    public Button botonGuardar;
+    // Texto de confirmacion que aparece al guardar correctamente
+    public GameObject textoGuardadoOk;
 
-    //Objeto que hace refencia al panel de controles
+    // Objeto que hace referencia al panel de controles
     public GameObject panelControles;
-
-    //boton volver del panel controles
+    // Boton volver del panel controles
     public Button botonVolverPanelControles;
 
-    // Detectar si estamos en móvil o PC
+    // Detectar si estamos en movil o PC
     private bool esMovil;
 
-    //desbloqueamos el cursor desde el principio del juego
+    // Desbloqueamos el cursor desde el principio del juego
     private void Awake()
     {
         comprobacionInicialParteMovil();
@@ -31,78 +35,137 @@ public class MenuOpciones : MonoBehaviour
         // Solo desbloquear cursor en PC
         if (!esMovil)
         {
-            //Para que el cursor se pueda mover
+            // Para que el cursor se pueda mover
             Cursor.lockState = CursorLockMode.None;
-            //Para que se vea
+            // Para que se vea
             Cursor.visible = true;
         }
 
-        //Son expresiones lambda que esperan a la activación del botón 
-        botonVolverPanelOpciones.onClick.AddListener(() =>
+        // Ocultamos el texto de confirmacion al arrancar
+        if (textoGuardadoOk != null)
         {
-            volver();
-        });
+            textoGuardadoOk.SetActive(false);
+        }
 
-        botonControles.onClick.AddListener(() =>
-        {
-            panelOpciones.SetActive(false);
-            panelControles.SetActive(true);
-        });
+        botonVolverPanelOpciones.onClick.AddListener(Volver);
 
-        botonVolverPanelControles.onClick.AddListener(() =>
-        {
-            panelOpciones.SetActive(true);
-            panelControles.SetActive(false);
-        });
+        botonControles.onClick.AddListener(AbrirControles);
 
-        botonSalirJuego.onClick.AddListener(() =>
-        {
-            Application.Quit();
-        });
+        botonVolverPanelControles.onClick.AddListener(VolverAOpciones);
+
+        botonSalirJuego.onClick.AddListener(SalirJuego);
+
+        botonGuardar.onClick.AddListener(GuardarPartida);
     }
 
     private void Update()
     {
-        // --- Detectar X para cerrar menú ---
+        // Detectar X para cerrar menu
         if (Input.GetKeyDown(KeyCode.X))
         {
-            volver();
+            Volver();
         }
     }
 
-    private void volver()
+    // Abre el panel de controles y cierra el de opciones
+    private void AbrirControles()
+    {
+        panelOpciones.SetActive(false);
+        panelControles.SetActive(true);
+    }
+
+    // Vuelve al panel de opciones desde el de controles
+    private void VolverAOpciones()
+    {
+        panelOpciones.SetActive(true);
+        panelControles.SetActive(false);
+    }
+
+    // Cierra el menu y vuelve al mapa donde estaba el jugador
+    private void Volver()
     {
         // Solo bloquear cursor en PC
         if (!esMovil)
         {
-            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
+            // Para que el cursor se quede en el medio
             Cursor.lockState = CursorLockMode.Locked;
-            //Y ahora le quitamos la visibilidad
+            // Y ahora le quitamos la visibilidad
             Cursor.visible = false;
         }
 
-        // Limpiar el estado de todos los botones móviles antes de cambiar de escena
+        // Limpiar el estado de todos los botones moviles antes de cambiar de escena
         // Esto previene que clicks pendientes activen cosas en la escena siguiente
         if (ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.LimpiarEstadoBotones();
         }
 
-        //Le asignamos la posición al jugador
+        // Le asignamos la posicion al jugador
         JugadorSpawn.posicion = GuardarPosicionAnterior.posicionAnterior;
 
-        //Cambiamos de escena
+        // Cambiamos de escena
         SceneManager.LoadScene(GuardarPosicionAnterior.escenaAnterior);
 
-        //para que siempre se muestre primero la de opciones y no la de configuración
+        // Para que siempre se muestre primero la de opciones y no la de configuracion
         panelOpciones.SetActive(true);
         panelControles.SetActive(false);
     }
 
-    //Parte movil inicial
+    // Cierra el juego
+    private void SalirJuego()
+    {
+        Application.Quit();
+    }
+
+    // Envia la posicion y escena actuales del jugador a la API
+    private void GuardarPartida()
+    {
+        if (!SessionManager.Instance.TienePartida)
+        {
+            Debug.LogWarning("[MenuOpciones] No hay partida activa, no se puede guardar");
+            return;
+        }
+
+        string escena = GuardarPosicionAnterior.escenaAnterior;
+        float x = GuardarPosicionAnterior.posicionAnterior.x;
+        float y = GuardarPosicionAnterior.posicionAnterior.y;
+
+        if (string.IsNullOrEmpty(escena))
+        {
+            Debug.LogWarning("[MenuOpciones] La escena anterior no esta registrada todavia");
+            return;
+        }
+
+        string partidaId = SessionManager.Instance.PartidaId;
+        int tiempoJugado = SessionManager.Instance.TiempoJugadoSegundos;
+        // Generamos la fecha actual en formato ISO 8601 para enviarla al servidor
+        string ultimaConexion = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+
+        ApiSetup.Partida.ActualizarPosicion(partidaId, escena, x, y, tiempoJugado, ultimaConexion,
+            ManejarGuardadoExitoso, ManejarGuardadoFallido);
+    }
+
+    // Se ejecuta cuando la API confirma que se guardo correctamente
+    // Muestra un mensaje de confirmacion al jugador
+    private void ManejarGuardadoExitoso(PartidaCompleta partidaActualizada)
+    {
+        Debug.Log("[MenuOpciones] Partida guardada correctamente");
+
+        if (textoGuardadoOk != null)
+        {
+            textoGuardadoOk.SetActive(true);
+        }
+    }
+
+    // Se ejecuta si la API devuelve error al guardar
+    private void ManejarGuardadoFallido(string mensajeError)
+    {
+        Debug.LogError($"[MenuOpciones] Error al guardar partida: {mensajeError}");
+    }
+
+    // Parte movil inicial
     private void comprobacionInicialParteMovil()
     {
-        // Detectar la plataforma
 #if UNITY_ANDROID || UNITY_IOS
         esMovil = true;
 #else

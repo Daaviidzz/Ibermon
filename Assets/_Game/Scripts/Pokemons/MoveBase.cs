@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,12 +21,15 @@ public class MoveBase : ScriptableObject
 
     // Puntos de Poder: cantidad de veces que se puede ejecutar este ataque.
     [SerializeField] int pp;
+    [SerializeField] int priority;
 
     // Clasificación: Físico, Especial o Estado 
     [SerializeField] MoveCategory category;
 
     // Efectos secundarios 
     [SerializeField] MoveEffects effects;
+    [SerializeField] List<SecondaryEffects> secondries;
+
 
     // Define a quién golpea: al enemigo o al propio usuario (útil para 2vs2 en el futuro).
     [SerializeField] MoveTarget target;
@@ -38,18 +42,32 @@ public class MoveBase : ScriptableObject
     public int Power => power;
     public int Accuracy => accuracy;
     public bool AlwaysHit => alwaysHit;
-    public int Pp => pp;
+    public int PP => pp;
+    public int Priority => priority;
     public MoveCategory Category => category;
     public MoveEffects Effects => effects;
     public MoveTarget Target => target;
+    public List<SecondaryEffects> Secondries => secondries;
 }
 
 [System.Serializable] // Permite que esta clase aparezca y sea editable dentro del Inspector de Unity.
 public class MoveEffects
 {
     [SerializeField] List<StatBoost> boosts;
+    [SerializeField] ConditionID status; // Condición de estado que puede causar el movimiento (Envenenado, Paralizado, etc.)
+    [SerializeField] ConditionID volatileStatus;
 
     public List<StatBoost> Boosts => boosts;
+    public ConditionID Status => status;
+    public ConditionID VolatileStatus => volatileStatus;
+}
+[System.Serializable]
+public class SecondaryEffects : MoveEffects
+{
+    [SerializeField] int chance;
+    [SerializeField] MoveTarget target;
+    public int Chance => chance;
+    public MoveTarget Target => target;
 }
 
 [System.Serializable]

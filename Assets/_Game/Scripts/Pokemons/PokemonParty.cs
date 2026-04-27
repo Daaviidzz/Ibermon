@@ -1,93 +1,117 @@
 using System.Collections.Generic;
 using System.Linq;
+using ApiRest.Models;
 using UnityEngine;
 
 public class PokemonParty : MonoBehaviour
 {
     [SerializeField] List<Pokemon> pokemons;
+    [SerializeField] bool esEquipoJugador = false;
 
-    //  Hacemos que la propiedad devuelva la lista del inspector
-    public List<Pokemon> Pokemons
-    {
-        get { return pokemons; }
-    }
+    private bool esBatallaTemp = false;
+
+    public List<Pokemon> Pokemons => pokemons;
+
+    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     private void Start()
     {
-        // Intentar cargar el equipo guardado
-        if (SistemGuardadoPokemon.HayDatosGuardados())
+        if (esBatallaTemp) return;
+        if (esEquipoJugador)
+            CargarEquipoGuardado();
+    }
+
+    // ─── Carga de equipo ──────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Carga el equipo desde la sesión activa de la API.
+    /// Prioridad 1: SessionManager (API) — usa IbermonConverter.
+    /// Prioridad 2: PlayerPrefs (fallback legacy, solo si no hay sesión API).
+    /// </summary>
+    public void CargarEquipoGuardado()
+    {
+        // ── Prioridad 1: datos de la API (sesión activa) ─────────────────────
+        if (SessionManager.Instance != null &&
+            SessionManager.Instance.TienePartida &&
+            CatalogoCache.Instance != null &&
+            CatalogoCache.Instance.EstaListo)
         {
-           
-            List<Pokemon> equipoCargado = SistemGuardadoPokemon.CargarEquipo();
-            if (equipoCargado != null && equipoCargado.Count > 0)
+            var equipoApi = new List<IbermonJugador>(SessionManager.Instance.EquipoAPI);
+            if (equipoApi.Count > 0)
             {
-                pokemons = equipoCargado;
-                Debug.Log("Equipo cargado desde guardado");
+                pokemons = IbermonConverter.ToPokemons(equipoApi, CatalogoCache.Instance);
+                if (pokemons.Count > 0)
+                {
+                    Debug.Log($"[PokemonParty] Equipo cargado desde API: {pokemons.Count} ibermon.");
+                    return;
+                }
+                Debug.LogWarning("[PokemonParty] La API devolvió equipo pero no se pudieron convertir. " +
+                                 "¿Los nombres de los ScriptableObjects coinciden con el catálogo?");
+            }
+            else
+            {
+                Debug.Log("[PokemonParty] La partida no tiene ibermon en el equipo todavía.");
+                pokemons = new List<Pokemon>();
+                return;
             }
         }
-        else
+
+        // ── Prioridad 2: PlayerPrefs (legacy / sin conexión) ─────────────────
+        if (SistemGuardadoPokemon.HayDatosGuardados())
         {
-            //// Si no hay guardado, inicializar los Pokémon del inspector
-            //foreach (var pokemon in pokemons)
-            //{
-            //    pokemon.Init();
-            //}
+            var cargado = SistemGuardadoPokemon.CargarEquipo();
+            if (cargado != null && cargado.Count > 0)
+            {
+                pokemons = cargado;
+                Debug.Log("[PokemonParty] Equipo cargado desde PlayerPrefs (modo sin API).");
+                return;
+            }
         }
-        
-        
-          
-        
+
+        Debug.LogWarning("[PokemonParty] No se encontró equipo. El partido puede no haberse cargado aún.");
     }
 
-    private void OnDestroy()
+    // ─── Batalla de entrenador ────────────────────────────────────────────────
+
+    public void SetPokemonsForBattle(List<Pokemon> pokemonsEntrenador)
     {
-        // Guardar automáticamente al destruir el objeto (al cerrar el juego o cambiar escena)
-        if (pokemons != null && pokemons.Count > 0)
-        {
-            SistemGuardadoPokemon.GuardarEquipo(pokemons);
-        }
+        esBatallaTemp = true;
+        pokemons = pokemonsEntrenador;
+        foreach (var p in pokemons) p.Init();
     }
 
-    private void OnApplicationQuit()
-    {
-        // Guardar también al cerrar la aplicación
-        if (pokemons != null && pokemons.Count > 0)
-        {
-            SistemGuardadoPokemon.GuardarEquipo(pokemons);
-        }
-    }
+    // ─── Helpers de combate ───────────────────────────────────────────────────
 
-    // Retorna el primer pokemon con HP > 0
-    public Pokemon GetHealtyPokemon()
-    {
-        // Aseguramos que la lista no sea nula para evitar otro error
-        if (pokemons == null) return null;
+    /// <summary>Devuelve el primer ibermon con HP > 0.</summary>
+    public Pokemon GetHealtyPokemon() =>
+        pokemons?.FirstOrDefault(p => p.HP > 0);
 
-        return pokemons.Where(p => p.HP > 0).FirstOrDefault();
-    }
-
+    /// <summary>
+    /// Añade un nuevo ibermon al equipo local (al capturar).
+    /// La persistencia en la API se gestiona desde BattleSystem mediante SessionManager.
+    /// </summary>
     public bool AddPokemon(Pokemon newPokemon)
     {
+        if (pokemons == null) pokemons = new List<Pokemon>();
+
         if (pokemons.Count < 6)
         {
             pokemons.Add(newPokemon);
-            // Guardar inmediatamente al capturar un nuevo Pokémon
-            SistemGuardadoPokemon.GuardarEquipo(pokemons);
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
+    /// <summary>Cura a todos los ibermon del equipo (HP máximo, sin status).</summary>
     public void HealAllPokemonsInParty()
     {
-        // Iteramos por cada pokemon en la lista y le decimos que se cure individualmente
-        foreach (var pokemon in pokemons)
+        if (pokemons == null) return;
+        foreach (var p in pokemons)
         {
-            pokemon.ResetHealth();
+            p.ResetHealth();
+            p.CureStatus();
         }
-
-        // Guardar después de curar
-        SistemGuardadoPokemon.GuardarEquipo(pokemons);
+        // La sincronización con la API se hace explícitamente (SessionManager.SincronizarEquipo)
+        // no aquí, para evitar llamadas duplicadas.
     }
 }

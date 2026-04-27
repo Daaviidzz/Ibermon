@@ -1,9 +1,11 @@
-﻿namespace Assets.Scripts.Batalla
+﻿using System.Collections.Generic;
+
+namespace Assets.Scripts.Batalla
 {
-    // Clase estática para almacenar datos de la batalla y usarla de puente entre escenqa combate y jugador
     public static class BattleData
     {
-        public static PokemonParty Party;
         public static Pokemon WildPokemon;
+        public static bool EsEntrenador;
+        public static List<Pokemon> TrainerPokemons; // Lista en lugar de componente
     }
 }
