@@ -150,8 +150,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1791538062}
-  - {fileID: 545783474}
   - {fileID: 801105752}
+  - {fileID: 545783474}
   - {fileID: 501509064}
   m_Father: {fileID: 834895943}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4338,6 +4338,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CanvasMensaje
       objectReference: {fileID: 0}
+    - target: {fileID: 2713768450290644123, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5647769450730245297, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -4583,7 +4587,7 @@ GameObject:
   - component: {fileID: 545783476}
   - component: {fileID: 545783475}
   m_Layer: 5
-  m_Name: CajitaPersonaje (1)
+  m_Name: CajitaIbermon3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4851,7 +4855,7 @@ GameObject:
   - component: {fileID: 801105754}
   - component: {fileID: 801105753}
   m_Layer: 5
-  m_Name: CajitaPersonaje2
+  m_Name: CajitaIbermon2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4875,7 +4879,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 7.281187, y: 4.999991}
+  m_AnchoredPosition: {x: 7.281187, y: 5}
   m_SizeDelta: {x: 164.39801, y: 173.9298}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801105753
@@ -4934,7 +4938,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &834895940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5102,12 +5106,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuPartidas, Assembly-CSharp
-        m_MethodName: OnElegirTorrente
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -5208,7 +5212,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4684512453661952085, guid: d44cdc498eae5d548bcd93d19e621985, type: 3}
+  m_Sprite: {fileID: -855298285791758126, guid: a7f540dc2a98c084fa81b177390746b4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6426,7 +6430,7 @@ GameObject:
   - component: {fileID: 1791538064}
   - component: {fileID: 1791538063}
   m_Layer: 5
-  m_Name: CajitaPersonaje
+  m_Name: CajitaIbermon1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10229,8 +10233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -10.3}
-  m_SizeDelta: {x: 147.4343, y: 158.30609}
+  m_AnchoredPosition: {x: 2.8473, y: -23.3304}
+  m_SizeDelta: {x: 141.7397, y: 111.6453}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1877482648
 MonoBehaviour:
@@ -10252,7 +10256,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4462019878270202156, guid: b61d7c07efc51ef42bc06c3a2740fecc, type: 3}
+  m_Sprite: {fileID: -4178046375966092550, guid: a8e87573a05c3c34a92e656e177ff3a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10512,6 +10516,10 @@ PrefabInstance:
     - target: {fileID: 6878398958554541868, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
       propertyPath: m_Name
       value: UIMovil
+      objectReference: {fileID: 0}
+    - target: {fileID: 6878398958554541868, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9194720922275282168, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
       propertyPath: m_Pivot.x
