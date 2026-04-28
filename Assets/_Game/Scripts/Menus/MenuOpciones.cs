@@ -48,13 +48,9 @@ public class MenuOpciones : MonoBehaviour
         }
 
         botonVolverPanelOpciones.onClick.AddListener(Volver);
-
         botonControles.onClick.AddListener(AbrirControles);
-
         botonVolverPanelControles.onClick.AddListener(VolverAOpciones);
-
         botonSalirJuego.onClick.AddListener(SalirJuego);
-
         botonGuardar.onClick.AddListener(GuardarPartida);
     }
 
@@ -84,8 +80,9 @@ public class MenuOpciones : MonoBehaviour
     // Cierra el menu y vuelve al mapa donde estaba el jugador
     private void Volver()
     {
-        // Solo bloquear cursor en PC
-        if (!esMovil)
+        // Solo bloquear cursor en PC si el UIOpcionesPanel NO está abierto
+        // Si está abierto, él mismo gestiona el cursor al volver
+        if (!esMovil && !UIOpcionesPanel.estaAbierto)
         {
             // Para que el cursor se quede en el medio
             Cursor.lockState = CursorLockMode.Locked;
@@ -146,7 +143,6 @@ public class MenuOpciones : MonoBehaviour
     }
 
     // Se ejecuta cuando la API confirma que se guardo correctamente
-    // Muestra un mensaje de confirmacion al jugador
     private void ManejarGuardadoExitoso(PartidaCompleta partidaActualizada)
     {
         Debug.Log("[MenuOpciones] Partida guardada correctamente");

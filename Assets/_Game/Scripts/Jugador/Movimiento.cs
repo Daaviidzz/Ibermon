@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public enum GameState { FreeRoam, Menu }
+public enum GameState { FreeRoam, UIPanel }
 
 public class Movimiento : MonoBehaviour
 {
@@ -32,7 +32,9 @@ public class Movimiento : MonoBehaviour
     public bool estaEnInteraccion = false;
 
     GameState state;
-    MenuController menuController;
+
+    // Referencia al panel de opciones integrado en el prefab del jugador
+    private UIOpcionesPanel uiOpcionesPanel;
 
     //Parte movil
     [Header("Controles Móviles (Opcional)")]
@@ -63,7 +65,7 @@ public class Movimiento : MonoBehaviour
             Cursor.visible = false;
         }
 
-        menuController = GetComponent<MenuController>();
+        uiOpcionesPanel = GetComponent<UIOpcionesPanel>();
     }
 
     // Método Start que se ejecuta después del Awake
@@ -75,39 +77,6 @@ public class Movimiento : MonoBehaviour
         {
             ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
         }
-
-        // Comprobamos que menuController existe antes de suscribirnos
-        // El personaje1 puede no tener MenuController en su prefab
-        if (menuController != null)
-        {
-            menuController.onBack += () =>
-            {
-                state = GameState.FreeRoam;
-            };
-            menuController.onMenuSelected += OnMenuSelected;
-        }
-        else
-        {
-            Debug.LogWarning("[Movimiento] No se encontro MenuController en el personaje, el menu no estara disponible");
-        }
-    }
-
-    void OnMenuSelected(int selectedItem)
-    {
-        if (selectedItem == 0)
-        {
-            //Pokemons
-        }
-        else if (selectedItem == 1)
-        {
-            //Mochila
-        }
-        else if (selectedItem == 2)
-        {
-            //Pokedex
-        }
-
-        state = GameState.FreeRoam;
     }
 
     //Este método es el que se usa para hacer el movimiento del personaje
@@ -125,16 +94,6 @@ public class Movimiento : MonoBehaviour
                 else
                 {
                     velocidad = velocidadMinima;
-                }
-
-                // Abrimos el menu con M si el personaje tiene MenuController
-                if (Input.GetKeyDown(KeyCode.M))
-                {
-                    if (menuController != null)
-                    {
-                        menuController.OpenMenu();
-                        state = GameState.Menu;
-                    }
                 }
 
                 //colocamos dentro de nuestro vector2 el x con horizontal y el y con vertical
@@ -156,29 +115,33 @@ public class Movimiento : MonoBehaviour
                     ChequearHierba();
                 }
 
-                // llamada al metodo para detectar abrirMenu de opciones
+                // Detectar X para abrir el panel de opciones del jugador
                 if (DetectarMenuOpciones())
                 {
-                    GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
-                    GuardarPosicionAnterior.posicionAnterior = transform.position;
+                    if (uiOpcionesPanel != null)
+                    {
+                        state = GameState.UIPanel;
+                        uiOpcionesPanel.AbrirPanel();
+                    }
+                    else
+                    {
+                        // Fallback: si no hay UIOpcionesPanel, cargamos la escena como antes
+                        GuardarPosicionAnterior.escenaAnterior = SceneManager.GetActiveScene().name;
+                        GuardarPosicionAnterior.posicionAnterior = transform.position;
 
-                    // Deshabilitar AudioListener del Player ANTES de cargar la escena
-                    var listener = GetComponentInChildren<AudioListener>();
-                    if (listener) listener.enabled = false;
+                        var listener = GetComponentInChildren<AudioListener>();
+                        if (listener != null)
+                        {
+                            listener.enabled = false;
+                        }
 
-                    // Cargamos de manera asincrona para que la musica no se pare
-                    SceneManager.LoadSceneAsync("Opciones");
+                        SceneManager.LoadSceneAsync("Opciones");
+                    }
                 }
             }
         }
-        else if (state == GameState.Menu)
-        {
-            // Solo procesamos el menu si el personaje tiene MenuController
-            if (menuController != null)
-            {
-                menuController.HandleUpdate();
-            }
-        }
+        // En estado UIPanel no procesamos ningún input de movimiento ni de menú
+        // El panel se gestiona íntegramente desde UIOpcionesPanel
     }
 
     private void FixedUpdate()
@@ -200,6 +163,12 @@ public class Movimiento : MonoBehaviour
         var controller = GetComponent<PlayerCharacterController>();
         if (controller != null)
             controller.ChequearHierba(transform.position);
+    }
+
+    // Lo llama UIOpcionesPanel cuando el jugador pulsa Volver
+    public void CerrarUIPanel()
+    {
+        state = GameState.FreeRoam;
     }
 
     // ========== FUNCIONES MULTIPLATAFORMA ==========
