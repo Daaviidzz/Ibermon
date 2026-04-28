@@ -565,6 +565,7 @@ MonoBehaviour:
   botonOpciones: {fileID: 6835009108832658675}
   botonGuardar: {fileID: 2401130881016408387}
   botonVolver: {fileID: 2565439100194903921}
+  botonSalir: {fileID: 5358621303441524482}
   textoGuardadoOk: {fileID: 4508399346577752956}
 --- !u!1001 &6043069709306078428
 PrefabInstance:
@@ -767,6 +768,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &5358621303441524482 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1837730663477126110, guid: 9a76af1894f0fde40a23088cf8805b65, type: 3}
+  m_PrefabInstance: {fileID: 6043069709306078428}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &6114931036547620558 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 504916094187878930, guid: 9a76af1894f0fde40a23088cf8805b65, type: 3}

@@ -27,6 +27,7 @@ public class UIOpcionesPanel : MonoBehaviour
     public Button botonOpciones;
     public Button botonGuardar;
     public Button botonVolver;
+    public Button botonSalir;
 
     // --- Texto de confirmación de guardado ---
     public GameObject textoGuardadoOk;
@@ -50,6 +51,7 @@ public class UIOpcionesPanel : MonoBehaviour
         botonOpciones.onClick.AddListener(AbrirOpciones);
         botonGuardar.onClick.AddListener(GuardarPartida);
         botonVolver.onClick.AddListener(CerrarPanel);
+        botonSalir.onClick.AddListener(SalirJuego);
 
         // El panel empieza cerrado
         panel.SetActive(false);
@@ -184,6 +186,10 @@ public class UIOpcionesPanel : MonoBehaviour
     {
         Debug.Log("[UIOpcionesPanel] Mochila: sin implementar");
     }
+    private void SalirJuego()
+    {
+        Application.Quit();
+    }
 
     // Carga la escena Opciones igual que antes, guardando posición y escena actuales
     private void AbrirOpciones()
@@ -236,7 +242,7 @@ public class UIOpcionesPanel : MonoBehaviour
     // Oculta el texto de confirmación tras 4 segundos
     private IEnumerator OcultarTextoGuardado()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(1f);
 
         if (textoGuardadoOk != null)
         {
