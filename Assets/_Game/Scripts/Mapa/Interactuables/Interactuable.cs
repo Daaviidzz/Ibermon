@@ -14,7 +14,6 @@ public class FaseDialogo
 
 public class Interactuable : MonoBehaviour
 {
-
     //Parte de sonido
     public AudioSource archivoAudio;
     public AudioClip audio;
@@ -29,8 +28,8 @@ public class Interactuable : MonoBehaviour
     private bool jugadorDentro = false;
 
     // Parte de animación
-    public Animator animacion;// Donde colocaremos la animación
-    public string triggerAnimacion; //Nombre del trigger
+    public Animator animacion;        // Donde colocaremos la animación
+    public string triggerAnimacion;   // Nombre del trigger
 
     // Lista de fases que tendrá este NPC
     // Cada fase contiene su propia lista de textos
@@ -40,7 +39,7 @@ public class Interactuable : MonoBehaviour
     // Cada NPC puede tener más o menos fases, no pasa nada
     public int faseActual = 0;
 
-    // NUEVO: Variable para activar el cambio automático de fase según Pokémon capturados
+    // Variable para activar el cambio automático de fase según Pokémon capturados
     [Header("Cambio automático de fase")]
     [Tooltip("Si está marcado, la fase cambiará automáticamente según los Pokémon capturados")]
     public bool cambiarFaseSegunPokemon = false;
@@ -55,23 +54,21 @@ public class Interactuable : MonoBehaviour
     [Tooltip("Segundos que durará la escena antes de volver")]
     public float segundosEnEscenaTransicion = 5f;
 
-    //Parte de cuadro de dialogo
+    // Parte de cuadro de dialogo
     [SerializeField]
-    private ControladorTextosUI controladorTextosUI;//hace referencia al script que controlará la parte UI
+    private ControladorTextosUI controladorTextosUI; // Hace referencia al script que controlará la parte UI
 
-    //variable de movimiento de personaje que luego usaremos
+    // Variable de movimiento de personaje que luego usaremos
     private Movimiento movimientoPersonaje;
     private PokemonParty equipoPokemon; // Referencia al componente que cura los Pokémon
 
-    // NUEVO: Referencia al Rigidbody para frenar la inercia sin desactivar colisiones
+    // Referencia al Rigidbody para frenar la inercia sin desactivar colisiones
     private Rigidbody2D rbPersonaje;
 
-
-    private int indice;//El contador de frases
+    private int indice;              // El contador de frases
     private bool dialogoActivo = false; // Controla si estamos dentro de un diálogo
 
-
-    //Parte movil
+    // Parte movil
     [Header("Controles Móviles (Opcional)")]
     [SerializeField] private ActivacionBoton botonInteraccion; // Referencia al botón de interacción
 
@@ -84,12 +81,11 @@ public class Interactuable : MonoBehaviour
 
         if (GameObject.FindWithTag("Player") != null)
         {
-            //Buscamos el componente de Movimiento del personaje para poder pararle
+            // Buscamos el componente de Movimiento del personaje para poder pararle
             movimientoPersonaje = GameObject.FindWithTag("Player").GetComponent<Movimiento>();
             // Buscamos el componente PokemonParty en el jugador para poder curarlo luego
             equipoPokemon = GameObject.FindWithTag("Player").GetComponent<PokemonParty>();
-
-            // NUEVO: Pillamos el Rigidbody del jugador
+            // Pillamos el Rigidbody del jugador
             rbPersonaje = GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>();
         }
     }
@@ -107,7 +103,7 @@ public class Interactuable : MonoBehaviour
                 ControlesMoviles.Instance.botonInteraccion.ResetearEstado();
                 Debug.Log($"[{gameObject.name}] Jugador entro - Estado de interaccion limpiado");
             }
-            //aquí debería de mostrar el mensaje lanzando la acción necesaria
+            // Aquí debería de mostrar el mensaje lanzando la acción necesaria
         }
     }
 
@@ -119,8 +115,7 @@ public class Interactuable : MonoBehaviour
         }
     }
 
-
-    //Metodo para detectar colisiones 2D
+    // Metodo para detectar colisiones 2D
     private void Update()
     {
         // Si estamos en móvil y el botón aún no existe, lo reasignamos dinámicamente
@@ -129,11 +124,30 @@ public class Interactuable : MonoBehaviour
             botonInteraccion = ControlesMoviles.Instance.botonInteraccion;
         }
 
-        // NUEVA VERIFICACIÓN: Solo procesar input si NO estamos ya en diálogo
-        // Y si el jugador está dentro del collider
+        // Solo procesar input si NO estamos ya en diálogo y el jugador está dentro del collider
         if (jugadorDentro && !dialogoActivo && DetectarInteraccion())
         {
-            // NUEVO: Antes de mostrar el diálogo, comprobar si hay que cambiar de fase automáticamente
+            // Comprobamos si este GameObject tiene un ProfesorController
+            // Si lo tiene le delegamos la decision de mostrar el starter o el dialogo
+            // Es importante que este check sea el primero para que el profesor
+            // pueda interceptar la interaccion antes de que Interactuable haga nada
+            // Buscamos ProfesorController en este objeto o en su padre
+            // por si la estructura del NPC tiene el Interactuable en un hijo
+            var profesor = GetComponent<ProfesorController>();
+            if (profesor == null)
+            {
+                profesor = GetComponentInParent<ProfesorController>();
+            }
+
+            Debug.Log($"[Interactuable] ProfesorController encontrado: {profesor != null}");
+
+            if (profesor != null)
+            {
+                profesor.OnInteraccion();
+                return;
+            }
+
+            // Antes de mostrar el diálogo, comprobar si hay que cambiar de fase automáticamente
             if (cambiarFaseSegunPokemon && equipoPokemon != null)
             {
                 ActualizarFaseSegunPokemon();
@@ -158,37 +172,37 @@ public class Interactuable : MonoBehaviour
                 }
             }
 
-            //Bloqueamos el movimiento del personaje y activamos el diálogo
+            // Bloqueamos el movimiento del personaje y activamos el diálogo
             if (movimientoPersonaje != null) movimientoPersonaje.estaEnInteraccion = true;
 
-            //FRENADO EN SECO SIN ATRAVESAR PAREDES
+            // FRENADO EN SECO SIN ATRAVESAR PAREDES
             if (rbPersonaje != null)
             {
-                rbPersonaje.linearVelocity = Vector2.zero; // Anulamos la velocidad que llevaba
-                // Congelamos la posición en X e Y para que no se deslice, pero sigue siendo Dynamic para que las paredes lo paren
+                rbPersonaje.linearVelocity = Vector2.zero;
+                // Congelamos la posición en X e Y para que no se deslice
+                // pero sigue siendo Dynamic para que las paredes lo paren
                 rbPersonaje.constraints = RigidbodyConstraints2D.FreezePosition | RigidbodyConstraints2D.FreezeRotation;
             }
 
             dialogoActivo = true;
 
-            //ocultar controles móviles excepto interacción
+            // Ocultar controles móviles excepto interacción
             if (esMovil && ControlesMoviles.Instance != null)
             {
                 ControlesMoviles.Instance.MostrarSoloInteraccion();
             }
 
-
-            //Lanza el audio si existe
+            // Lanza el audio si existe
             if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
 
-            //Lanza animación si existe
+            // Lanza animación si existe
             if (animacion != null) animacion.SetTrigger(triggerAnimacion);
 
             // Comprobamos si la fase actual tiene textos
             // Usamos && para que si la lista es nula no intente hacer .Count
             if (fasesDialogo[faseActual].textosDeEstaFase != null && fasesDialogo[faseActual].textosDeEstaFase.Count > 0)
             {
-                //Activamos la UI y mostramos la primera frase de la fase actual
+                // Activamos la UI y mostramos la primera frase de la fase actual
                 controladorTextosUI.activarDesactivarCajaDeTextos(true);
                 activarCartel();
             }
@@ -214,11 +228,11 @@ public class Interactuable : MonoBehaviour
         // Usamos && para que si la lista es nula no intente hacer .Count
         if (textos != null && textos.Count > 0)
         {
-            //si la posición es menor a el total de la lista
+            // Si la posición es menor al total de la lista mostramos la siguiente frase
             if (indice < textos.Count)
             {
-                controladorTextosUI.mostrarTextos(textos[indice]);//llamamos al método de la UI para que muestre el texto
-                indice++;//sumamos uno al contador
+                controladorTextosUI.mostrarTextos(textos[indice]); // Llamamos al método de la UI para que muestre el texto
+                indice++; // Sumamos uno al contador
             }
             else
             {
@@ -233,7 +247,7 @@ public class Interactuable : MonoBehaviour
         }
     }
 
-    //  Método para limpiar estados y devolver el control al jugador correctamente
+    // Método para limpiar estados y devolver el control al jugador correctamente
     private void TerminarDialogo()
     {
         controladorTextosUI.activarDesactivarCajaDeTextos(false);
@@ -243,36 +257,42 @@ public class Interactuable : MonoBehaviour
         // Desbloqueamos el movimiento del personaje
         if (movimientoPersonaje != null) movimientoPersonaje.estaEnInteraccion = false;
 
-        //  Quitamos el "freno de mano" (FreezePosition) pero mantenemos la rotación congelada para que no se caiga
+        // Quitamos el "freno de mano" (FreezePosition) pero mantenemos la rotación
+        // congelada para que no se caiga
         if (rbPersonaje != null)
         {
             rbPersonaje.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
-        //  Si acabamos de terminar la fase 1 y está activado el cambio de escena, lo hacemos
+        // Si acabamos de terminar la fase 1 y está activado el cambio de escena, lo hacemos
         if (cambiarEscenaAlTerminarFase1 && faseActual == 1)
         {
             CambiarAEscenaTransicion();
         }
 
-        // restaurar controles móviles
+        // Restaurar controles móviles
         if (esMovil && ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.MostrarTodosLosControles();
         }
-       // Al terminar el diálogo del entrenador, lanzar la batalla
+
+        // Al terminar el diálogo del entrenador, lanzar la batalla
         // Subimos al padre a buscar el TrainerController
         var trainer = GetComponentInParent<TrainerController>();
         if (trainer != null)
         {
-           var jugador = GameObject.FindWithTag("Player").transform;
-           trainer.IniciarBatallaEntrenador(jugador);
+            var jugador = GameObject.FindWithTag("Player").transform;
+            trainer.IniciarBatallaEntrenador(jugador);
         }
-
-
     }
+
+    // Inicia el diálogo directamente sin esperar input del jugador
+    // Lo usa ProfesorController después de elegir el starter
+    // y TrainerController cuando el entrenador ve al jugador
     public void IniciarDialogoDesdeEntrenador()
     {
+        // Si no hay controlador de textos ni fases configuradas no podemos mostrar nada
+        // En ese caso si hay un entrenador asociado lanzamos la batalla directamente
         if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
         {
             var trainer = GetComponentInParent<TrainerController>();
@@ -293,7 +313,7 @@ public class Interactuable : MonoBehaviour
         activarCartel();
     }
 
-    //  Método simple que solo cambia a la escena de transición
+    // Método simple que solo cambia a la escena de transición
     private void CambiarAEscenaTransicion()
     {
         // Guardar la escena actual y posición del jugador
@@ -304,12 +324,12 @@ public class Interactuable : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(escenaDespuesDeFase1);
     }
 
-    //  Método que actualiza la fase según cuántos Pokémon tiene el jugador
+    // Método que actualiza la fase según cuántos Pokémon tiene el jugador
     private void ActualizarFaseSegunPokemon()
     {
         int cantidadPokemon = equipoPokemon.Pokemons.Count;
 
-        // Si tiene 5 o más Pokémon, cambia a la fase 1
+        // Si tiene los suficientes Pokémon cambia a la fase 1
         if (cantidadPokemon >= pokemonNecesariosParaFase1)
         {
             CambiarFase(1);
@@ -325,18 +345,14 @@ public class Interactuable : MonoBehaviour
     // Lo puedes llamar desde cualquier script cuando el jugador haga algo
     public void CambiarFase(int nuevaFase)
     {
-        //Comprobamos que la fase existe para evitar errores
+        // Comprobamos que la fase existe para evitar errores
         if (nuevaFase >= 0 && nuevaFase < fasesDialogo.Count)
         {
             faseActual = nuevaFase;
         }
     }
 
-
-    //Parte para movil
-
-
-    //Parte movil inicial
+    // Parte movil inicial
     private void comprobacionInicialParteMovil()
     {
         // Detectar la plataforma
@@ -378,7 +394,4 @@ public class Interactuable : MonoBehaviour
             return Input.GetKeyDown(KeyCode.E);
         }
     }
-    
-  
-
 }

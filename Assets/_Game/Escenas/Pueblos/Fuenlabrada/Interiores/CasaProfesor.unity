@@ -3943,9 +3943,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuPartidas, Assembly-CSharp
-        m_MethodName: OnElegirTorrente
+      - m_Target: {fileID: 583646402}
+        m_TargetAssemblyTypeName: ProfesorController, Assembly-CSharp
+        m_MethodName: OnElegirStarter3
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4012,7 +4012,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &329584225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4422,6 +4422,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8114838117266136054, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4664,6 +4668,7 @@ GameObject:
   - component: {fileID: 583646400}
   - component: {fileID: 583646399}
   - component: {fileID: 583646398}
+  - component: {fileID: 583646402}
   m_Layer: 0
   m_Name: JoseManu
   m_TagString: Untagged
@@ -4720,7 +4725,7 @@ MonoBehaviour:
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5
-  controladorTextosUI: {fileID: 0}
+  controladorTextosUI: {fileID: 460087813}
   botonInteraccion: {fileID: 0}
 --- !u!212 &583646399
 SpriteRenderer:
@@ -4843,6 +4848,19 @@ Transform:
   - {fileID: 1603670178}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &583646402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583646397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c81716243f9825409c5f9564244e946, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProfesorController
+  canvasEleccionStarter: {fileID: 834895939}
 --- !u!1 &801105751
 GameObject:
   m_ObjectHideFlags: 0
@@ -4938,7 +4956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &834895940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5105,13 +5123,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 583646402}
+        m_TargetAssemblyTypeName: ProfesorController, Assembly-CSharp
+        m_MethodName: OnElegirStarter1
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -6368,9 +6386,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MenuPartidas, Assembly-CSharp
-        m_MethodName: OnElegirPersonaje1
+      - m_Target: {fileID: 583646402}
+        m_TargetAssemblyTypeName: ProfesorController, Assembly-CSharp
+        m_MethodName: OnElegirStarter2
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
