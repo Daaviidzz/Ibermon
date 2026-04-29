@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
+    [SerializeField] GameObject itemList;
+    [SerializeField] ItemSlotUI itemSlotUI;
+    Inventory inventory;
+
+
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
     private float tiempoSiguienteInput = 0f; // Cooldown para que el joystick no se mueva demasiado rápido
@@ -16,8 +21,27 @@ public class InventoryUI : MonoBehaviour
 #else
         esMovil = false;
 #endif
+        inventory = Inventory.GetInventory();
     }
-   public void HandleUpdate(Action onBack)
+    private void Start()
+    {
+        UpdateItemList();
+    }
+    void UpdateItemList()
+    {
+        // Limpiar lista actual
+        foreach (Transform child in itemList.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        // Agregar nuevos items
+        foreach (var itemSlot in inventory.Slots)
+        {
+            var itemSlotUIObj = Instantiate(itemSlotUI, itemList.transform);
+            itemSlotUIObj.SetData(itemSlot);
+        }
+    }
+    public void HandleUpdate(Action onBack)
     {
         if (InputCancelar())
         {

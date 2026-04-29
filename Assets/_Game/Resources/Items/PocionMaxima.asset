@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50bcd5283c4dd644dac89cb55afc20cb, type: 3}
+  m_Name: PocionMaxima
+  m_EditorClassIdentifier: Assembly-CSharp::RecoveryItem
+  name: Pocion Maxima
+  description: Cura al pokemon toda la vida
+  icon: {fileID: -5349109878154004307, guid: c67a0be3a04ad7d4383e744da71a8c12, type: 3}
+  hpAmount: 0
+  restoreMaxHP: 1
+  restoreMaxPP: 0
+  ppAmount: 0
+  status: 0
+  recoverAllStatus: 0
+  revive: 0
+  maxRevive: 0
