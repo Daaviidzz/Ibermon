@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public enum GameState { FreeRoam,Menu,PartyScreen}
+public enum GameState { FreeRoam,Menu,PartyScreen,Bag}
 public class Movimiento : MonoBehaviour
 {
     //Variable para la velocidad del personaje
@@ -32,6 +32,7 @@ public class Movimiento : MonoBehaviour
     GameState state;
     MenuController menuController;
     [SerializeField] PartyScreen partyScreen;
+    [SerializeField] InventoryUI inventoryUI;
     PokemonParty pokemonParty;
     //Parte movil
     [Header("Controles Móviles (Opcional)")]
@@ -93,7 +94,8 @@ public class Movimiento : MonoBehaviour
         else if (selectedItem == 1)
         {
             //Mochila
-            state = GameState.FreeRoam;
+            inventoryUI.gameObject.SetActive(true);
+            state = GameState.Bag;
         }
         else if (selectedItem == 2)
         {
@@ -163,6 +165,14 @@ public class Movimiento : MonoBehaviour
                     state = GameState.FreeRoam;
                 }
             );
+        }
+        else if (state == GameState.Bag)
+        {
+            inventoryUI.HandleUpdate(onBack: () =>
+            {
+                inventoryUI.gameObject.SetActive(false);
+                state = GameState.FreeRoam;
+            });
         }
         // llamada al metodo para detectar abrirMenu
         if (DetectarMenuOpciones())
