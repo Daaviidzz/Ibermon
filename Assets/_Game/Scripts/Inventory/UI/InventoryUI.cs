@@ -1,11 +1,25 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using TMPro;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
+
+    [SerializeField] Color higthlighedColor;
     [SerializeField] GameObject itemList;
     [SerializeField] ItemSlotUI itemSlotUI;
+    [SerializeField] Image itemIcon;
+    [SerializeField] TextMeshProUGUI itemDescription;
+
+
     Inventory inventory;
+    int selectedItem = 0;
+    List<ItemSlotUI> slotUIList;
+    
 
 
     // --- VARIABLES CONTROL MOVIL ---
@@ -34,20 +48,50 @@ public class InventoryUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        slotUIList = new List<ItemSlotUI>();
         // Agregar nuevos items
         foreach (var itemSlot in inventory.Slots)
         {
             var itemSlotUIObj = Instantiate(itemSlotUI, itemList.transform);
             itemSlotUIObj.SetData(itemSlot);
+
+            slotUIList.Add(itemSlotUIObj);
         }
+        UpdateItemSelection();
     }
     public void HandleUpdate(Action onBack)
     {
+        int prevSelection = selectedItem;
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            ++selectedItem;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+            --selectedItem;
+        selectedItem = Math.Clamp(selectedItem, 0, inventory.Slots.Count - 1);
+        if (prevSelection != selectedItem)
+            UpdateItemSelection();
         if (InputCancelar())
         {
             onBack?.Invoke();
         }
     }
+
+    void UpdateItemSelection()
+    {
+        for (int i = 0; i < slotUIList.Count; ++i)
+        {
+            if (i == selectedItem)
+                slotUIList[i].NameText.color = higthlighedColor;
+            else
+                slotUIList[i].NameText.color = Color.black;
+        }
+        var item=inventory.Slots[selectedItem].Item;
+        itemIcon.sprite = item.Icon;
+        itemDescription.text= item.Description;
+    }
+
     bool InputConfirmar()
     {
         if (esMovil && ControlesMoviles.Instance != null)

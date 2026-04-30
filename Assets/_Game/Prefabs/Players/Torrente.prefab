@@ -2157,8 +2157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86f0b5798c8d39a498c0ec122272c05b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
+  higthlighedColor: {r: 0.13550194, g: 0.47246045, b: 0.8207547, a: 1}
   itemList: {fileID: 4332191081750227073}
   itemSlotUI: {fileID: 3912254885399139799, guid: ce837ae3594b6724598e5b70e5265087, type: 3}
+  itemIcon: {fileID: 7138594976092725702}
+  itemDescription: {fileID: 175336471274121091}
 --- !u!1 &3983203218967952147
 GameObject:
   m_ObjectHideFlags: 0

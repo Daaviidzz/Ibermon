@@ -6,22 +6,19 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [SerializeField] List<ItemSlot> slots;
-
+    public static Inventory Instance { get; private set; }
     public List<ItemSlot> Slots => slots;
-    public static Inventory GetInventory() 
+    private void Awake()
     {
-        var inventory = FindObjectOfType<Inventory>();
-        if (inventory == null)
-        {
-            Debug.LogError(" ERROR: Inventory no encontrado en la escena. " +
-                "Asegúrate de que hay un GameObject con el componente Inventory adjunto.");
-        }
-        else
-        {
-            Debug.Log($"✓ Inventory encontrado: {inventory.gameObject.name}");  
-        }
-        return inventory;
+        Instance = this;
     }
+
+    public static Inventory GetInventory()
+    {
+        return Instance;
+    }
+   
+
 }
 
 [Serializable]
