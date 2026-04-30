@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,14 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] Image itemIcon;
     [SerializeField] TextMeshProUGUI itemDescription;
 
+    [SerializeField] Image upArrow;
+    [SerializeField] Image downArrow;
 
+    RectTransform itemListRect;
     Inventory inventory;
     int selectedItem = 0;
     List<ItemSlotUI> slotUIList;
-    
+    const int ITEMS_IN_VIEWPORT = 8; // Número de items visibles sin necesidad de hacer scroll
 
 
     // --- VARIABLES CONTROL MOVIL ---
@@ -36,6 +40,7 @@ public class InventoryUI : MonoBehaviour
         esMovil = false;
 #endif
         inventory = Inventory.GetInventory();
+        itemListRect = itemList.GetComponent<RectTransform>();
     }
     private void Start()
     {
@@ -90,6 +95,18 @@ public class InventoryUI : MonoBehaviour
         var item=inventory.Slots[selectedItem].Item;
         itemIcon.sprite = item.Icon;
         itemDescription.text= item.Description;
+        HandleScrolling();
+
+    }
+    void HandleScrolling()
+    {
+        float scrollPos = Mathf.Clamp(selectedItem - ITEMS_IN_VIEWPORT / 2, 0, selectedItem) * slotUIList[0].Height;
+        itemListRect.localPosition = new Vector2(itemListRect.localPosition.x, scrollPos);
+
+        bool showUpArrow = selectedItem > ITEMS_IN_VIEWPORT / 2;
+        upArrow.gameObject.SetActive(showUpArrow);
+        bool showDownArrow = selectedItem + ITEMS_IN_VIEWPORT / 2 < slotUIList.Count;
+        downArrow.gameObject.SetActive(showDownArrow);
     }
 
     bool InputConfirmar()
