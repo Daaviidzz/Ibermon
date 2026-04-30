@@ -2166,6 +2166,7 @@ MonoBehaviour:
   itemDescription: {fileID: 175336471274121091}
   upArrow: {fileID: 1027867016696420665}
   downArrow: {fileID: 1847214862679235107}
+  partyScreen: {fileID: 8062682712086849403}
 --- !u!1 &3983203218967952147
 GameObject:
   m_ObjectHideFlags: 0
@@ -2341,7 +2342,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4176241968877562697
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5563,7 +5564,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &614211468854383172
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6196,10 +6197,10 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4102898214542262236, guid: bc07e4bb46c6c30429c79c56ccea22a3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2607277562502832456}
+      addedObject: {fileID: 2000115958066627665}
     - targetCorrespondingSourceObject: {fileID: 4102898214542262236, guid: bc07e4bb46c6c30429c79c56ccea22a3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2000115958066627665}
+      addedObject: {fileID: 2607277562502832456}
     - targetCorrespondingSourceObject: {fileID: 8268044005265087691, guid: bc07e4bb46c6c30429c79c56ccea22a3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 220510818329044281}

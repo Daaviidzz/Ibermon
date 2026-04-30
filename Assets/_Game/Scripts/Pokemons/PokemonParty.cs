@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class PokemonParty : MonoBehaviour
     [SerializeField] List<Pokemon> pokemons;
     [SerializeField] bool esEquipoJugador = false;
     private bool esBatallaTemp = false;
+    public event Action OnUpdated;
 
     //  Hacemos que la propiedad devuelva la lista del inspector
     public List<Pokemon> Pokemons
@@ -78,6 +80,7 @@ public class PokemonParty : MonoBehaviour
             pokemons.Add(newPokemon);
             // Guardar inmediatamente al capturar un nuevo Pokémon
             SistemGuardadoPokemon.GuardarEquipo(pokemons);
+            OnUpdated?.Invoke();
             return true;
         }
         else
@@ -96,7 +99,10 @@ public class PokemonParty : MonoBehaviour
         // Guardar después de curar
         SistemGuardadoPokemon.GuardarEquipo(pokemons);
     }
-  
+    public static PokemonParty GetPlayerParty()
+    {
+        return GameObject.FindGameObjectWithTag("Player").GetComponent<PokemonParty>();
+    }
 
     
 }

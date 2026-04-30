@@ -16,7 +16,19 @@ public class PartyScreen : MonoBehaviour
     public BattleState? CalledFrom { get; set; }
 
     int selection = 0;
-    public Pokemon SelectedMember => pokemons[selection];
+    public Pokemon SelectedMember 
+    { 
+        get 
+        {
+            if (pokemons == null || pokemons.Count == 0)
+            {
+                Debug.LogError("? SelectedMember: No hay Pokémons disponibles");
+                return null;
+            }
+            return pokemons[selection];
+        }
+    }
+    PokemonParty party;
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
@@ -39,26 +51,45 @@ public class PartyScreen : MonoBehaviour
         GameObject target = partyList != null ? partyList : gameObject;
 
         memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
+        party = PokemonParty.GetPlayerParty();
+
+        // IMPORTANTE: Asegurar que el equipo se cargó antes de usarlo
+        if (party != null)
+        {
+            party.CargarEquipoGuardado();
+        }
+
+        SetPartyData();
+        party.OnUpdated += SetPartyData;
     }
 
 
-    public void SetPartyData(List<Pokemon> pokemons)
+    public void SetPartyData()
     {
-        this.pokemons = pokemons;
-
-        if (memberSlots == null) Init(); // Inicialización de seguridad
-
-        if (pokemons == null)
+        // Garantizar inicialización si party no se ha configurado
+        if (memberSlots == null || party == null) 
         {
-            Debug.LogError("La lista de Pokemons enviada a PartyScreen es NULA.");
+            Debug.LogError("PartyScreen no inicializado correctamente. Calling Init()...");
+            Init();
+            return; // Salir después de reintentar Init
+        }
+
+        pokemons = party.Pokemons;
+
+        if (pokemons == null || pokemons.Count == 0)
+        {
+            Debug.LogError("? La lista de Pokemons es NULA o VACÍA. " +
+                "Verifica que:\n" +
+                "1. El equipo guardado existe\n" +
+                "2. PokemonParty.CargarEquipoGuardado() se ejecutó\n" +
+                "3. La lista en el inspector tiene Pokémons asignados");
             return;
         }
 
         for (int i = 0; i < memberSlots.Length; i++)
         {
-            if (memberSlots[i] == null) continue; // Si el slot es nulo, saltamos
+            if (memberSlots[i] == null) continue;
 
-            // Verificamos si este slot corresponde a un pokemon existente
             bool isActive = i < pokemons.Count;
 
             memberSlots[i].gameObject.SetActive(isActive);
@@ -78,46 +109,59 @@ public class PartyScreen : MonoBehaviour
 
    public void HandleUpdate(Action onSelected, Action onBack)
     {
-        var prevSelection = selection;
+    // Validar inicialización
+    if (pokemons == null || pokemons.Count == 0)
+    {
+        Debug.LogError("? PartyScreen.HandleUpdate: pokemons es null o vacío.\n" +
+            "Intentando reinicializar...");
+        SetPartyData(); // Reintentar cargar datos
 
-        if (Time.time >= tiempoSiguienteInput)
+        if (pokemons == null || pokemons.Count == 0)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
-            {
-                ++selection;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
-            {
-                --selection;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
-            {
-                selection += 2;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
-            {
-                selection -= 2;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
-        }
-
-        selection = Math.Clamp(selection, 0, pokemons.Count - 1);
-        if(selection != prevSelection)
-            UpdateMemberSelection(selection);
-
-        if (InputConfirmar())
-        {
-            onSelected?.Invoke();
-
-        }
-        else if (InputCancelar())
-        {
-           onBack?.Invoke();
+            Debug.LogError("FALLO CRÍTICO: No se pudieron cargar los Pokémons.");
+            return;
         }
     }
+
+    var prevSelection = selection;
+
+    if (Time.time >= tiempoSiguienteInput)
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+        {
+            ++selection;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+        {
+            --selection;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+        {
+            selection += 2;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+        {
+            selection -= 2;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+    }
+
+    selection = Math.Clamp(selection, 0, pokemons.Count - 1);
+    if(selection != prevSelection)
+        UpdateMemberSelection(selection);
+
+    if (InputConfirmar())
+    {
+        onSelected?.Invoke();
+    }
+    else if (InputCancelar())
+    {
+       onBack?.Invoke();
+    }
+}
     public void UpdateMemberSelection(int selectedMember)
     {
         for (int i = 0; i < pokemons.Count; i++)
@@ -129,8 +173,6 @@ public class PartyScreen : MonoBehaviour
     }
 
     public void SetMessageText(string message) => messageText.text = message;
-
-
 
 
     bool InputConfirmar()

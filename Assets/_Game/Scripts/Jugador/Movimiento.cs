@@ -88,7 +88,6 @@ public class Movimiento : MonoBehaviour
         {
             //Pokemons
             partyScreen.gameObject.SetActive(true);
-            partyScreen.SetPartyData(pokemonParty.Pokemons);
             state=GameState.PartyScreen;
         }
         else if (selectedItem == 1)
