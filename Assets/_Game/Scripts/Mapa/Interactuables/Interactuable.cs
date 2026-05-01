@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Batalla;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -204,7 +205,7 @@ public class Interactuable : MonoBehaviour
             activarCartel();
         }
     }
-
+    
     private void activarCartel()
     {
         // Cogemos la lista de frases de la fase actual del NPC

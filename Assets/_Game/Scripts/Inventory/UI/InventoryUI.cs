@@ -1,10 +1,9 @@
 using JetBrains.Annotations;
-using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,6 +49,7 @@ public class InventoryUI : MonoBehaviour
     private void Start()
     {
         UpdateItemList();
+        inventory.OnUpdated += UpdateItemList;
     }
     void UpdateItemList()
     {
@@ -98,7 +98,7 @@ public class InventoryUI : MonoBehaviour
         {
             Action onSelected = () =>
             {
-                
+                StartCoroutine(UseItem());
             };
             Action onBackPartyScreen = () =>
             {
@@ -107,7 +107,22 @@ public class InventoryUI : MonoBehaviour
             partyScreen.HandleUpdate(onSelected, onBackPartyScreen);
         }
     }
-
+    IEnumerator UseItem()
+    {
+        state = InventoryUIState.Busy;
+        var usedItem= inventory.UseItem(selectedItem, partyScreen.SelectedMember);
+        if(usedItem != null)
+        {
+            //Mostrar mensaje de se ha usado el item
+            yield return DialogManager.Instance.ShowDialogText($"Usaste {usedItem.Name}");
+        }
+        else
+        {
+            //Mostrar mensaje de no se pudo usar el item
+            yield return DialogManager.Instance.ShowDialogText($"No se pudo usar {inventory.Slots[selectedItem].Item.Name}");
+        }
+         ClosePartyScreen();
+    }
     void UpdateItemSelection()
     {
         for (int i = 0; i < slotUIList.Count; ++i)

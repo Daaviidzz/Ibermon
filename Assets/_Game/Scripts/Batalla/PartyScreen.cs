@@ -95,7 +95,7 @@ public class PartyScreen : MonoBehaviour
             memberSlots[i].gameObject.SetActive(isActive);
 
             if (isActive)
-                memberSlots[i].SetData(pokemons[i]);
+                memberSlots[i].Init(pokemons[i]);
         }
         UpdateMemberSelection(selection);
 

@@ -95,6 +95,7 @@ MonoBehaviour:
   actionSelector: {fileID: 0}
   moveSelector: {fileID: 0}
   moveDetails: {fileID: 0}
+  choiceBox: {fileID: 0}
   actionTexts:
   - {fileID: 0}
   - {fileID: 0}
@@ -107,6 +108,8 @@ MonoBehaviour:
   - {fileID: 0}
   ppText: {fileID: 0}
   typeText: {fileID: 0}
+  yesText: {fileID: 0}
+  noText: {fileID: 0}
 --- !u!1 &2713768450290644123
 GameObject:
   m_ObjectHideFlags: 0
