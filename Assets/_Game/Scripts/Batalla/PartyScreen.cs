@@ -29,6 +29,7 @@ public class PartyScreen : MonoBehaviour
         }
     }
     PokemonParty party;
+    private bool initialized = false; // Flag para asegurar que Init() solo se ejecuta una vez
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
@@ -46,6 +47,13 @@ public class PartyScreen : MonoBehaviour
     }
     public void Init()
     {
+        // Solo hacer setup una vez
+        if (initialized) 
+        {
+            SetPartyData(); // Solo actualizar datos, no reinicializar
+            return;
+        }
+
         // Si partyList existe buscamos ahí, si no, en este mismo objeto (gameObject).
         // Usamos el operador ternario para decidir el origen en una línea.
         GameObject target = partyList != null ? partyList : gameObject;
@@ -53,14 +61,11 @@ public class PartyScreen : MonoBehaviour
         memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
         party = PokemonParty.GetPlayerParty();
 
-        // IMPORTANTE: Asegurar que el equipo se cargó antes de usarlo
-        if (party != null)
-        {
-            party.CargarEquipoGuardado();
-        }
+        
 
         SetPartyData();
         party.OnUpdated += SetPartyData;
+        initialized = true;
     }
 
 
@@ -94,8 +99,13 @@ public class PartyScreen : MonoBehaviour
 
             memberSlots[i].gameObject.SetActive(isActive);
 
+            // Usar SetData en lugar de Init para evitar múltiples suscripciones
             if (isActive)
-                memberSlots[i].Init(pokemons[i]);
+            {
+                memberSlots[i].SetData(pokemons[i]);
+                // Forzar actualización inmediata del estado actual
+                memberSlots[i].RefreshDisplay();
+            }
         }
         UpdateMemberSelection(selection);
 

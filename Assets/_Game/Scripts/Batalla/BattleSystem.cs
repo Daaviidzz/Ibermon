@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Estados posibles para controlar el flujo de la máquina de estados del combate
-public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, RUNNINGTURN, BUSY, PARTYSCREEN, BATTLEOVER,ABOUTTOUSE,MOVETOFORGET }
+public enum BattleState { START, ACTIONSELECTION, MOVESELECTION, RUNNINGTURN, BUSY, PARTYSCREEN, BATTLEOVER,ABOUTTOUSE,MOVETOFORGET,BAG }
 public enum BattleAction {MOVE,SWITCHPOKEMON,USEITEM,RUN }
 
 public class BattleSystem : MonoBehaviour
@@ -24,6 +24,7 @@ public class BattleSystem : MonoBehaviour
 
     [SerializeField] GameObject pokeballSprite;
     [SerializeField] MoveSelectionUI moveSelectionUI;
+    [SerializeField] InventoryUI inventoryUI;
 
     // Índices para la navegación en los menús
     int currentAction;
@@ -158,8 +159,14 @@ public class BattleSystem : MonoBehaviour
     {
         partyScreen.CalledFrom = state;
         state = BattleState.PARTYSCREEN;
-        
+
         partyScreen.gameObject.SetActive(true);
+        partyScreen.SetPartyData(); // Forzar actualización de datos actuales
+    }
+    void OpenBag()
+    {
+        state = BattleState.BAG;
+        inventoryUI.gameObject.SetActive(true);
     }
     IEnumerator AboutToUse(Pokemon newPokemon)
     {
@@ -223,22 +230,27 @@ public class BattleSystem : MonoBehaviour
             }
             else if (playerAction == BattleAction.USEITEM)
             {
-                pokeballFallo = false; // resetear antes
                 dialogBox.EnableActionSelector(false);
-                yield return ThrowPokeball();
 
+                // Si el inventario ya usó el ítem (poción, etc.), el enemigo ataca directamente
+                // Si fue una pokeball, ThrowPokeball ya habrá gestionado BattleOver o puesto pokeballFallo=true
                 if (pokeballFallo)
                 {
-                    // El pokémon escapó, ahora ataca el enemigo
+                    // La pokeball falló, el enemigo contraataca
                     var enemyMove = enemyUnit.Pokemon.GetRandomMove();
                     yield return RunMove(enemyUnit, playerUnit, enemyMove);
                     yield return RunAfterTurn(enemyUnit);
                     if (state == BattleState.BATTLEOVER) yield break;
                 }
-                else
+                else if (state != BattleState.BATTLEOVER)
                 {
-                    yield break; 
+                    // Poción u otro ítem usado: el enemigo ataca normalmente
+                    var enemyMove = enemyUnit.Pokemon.GetRandomMove();
+                    yield return RunMove(enemyUnit, playerUnit, enemyMove);
+                    yield return RunAfterTurn(enemyUnit);
+                    if (state == BattleState.BATTLEOVER) yield break;
                 }
+                // Si state == BATTLEOVER (pokémon capturado), no hacemos nada más
             }
             else if(playerAction == BattleAction.RUN)
             {
@@ -284,7 +296,7 @@ public class BattleSystem : MonoBehaviour
        if (!canRunMove)
        {
             yield return ShowStatusChanges(sourceUnit.Pokemon);
-            yield return sourceUnit.Hud.UpdateHP();
+            yield return sourceUnit.Hud.UpdateHPCoroutine();
             yield break;
        }
         yield return ShowStatusChanges(sourceUnit.Pokemon);
@@ -306,7 +318,7 @@ public class BattleSystem : MonoBehaviour
             else
             {
                 var damageDetails = targetUnit.Pokemon.TakeDamage(move, sourceUnit.Pokemon);
-                yield return targetUnit.Hud.UpdateHP();
+                yield return targetUnit.Hud.UpdateHPCoroutine();
                 yield return ShowDamageDetails(damageDetails);
             }
             if(move.Base.Secondries !=null && move.Base.Secondries.Count > 0 && targetUnit.Pokemon.HP > 0)
@@ -339,7 +351,7 @@ public class BattleSystem : MonoBehaviour
 
         sourceUnit.Pokemon.OnAfterTurn();
         yield return ShowStatusChanges(sourceUnit.Pokemon);
-        yield return sourceUnit.Hud.UpdateHP();
+        yield return sourceUnit.Hud.UpdateHPCoroutine();
         if (sourceUnit.Pokemon.HP <= 0)
         {
             yield return HandlePokemonFainted(sourceUnit);
@@ -469,6 +481,22 @@ public class BattleSystem : MonoBehaviour
         if (state == BattleState.ACTIONSELECTION) HandleActionSelection();
         else if (state == BattleState.MOVESELECTION) HandleMoveSelection();
         else if (state == BattleState.PARTYSCREEN) HandlePartyScreenSelection();
+        else if (state == BattleState.BAG) 
+        {
+            Action onBack = () =>
+            {
+                inventoryUI.gameObject.SetActive(false);
+                state = BattleState.ACTIONSELECTION;
+            };
+            Action onItemUsed = () =>
+            {
+                state = BattleState.BUSY;
+                inventoryUI.gameObject.SetActive(false);
+                StartCoroutine(RunTurns(BattleAction.USEITEM));
+
+            };
+            inventoryUI.HandleUpdate(onBack,onItemUsed); 
+        }
         else if (state == BattleState.ABOUTTOUSE) HandleAboutToUseSelection();
         else if (state == BattleState.MOVETOFORGET)
         {
@@ -481,17 +509,17 @@ public class BattleSystem : MonoBehaviour
                 }
                 else
                 {
-                    var selectedMove=playerUnit.Pokemon.Moves[moveIndex].Base;
+                    var selectedMove = playerUnit.Pokemon.Moves[moveIndex].Base;
                     StartCoroutine(dialogBox.TypeDialog($"{playerUnit.Pokemon.Base.Name} olvidó {selectedMove.Name} y aprendió {moveToLearn.Name}!"));
-                    playerUnit.Pokemon.Moves[moveIndex]=new Move(moveToLearn);
+                    playerUnit.Pokemon.Moves[moveIndex] = new Move(moveToLearn);
 
 
                 }
                 moveToLearn = null;
-                state=BattleState.RUNNINGTURN;
+                state = BattleState.RUNNINGTURN;
 
             };
-            moveSelectionUI.HandleMoveSelection(esMovil,onMoveSelected);
+            moveSelectionUI.HandleMoveSelection(esMovil, onMoveSelected);
         }
 
 
@@ -615,7 +643,8 @@ public class BattleSystem : MonoBehaviour
             if (currentAction == 0) MoveSelection(); // Luchar
             else if (currentAction == 1)
             {
-                StartCoroutine(RunTurns(BattleAction.USEITEM));//Mochila
+                OpenBag();
+               // StartCoroutine(RunTurns(BattleAction.USEITEM));//Mochila
             }
             else if (currentAction == 2)
             {// Pokémons

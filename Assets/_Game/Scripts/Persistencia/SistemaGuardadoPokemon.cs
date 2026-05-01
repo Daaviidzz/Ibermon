@@ -150,7 +150,6 @@ public static class SistemGuardadoPokemon
             if (pBase != null)
             {
                 Pokemon pokemon = new Pokemon(pBase, pokemonGuardado.nivel);
-                pokemon.Init();
                 pokemon.HP = pokemonGuardado.hp;
                 pokemon.Exp = pokemonGuardado.exp;
                 equipoCargado.Add(pokemon);

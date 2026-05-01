@@ -28,7 +28,7 @@ public class InventoryUI : MonoBehaviour
     int selectedItem = 0;
     List<ItemSlotUI> slotUIList;
     const int ITEMS_IN_VIEWPORT = 8; // Número de items visibles sin necesidad de hacer scroll
-
+    Action OnItemUsed;
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
@@ -69,8 +69,9 @@ public class InventoryUI : MonoBehaviour
         }
         UpdateItemSelection();
     }
-    public void HandleUpdate(Action onBack)
+    public void HandleUpdate(Action onBack,Action onItemUsed=null)
     {
+        this.OnItemUsed = onItemUsed;
         if (state == InventoryUIState.ItemSelection)
         {
             int prevSelection = selectedItem;
@@ -115,6 +116,7 @@ public class InventoryUI : MonoBehaviour
         {
             //Mostrar mensaje de se ha usado el item
             yield return DialogManager.Instance.ShowDialogText($"Usaste {usedItem.Name}");
+            OnItemUsed?.Invoke();
         }
         else
         {

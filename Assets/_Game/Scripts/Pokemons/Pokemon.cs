@@ -33,8 +33,7 @@ public class Pokemon
     public int VolatileStatusTime { get; set; }
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
-    public Queue<string> StatusChanges { get; private set; } 
-    public bool HpChanged { get; set; }
+    public Queue<string> StatusChanges { get; private set; }
     public event System.Action OnStatusChanged; // Evento para notificar cambios de estado
     public event System.Action OnHpChanged; // Evento para notificar cambios de HP
 
@@ -159,13 +158,13 @@ public class Pokemon
     {
         HP=Mathf.Clamp(HP - damage, 0, MaxHp);
         OnHpChanged?.Invoke();
-        HpChanged = true;
+       
     }
     public void IncreaseHP(int amount)
     {
         HP=Mathf.Clamp(HP + amount, 0, MaxHp);
         OnHpChanged?.Invoke();
-        HpChanged = true;
+        
     }
     public void SetStatus(ConditionID conditionId)
     {
