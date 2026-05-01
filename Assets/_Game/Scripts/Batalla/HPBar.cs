@@ -7,7 +7,7 @@ public class HPBar : MonoBehaviour
     public bool IsUpdating { get; private set; }
     public void SetHP(float hpNormalized)
     {
-        //actualiza la barra de vida
+        if (health == null || !health) return; //  protección extra
         health.transform.localScale = new Vector3(hpNormalized, 1f, 1f);
     }
     //Anima la barra de vida para que cambie suavemente a la nueva cantidad de vida

@@ -67,6 +67,7 @@ public class BattleHud : MonoBehaviour
     }
     public void UpdateHP()
     {
+        if (this == null || !gameObject.activeInHierarchy) return;
         StartCoroutine(UpdateHPAsync());
     }
 
@@ -82,6 +83,7 @@ public class BattleHud : MonoBehaviour
     }
     public void SetStatusText()
     {
+        if (this == null || !gameObject.activeInHierarchy) return;
         if (_pokemon.Status==null)
         {
             statusText.text = "";
@@ -91,7 +93,6 @@ public class BattleHud : MonoBehaviour
             statusText.text=_pokemon.Status.Id.ToString().ToUpper();
             statusText.color=statusColors[_pokemon.Status.Id];
         }
-        
     }
     public void SetExp()
     {
@@ -123,5 +124,12 @@ public class BattleHud : MonoBehaviour
     public IEnumerator WaitForHPUpdate()
     {
         yield return new WaitWhile(() => hpBar.IsUpdating == true);
+    }
+    private void OnDestroy()
+    {
+        if (_pokemon != null)
+        {
+            _pokemon.OnHpChanged -= UpdateHP;
+        }
     }
 }

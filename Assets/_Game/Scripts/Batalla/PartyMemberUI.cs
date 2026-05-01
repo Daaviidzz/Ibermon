@@ -28,6 +28,7 @@ public class PartyMemberUI : MonoBehaviour
     void UpdateData()
     {
         if (_pokemon == null) return;
+        if (this == null || !gameObject) return; // ← el objeto ya fue destruido
 
         NameText.text = _pokemon.Base.Name;
         LevelText.text = "Lvl " + _pokemon.Level;
@@ -47,5 +48,12 @@ public class PartyMemberUI : MonoBehaviour
     public void RefreshDisplay()
     {
         UpdateData();
+    }
+    private void OnDestroy()
+    {
+        if (_pokemon != null)
+        {
+            _pokemon.OnHpChanged -= UpdateData;
+        }
     }
 }
