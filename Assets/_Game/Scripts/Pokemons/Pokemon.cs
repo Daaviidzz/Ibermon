@@ -205,6 +205,8 @@ public class Pokemon
     public Move GetRandomMove() 
     {
         var movesWithPP = Moves.FindAll(m => m.PP > 0);
+        if (movesWithPP.Count == 0)
+            return null;
         return movesWithPP[Random.Range(0, movesWithPP.Count)];
     } 
     public bool OnBeforeMove() 

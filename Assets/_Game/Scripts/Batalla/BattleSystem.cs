@@ -192,6 +192,11 @@ public class BattleSystem : MonoBehaviour
         {
             playerUnit.Pokemon.CurrentMove = playerUnit.Pokemon.Moves[currentMove];
            enemyUnit.Pokemon.CurrentMove=enemyUnit.Pokemon.GetRandomMove();
+            if(enemyUnit.Pokemon.CurrentMove == null)
+            {
+                yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
+                yield break;
+            }
             int playerMovePriority = playerUnit.Pokemon.CurrentMove.Base.Priority;
             int enemyMovePriority = enemyUnit.Pokemon.CurrentMove.Base.Priority;
 
@@ -238,6 +243,11 @@ public class BattleSystem : MonoBehaviour
                 {
                     // La pokeball falló, el enemigo contraataca
                     var enemyMove = enemyUnit.Pokemon.GetRandomMove();
+                    if(enemyMove == null)
+                    {
+                        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
+                        yield break;
+                    }
                     yield return RunMove(enemyUnit, playerUnit, enemyMove);
                     yield return RunAfterTurn(enemyUnit);
                     if (state == BattleState.BATTLEOVER) yield break;
@@ -246,6 +256,11 @@ public class BattleSystem : MonoBehaviour
                 {
                     // Poción u otro ítem usado: el enemigo ataca normalmente
                     var enemyMove = enemyUnit.Pokemon.GetRandomMove();
+                    if(enemyMove == null)
+                    {
+                        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
+                        yield break;
+                    }
                     yield return RunMove(enemyUnit, playerUnit, enemyMove);
                     yield return RunAfterTurn(enemyUnit);
                     if (state == BattleState.BATTLEOVER) yield break;
@@ -272,6 +287,11 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.RUNNINGTURN;
         var move = enemyUnit.Pokemon.GetRandomMove();
+        if(move == null)
+        {
+            yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
+            yield break;
+        }
         yield return RunMove(enemyUnit, playerUnit, move);
 
         if (state == BattleState.RUNNINGTURN)

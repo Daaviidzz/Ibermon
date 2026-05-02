@@ -53,21 +53,25 @@ public class InventoryUI : MonoBehaviour
     }
     void UpdateItemList()
     {
-        // Limpiar lista actual
         foreach (Transform child in itemList.transform)
-        {
             Destroy(child.gameObject);
-        }
+
         slotUIList = new List<ItemSlotUI>();
-        // Agregar nuevos items
+
         foreach (var itemSlot in inventory.Slots)
         {
             var itemSlotUIObj = Instantiate(itemSlotUI, itemList.transform);
             itemSlotUIObj.SetData(itemSlot);
-
             slotUIList.Add(itemSlotUIObj);
         }
-        UpdateItemSelection();
+
+        selectedItem = Mathf.Clamp(selectedItem, 0, Mathf.Max(0, inventory.Slots.Count - 1));
+
+        // forzar rebuild del layout
+        LayoutRebuilder.ForceRebuildLayoutImmediate(itemListRect);
+
+        if (slotUIList.Count > 0)
+            UpdateItemSelection();
     }
     public void HandleUpdate(Action onBack,Action onItemUsed=null)
     {
@@ -134,6 +138,8 @@ public class InventoryUI : MonoBehaviour
             else
                 slotUIList[i].NameText.color = Color.black;
         }
+        selectedItem = Mathf.Clamp(selectedItem, 0, inventory.Slots.Count - 1);
+
         var item=inventory.Slots[selectedItem].Item;
         itemIcon.sprite = item.Icon;
         itemDescription.text= item.Description;
@@ -142,12 +148,19 @@ public class InventoryUI : MonoBehaviour
     }
     void HandleScrolling()
     {
+        if (slotUIList == null || slotUIList.Count == 0) return;
+        if (slotUIList[0] == null) return;
+
         if (slotUIList.Count <= ITEMS_IN_VIEWPORT) return;
-        float scrollPos = Mathf.Clamp(selectedItem - ITEMS_IN_VIEWPORT / 2, 0, selectedItem) * slotUIList[0].Height;
+
+        float itemHeight = slotUIList[0].Height;
+        float scrollPos = Mathf.Clamp(selectedItem - ITEMS_IN_VIEWPORT / 2, 0, selectedItem) * itemHeight;
+
         itemListRect.localPosition = new Vector2(itemListRect.localPosition.x, scrollPos);
 
         bool showUpArrow = selectedItem > ITEMS_IN_VIEWPORT / 2;
         upArrow.gameObject.SetActive(showUpArrow);
+
         bool showDownArrow = selectedItem + ITEMS_IN_VIEWPORT / 2 < slotUIList.Count;
         downArrow.gameObject.SetActive(showDownArrow);
     }
