@@ -19,14 +19,18 @@ public class PokemonParty : MonoBehaviour
         }
     }
 
-    private void Start()
+    
+    private void Awake()  
     {
         if (esBatallaTemp) return;
         if (esEquipoJugador)
         {
-            CargarEquipoGuardado(); // extraemos la lógica a un método
+            CargarEquipoGuardado();
         }
     }
+
+    
+    private void Start() { }
 
     public void CargarEquipoGuardado()
     {

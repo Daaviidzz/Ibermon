@@ -80,7 +80,7 @@ public class Movimiento : MonoBehaviour
             state = GameState.FreeRoam;
         };
         menuController.onMenuSelected += OnMenuSelected;
-        partyScreen.Init();
+        partyScreen.Init(pokemonParty);
     }
     void OnMenuSelected(int selectedItem)
     {

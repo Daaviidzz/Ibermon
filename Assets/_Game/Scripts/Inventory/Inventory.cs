@@ -7,19 +7,37 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     [SerializeField] List<ItemSlot> slots;
+    [SerializeField] List<ItemSlot> pokeballSlots;
+
+    List<List<ItemSlot>> allSlots;
+
     public event Action OnUpdated;
     public static Inventory Instance { get; private set; }
-    public List<ItemSlot> Slots => slots;
+    
+    public static List<string> ItemCategories { get; set; } = new List<string>()
+    {
+        "ITEMS","POKEBALLS"
+    };
+    
+
     private void Awake()
     {
         Instance = this;
+        allSlots = new List<List<ItemSlot>>()
+        {
+            slots, pokeballSlots
+        };
     }
 
     public static Inventory GetInventory()
     {
         return Instance;
     }
-   
+    public List<ItemSlot> GetSlotsByCategory(int categoryIndex)
+    {
+       return allSlots[categoryIndex];
+    }
+    
     public ItemBase UseItem(int itemIndex, Pokemon selectedPokemon)
     {
         var item = slots[itemIndex].Item;

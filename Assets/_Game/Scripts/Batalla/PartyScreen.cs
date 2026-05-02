@@ -45,79 +45,77 @@ public class PartyScreen : MonoBehaviour
         esMovil = false;
 #endif
     }
-    public void Init()
+    public void Init(PokemonParty pokemonParty = null)
     {
-        // Solo hacer setup una vez
-        if (initialized) 
-        {
-            SetPartyData(); // Solo actualizar datos, no reinicializar
-            return;
-        }
-
-        // Si partyList existe buscamos ahí, si no, en este mismo objeto (gameObject).
-        // Usamos el operador ternario para decidir el origen en una línea.
         GameObject target = partyList != null ? partyList : gameObject;
-
         memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
-        party = PokemonParty.GetPlayerParty();
 
-        
+        party = pokemonParty ?? PokemonParty.GetPlayerParty();
+
+        // Suscribirse solo si no estaba ya suscrito
+        party.OnUpdated -= SetPartyData;
+        party.OnUpdated += SetPartyData;
 
         SetPartyData();
-        party.OnUpdated += SetPartyData;
-        initialized = true;
     }
 
 
     public void SetPartyData()
     {
-        // Garantizar inicialización si party no se ha configurado
-        if (memberSlots == null || party == null) 
+        // Auto-recuperación: si party o memberSlots son null, los obtenemos aquí
+        if (party == null)
+            party = PokemonParty.GetPlayerParty();
+
+        if (memberSlots == null)
         {
-            Debug.LogError("PartyScreen no inicializado correctamente. Calling Init()...");
-            Init();
-            return; // Salir después de reintentar Init
+            GameObject target = partyList != null ? partyList : gameObject;
+            memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
+        }
+
+        if (party == null || memberSlots == null)
+        {
+            Debug.LogError("PartyScreen: No se pudo obtener party o memberSlots.");
+            return;
         }
 
         pokemons = party.Pokemons;
 
         if (pokemons == null || pokemons.Count == 0)
         {
-            Debug.LogError("? La lista de Pokemons es NULA o VACÍA. " +
-                "Verifica que:\n" +
-                "1. El equipo guardado existe\n" +
-                "2. PokemonParty.CargarEquipoGuardado() se ejecutó\n" +
-                "3. La lista en el inspector tiene Pokémons asignados");
-            return;
+            // Último intento: forzar carga directa
+            party?.CargarEquipoGuardado();
+            pokemons = party?.Pokemons;
+
+            if (pokemons == null || pokemons.Count == 0)
+            {
+                Debug.LogError("PartyScreen: La lista de Pokémons está vacía.");
+                return;
+            }
         }
 
         for (int i = 0; i < memberSlots.Length; i++)
         {
             if (memberSlots[i] == null) continue;
-
             bool isActive = i < pokemons.Count;
-
             memberSlots[i].gameObject.SetActive(isActive);
-
-            // Usar SetData en lugar de Init para evitar múltiples suscripciones
             if (isActive)
             {
                 memberSlots[i].SetData(pokemons[i]);
-                // Forzar actualización inmediata del estado actual
                 memberSlots[i].RefreshDisplay();
             }
         }
+
         UpdateMemberSelection(selection);
 
         if (messageText != null)
         {
             messageText.gameObject.SetActive(true);
             messageText.text = "Elige con quien combatir";
-            messageText.color = Color.black; 
+            messageText.color = Color.black;
         }
     }
 
-   public void HandleUpdate(Action onSelected, Action onBack)
+    public void HandleUpdate(Action onSelected, Action onBack)
     {
     // Validar inicialización
     if (pokemons == null || pokemons.Count == 0)
