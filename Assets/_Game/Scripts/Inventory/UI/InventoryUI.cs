@@ -32,7 +32,7 @@ public class InventoryUI : MonoBehaviour
 
     List<ItemSlotUI> slotUIList;
     const int ITEMS_IN_VIEWPORT = 8; // Número de items visibles sin necesidad de hacer scroll
-    Action OnItemUsed;
+    Action<ItemBase> OnItemUsed;
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
@@ -78,7 +78,7 @@ public class InventoryUI : MonoBehaviour
         if (slotUIList.Count > 0)
             UpdateItemSelection();
     }
-    public void HandleUpdate(Action onBack,Action onItemUsed=null)
+    public void HandleUpdate(Action onBack,Action<ItemBase> onItemUsed=null)
     {
         this.OnItemUsed = onItemUsed;
         if (state == InventoryUIState.ItemSelection)
@@ -124,7 +124,7 @@ public class InventoryUI : MonoBehaviour
 
             if (InputConfirmar())
             {
-                OpenPartyScreen();
+                ItemSelected();
             }
             else if (InputCancelar())
             {
@@ -155,8 +155,9 @@ public class InventoryUI : MonoBehaviour
 
         if (usedItem != null)
         {
-            yield return DialogManager.Instance.ShowDialogText($"Usaste {usedItem.Name}");
-            OnItemUsed?.Invoke();
+            if(!(usedItem is PokeballItem))
+                yield return DialogManager.Instance.ShowDialogText($"Usaste {usedItem.Name}");
+            OnItemUsed?.Invoke(usedItem);
         }
         else
         {
@@ -256,5 +257,16 @@ public class InventoryUI : MonoBehaviour
     {
         if (inventory != null)
             inventory.OnUpdated -= UpdateItemList;
+    }
+    void ItemSelected()
+    {
+        if(selectedCategory==(int) ItemCategory.Pokeballs)
+        {
+            StartCoroutine(UseItem());
+        }
+        else
+        {
+            OpenPartyScreen();
+        }
     }
 }

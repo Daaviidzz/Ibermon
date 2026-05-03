@@ -30,7 +30,7 @@ public class BattleSystem : MonoBehaviour
     int currentAction;
     int currentMove;
     bool aboutToUseChoice = true;
-    bool pokeballFallo = false;
+    
 
 
     BattleState state;
@@ -236,8 +236,6 @@ public class BattleSystem : MonoBehaviour
             else if (playerAction == BattleAction.USEITEM)
             {
                 dialogBox.EnableActionSelector(false);
-
-                // Actualizar el HUD del jugador después de usar el ítem
                 yield return playerUnit.Hud.UpdateHPCoroutine();
 
                 if (state != BattleState.BATTLEOVER)
@@ -496,12 +494,9 @@ public class BattleSystem : MonoBehaviour
                 inventoryUI.gameObject.SetActive(false);
                 state = BattleState.ACTIONSELECTION;
             };
-            Action onItemUsed = () =>
+            Action<ItemBase> onItemUsed = (ItemBase usedItem) =>
             {
-                state = BattleState.BUSY;
-                inventoryUI.gameObject.SetActive(false);
-                StartCoroutine(RunTurns(BattleAction.USEITEM));
-
+                StartCoroutine(OnItemUsed(usedItem));
             };
             inventoryUI.HandleUpdate(onBack,onItemUsed); 
         }
@@ -720,6 +715,22 @@ public class BattleSystem : MonoBehaviour
         
     }
 
+    IEnumerator OnItemUsed(ItemBase usedItem)
+    {
+        state = BattleState.BUSY;
+        inventoryUI.gameObject.SetActive(false);
+
+        if (usedItem is PokeballItem)
+        {
+            yield return ThrowPokeball((PokeballItem)usedItem);
+            // Si la batalla terminó (captura exitosa), no hacer nada más
+            if (state == BattleState.BATTLEOVER) yield break;
+        }
+
+        // Solo llegar aquí si: fue poción, o la pokeball falló
+        StartCoroutine(RunTurns(BattleAction.USEITEM));
+    }
+
     IEnumerator HandlePokemonFainted(BattleUnit faintedUnit)
     {
         yield return dialogBox.TypeDialog($"{faintedUnit.Pokemon.Base.Name} ha sido derrotado!");
@@ -825,28 +836,28 @@ public class BattleSystem : MonoBehaviour
         
     }
 
-    IEnumerator ThrowPokeball()
+    IEnumerator ThrowPokeball(PokeballItem pokeballItem)
     {
         state = BattleState.BUSY;
         if (esTrainerBattle)
         {
             yield return dialogBox.TypeDialog($"No puedes usar una pokeball contra un entrenador!");
-            pokeballFallo = true; // Indicar que no se intentó capturar, para que el enemigo ataque normalmente
             state = BattleState.RUNNINGTURN;
             yield break;
         }
 
-        yield return dialogBox.TypeDialog($"Has usado una pokeball");
+        yield return dialogBox.TypeDialog($"Has usado una {pokeballItem.Name.ToUpper()}");
 
         var pokeballObJ = Instantiate(pokeballSprite, playerUnit.transform.position - new Vector3(0, 2, 1), Quaternion.identity);
         var pokeball = pokeballObJ.GetComponent<SpriteRenderer>();
+        pokeball.sprite = pokeballItem.Icon;
 
         //Animaciones
         yield return pokeball.transform.DOJump(enemyUnit.transform.position + new Vector3(0, 2, 1), 2f, 1, 1f).WaitForCompletion();
         yield return enemyUnit.PlayCaptureAnimation();
         yield return pokeball.transform.DOMoveY(enemyUnit.transform.position.y - 3f, 0.5f).WaitForCompletion();
 
-        int shakeCount = TryCatchPokemon(enemyUnit.Pokemon);
+        int shakeCount = TryCatchPokemon(enemyUnit.Pokemon, pokeballItem);
 
         for (int i = 0; i < Mathf.Min(shakeCount, 3); i++)
         {
@@ -888,15 +899,14 @@ public class BattleSystem : MonoBehaviour
             // IMPORTANTE: Destruir el objeto completo, no solo el componente
             Destroy(pokeballObJ);
             
-            pokeballFallo = true; // Indicar que el pokémon escapó
 
             state = BattleState.RUNNINGTURN;
         }
 
     }
-    int TryCatchPokemon(Pokemon pokemon)
+    int TryCatchPokemon(Pokemon pokemon, PokeballItem pokeballItem)
     {
-        float a = (3 * pokemon.MaxHp - 2 * pokemon.HP) * pokemon.Base.CatchRate * ConditionsDB.GetStatusBonus(pokemon.Status) / (3 * pokemon.MaxHp);
+        float a = (3 * pokemon.MaxHp - 2 * pokemon.HP) * pokemon.Base.CatchRate * ConditionsDB.GetStatusBonus(pokemon.Status) * pokeballItem.CathRateModifier / (3 * pokemon.MaxHp);
         if (a >= 255)
             return 4;
         float b = 1048560 / Mathf.Sqrt(Mathf.Sqrt(16711680 / a));
