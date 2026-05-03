@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// Clase principal que representa una instancia individual de un Pokémon.
+// Clase principal que representa una instancia individual de un Pokï¿½mon.
 [System.Serializable]
 public class Pokemon
 {
@@ -16,7 +16,7 @@ public class Pokemon
         Init();
     }
 
-    // Propiedades básicas
+    // Propiedades bï¿½sicas
     public int Exp { get; set; }
     public PokemonBase Base => _base;
     public int Level => level;
@@ -24,12 +24,16 @@ public class Pokemon
     public List<Move> Moves { get; set; }
     public Move CurrentMove { get; set; }
 
-    // Diccionarios para gestionar estadísticas base y modificadores de combate (Evasión, Ataque, etc.)
+    // sprites cargados desde la API en runtime (los rellena IbermonConverter)
+    public Sprite FrontSprite { get; set; }
+    public Sprite BackSprite { get; set; }
+
+    // Diccionarios para gestionar estadï¿½sticas base y modificadores de combate (Evasiï¿½n, Ataque, etc.)
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatsBoosts { get; private set; }
     public Condition Status { get; private set; }
-    public int StatusTime { get; set; } // Duración restante de la condición de estado, si es aplicable.
-    public Condition VolatileStatus { get; set; } // Para condiciones temporales como Confusión, etc.
+    public int StatusTime { get; set; } // Duraciï¿½n restante de la condiciï¿½n de estado, si es aplicable.
+    public Condition VolatileStatus { get; set; } // Para condiciones temporales como Confusiï¿½n, etc.
     public int VolatileStatusTime { get; set; }
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
@@ -41,7 +45,7 @@ public class Pokemon
     {
         Moves = new(); 
 
-        // El Pokémon aprende movimientos de su lista base según su nivel actual.
+        // El Pokï¿½mon aprende movimientos de su lista base segï¿½n su nivel actual.
         foreach (var learnableMove in Base.LearnableMoves)
         {
             if (learnableMove.Level <= Level)
@@ -59,7 +63,7 @@ public class Pokemon
         VolatileStatus = null;
     }
 
-    // Calcula las estadísticas finales basadas en la fórmula oficial de los juegos de Pokémon.
+    // Calcula las estadï¿½sticas finales basadas en la fï¿½rmula oficial de los juegos de Pokï¿½mon.
     void CalculateStats()
     {
         Stats = new();
@@ -87,7 +91,7 @@ public class Pokemon
         };
     }
 
-    // Obtiene el valor real de una estadística aplicando el modificador actual (boost).
+    // Obtiene el valor real de una estadï¿½stica aplicando el modificador actual (boost).
     int GetStat(Stat stat)
     {
         int statVal = Stats[stat];
@@ -100,7 +104,7 @@ public class Pokemon
             : Mathf.FloorToInt(statVal / boostValues[-boost]);
     }
 
-    // Aplica cambios a las estadísticas 
+    // Aplica cambios a las estadï¿½sticas 
     public void ApplyBoosts(List<StatBoost> statBoosts)
     {
         foreach (var statBoost in statBoosts)
@@ -108,7 +112,7 @@ public class Pokemon
             var stat = statBoost.stat;
             var boost = statBoost.boost;
 
-            // Clampeamos entre -6 y 6 niveles (límite estándar).
+            // Clampeamos entre -6 y 6 niveles (lï¿½mite estï¿½ndar).
             StatsBoosts[stat] = Mathf.Clamp(StatsBoosts[stat] + boost, -6, 6);
 
             string changeType = boost > 0 ? "aumento!" : "disminuyo!";
@@ -124,13 +128,13 @@ public class Pokemon
     public int Speed => GetStat(Stat.Velocidad);
     public int MaxHp { get; private set; }
 
-    // Procesa el daño recibido por un ataque.
+    // Procesa el daï¿½o recibido por un ataque.
     public DamageDetails TakeDamage(Move move, Pokemon attacker)
     {
-        // Probabilidad de golpe crítico (6.25%).
+        // Probabilidad de golpe crï¿½tico (6.25%).
         float critical = (Random.value * 100f <= 6.25f) ? 2f : 1f;
 
-        // Cálculo de efectividad de tipos 
+        // Cï¿½lculo de efectividad de tipos 
         float type = TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type1) * TypeChart.GetEffectiveness(move.Base.Type, this.Base.Type2);
 
         var damageDetails = new DamageDetails()
@@ -140,11 +144,11 @@ public class Pokemon
             Fainted = false
         };
 
-        // Seleccionamos ataque y defensa según la categoría del movimiento.
+        // Seleccionamos ataque y defensa segï¿½n la categorï¿½a del movimiento.
         float attack = (move.Base.Category == MoveCategory.Especial) ? attacker.SpAttack : attacker.Attack;
         float defense = (move.Base.Category == MoveCategory.Especial) ? this.SpDefense : this.Defense;
 
-        // Implementación de la fórmula de daño oficial.
+        // Implementaciï¿½n de la fï¿½rmula de daï¿½o oficial.
         float modifiers = Random.Range(0.85f, 1f) * type * critical;
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * move.Base.Power * ((float)attack / defense) + 2;

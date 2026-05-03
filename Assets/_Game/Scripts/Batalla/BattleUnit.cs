@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using System.Collections; // Importante: Librería para animaciones suaves (DOTween).
+using System.Collections; // Importante: Librerï¿½a para animaciones suaves (DOTween).
 
 public class BattleUnit : MonoBehaviour
 {
@@ -12,12 +12,12 @@ public class BattleUnit : MonoBehaviour
     public bool IsPlayerUnit => isPlayerUnit;
     public BattleHud Hud => hud;
 
-    // Propiedad auto-implementada para guardar la referencia del Pokémon actual.
+    // Propiedad auto-implementada para guardar la referencia del Pokï¿½mon actual.
     public Pokemon Pokemon { get; set; }
 
-    Image image; // Referencia al componente visual del Pokémon.
-    Vector3 originalPosition; // Guardamos dónde estaba originalmente para volver tras animaciones.
-    Color originalColor;      // Guardamos el color original para restaurarlo tras recibir daño.
+    Image image; // Referencia al componente visual del Pokï¿½mon.
+    Vector3 originalPosition; // Guardamos dï¿½nde estaba originalmente para volver tras animaciones.
+    Color originalColor;      // Guardamos el color original para restaurarlo tras recibir daï¿½o.
 
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class BattleUnit : MonoBehaviour
         originalColor = image.color;
     }
 
-    // Configura la unidad con los datos del Pokémon al iniciar batalla o cambiar criatura.
+    // Configura la unidad con los datos del Pokï¿½mon al iniciar batalla o cambiar criatura.
     public void Setup(Pokemon pokemon)
     {
         Pokemon = pokemon;
@@ -35,64 +35,67 @@ public class BattleUnit : MonoBehaviour
         // Verificamos que tengamos la imagen asignada (por seguridad).
         if (image != null)
         {
-            // Restauramos el color original por si el anterior murió o recibió daño.
+            // Restauramos el color original por si el anterior muriï¿½ o recibiï¿½ daï¿½o.
             image.color = originalColor;
 
             // Asignamos el Sprite correcto dependiendo de si es Jugador (Espalda) o Enemigo (Frente).
-            image.sprite = isPlayerUnit ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
+            // Primero el sprite cargado desde la API; si no, fallback al ScriptableObject.
+            Sprite spriteApi = isPlayerUnit ? Pokemon.BackSprite : Pokemon.FrontSprite;
+            Sprite spriteFallback = isPlayerUnit ? Pokemon.Base.BackSprite : Pokemon.Base.FrontSprite;
+            image.sprite = spriteApi != null ? spriteApi : spriteFallback;
 
             hud.gameObject.SetActive(true);
             // Actualizamos la interfaz (Nombre, Nivel, Vida) en el HUD.
             hud.SetData(pokemon);
 
             transform.localScale = new Vector3(1, 1, 1);
-            // Iniciamos la animación de entrada deslizante.
+            // Iniciamos la animaciï¿½n de entrada deslizante.
             PlayEnterAnimation();
         }
     }
 
 
-    // Animación de entrada: El Pokémon se desliza desde fuera de la pantalla hacia su posición.
+    // Animaciï¿½n de entrada: El Pokï¿½mon se desliza desde fuera de la pantalla hacia su posiciï¿½n.
     public void PlayEnterAnimation()
     {
         // Si es jugador entra desde la izquierda (-500), si es enemigo desde la derecha (500).
         float startX = isPlayerUnit ? -500f : 500f;
 
-        // Colocamos la imagen fuera de pantalla instantáneamente.
+        // Colocamos la imagen fuera de pantalla instantï¿½neamente.
         image.transform.localPosition = new Vector3(startX, originalPosition.y, 0f);
 
-        // Movemos suavemente hacia la posición original en X durante 1 segundo.
+        // Movemos suavemente hacia la posiciï¿½n original en X durante 1 segundo.
         image.transform.DOLocalMoveX(originalPosition.x, 1f);
     }
 
-    // Animación de ataque: Un pequeño empujón hacia adelante y vuelta atrás.
+    // Animaciï¿½n de ataque: Un pequeï¿½o empujï¿½n hacia adelante y vuelta atrï¿½s.
     public void PlayAttackAnimation()
     {
         var sequence = DOTween.Sequence();
 
-        // Determina la dirección del empujón: +50 (derecha) si es jugador, -50 (izquierda) si es enemigo.
+        // Determina la direcciï¿½n del empujï¿½n: +50 (derecha) si es jugador, -50 (izquierda) si es enemigo.
         float moveDir = isPlayerUnit ? 50f : -50f;
 
-        // 1. Empuje rápido hacia el oponente (0.25 segundos).
+        // 1. Empuje rï¿½pido hacia el oponente (0.25 segundos).
         sequence.Append(image.transform.DOLocalMoveX(originalPosition.x + moveDir, 0.25f));
 
-        // 2. Vuelta a la posición original (0.25 segundos).
+        // 2. Vuelta a la posiciï¿½n original (0.25 segundos).
         sequence.Append(image.transform.DOLocalMoveX(originalPosition.x, 0.25f));
     }
 
-    // Animación de recibir daño: Parpadeo en color gris.
+    // Animaciï¿½n de recibir daï¿½o: Parpadeo en color gris.
     public void PlayHitAnimation()
     {
         var sequence = DOTween.Sequence();
 
-        // 1. Cambia el color a gris instantáneamente 
+        // 1. Cambia el color a gris instantï¿½neamente 
         sequence.Append(image.DOColor(Color.gray, 0.1f));
 
         // 2. Vuelve al color original del sprite.
         sequence.Append(image.DOColor(originalColor, 0.1f));
     }
 
-    // Animación de debilitarse (Muerte): Baja hacia el suelo y se desvanece.
+    // Animaciï¿½n de debilitarse (Muerte): Baja hacia el suelo y se desvanece.
     public void PlayFaintAnimation()
     {
         var sequence = DOTween.Sequence();

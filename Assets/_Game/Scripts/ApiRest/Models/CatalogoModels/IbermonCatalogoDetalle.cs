@@ -29,7 +29,9 @@ namespace ApiRest.Models
         public int? evoluciona_a;
         public int? nivel_evolucion;
 
-        public string sprite;
+        // en API: sprite_frontal / sprite_trasero
+        public string sprite_frontal;
+        public string sprite_trasero;
 
         // Probabilidad de captura. Cuanto mas alto mas facil es atraparlo
         public int catch_rate = 255;

@@ -12,6 +12,8 @@ namespace ApiRest.Models
         public string tipo1;
         // El segundo tipo puede ser nulo si el ibermon solo tiene un tipo
         public string tipo2;
-        public string sprite;
+        // en API: sprite_frontal / sprite_trasero
+        public string sprite_frontal;
+        public string sprite_trasero;
     }
 }

@@ -44,7 +44,7 @@ public static class IbermonConverter
         Debug.Log($"[IbermonConverter] PokemonBase: {_pokemonBases.Count} | MoveBase: {_moveBases.Count}");
     }
 
-    // API → Unity: convierte un IbermonJugador en un Pokemon listo para combatir
+    // API : Unity: convierte un IbermonJugador en un Pokemon listo para combatir
     public static Pokemon ToPokemon(IbermonJugador ib, CatalogoCache catalogo)
     {
         EnsureResourcesLoaded();
@@ -71,6 +71,10 @@ public static class IbermonConverter
         // Sobreescribir con los valores reales guardados en la API
         pokemon.HP  = Mathf.Clamp(ib.hp_actual, 0, pokemon.MaxHp);
         pokemon.Exp = ib.experiencia;
+
+        // Sprites desde la API (paths como "1.png" / "back/1.png")
+        pokemon.FrontSprite = CargarSpriteDesdePath(catalogo.GetSpriteFrontal(ib.ibermon_catalogo_id));
+        pokemon.BackSprite  = CargarSpriteDesdePath(catalogo.GetSpriteTrasero(ib.ibermon_catalogo_id));
 
         // Restaurar los movimientos guardados si los hay
         if (ib.movimientos_aprendidos != null && ib.movimientos_aprendidos.Count > 0)
@@ -114,7 +118,7 @@ public static class IbermonConverter
         return result;
     }
 
-    // Unity → API: prepara el request para sincronizar un pokemon después de un combate
+    // Unity : API: prepara el request para sincronizar un pokemon después de un combate
     public static IbermonJugadorActualizarRequest ToActualizarRequest(Pokemon pokemon, CatalogoCache catalogo)
     {
         var movimientos = new List<MovimientoAprendido>();
@@ -142,10 +146,23 @@ public static class IbermonConverter
         return catalogo.GetIbermonNumero(pokemon.Base.Name);
     }
 
-    // Útil en desarrollo si añades nuevos assets sin reiniciar Unity
-    public static void InvalidarCache()
+    // Carga un Sprite desde Resources/Sprites/Pokemon/ usando el path de la API.
+    // Los PNG están en modo Multiple (sprite-sheet), por eso usamos LoadAll y
+    // cogemos el primer sub-sprite. Devuelve null si no se encuentra.
+    private static Sprite CargarSpriteDesdePath(string apiPath)
     {
-        _pokemonBases = null;
-        _moveBases    = null;
+        if (string.IsNullOrEmpty(apiPath)) return null;
+
+        // "1.png"  "1"   |   "back/1.png"  "back/1"
+        string sinExt = apiPath.EndsWith(".png") ? apiPath[..^4] : apiPath;
+        string resourcesPath = $"Sprites/Pokemon/{sinExt}";
+
+        var sprites = Resources.LoadAll<Sprite>(resourcesPath);
+        if (sprites == null || sprites.Length == 0)
+        {
+            Debug.LogWarning($"[IbermonConverter] No se encontró sprite en Resources/{resourcesPath} (api='{apiPath}')");
+            return null;
+        }
+        return sprites[0];
     }
 }

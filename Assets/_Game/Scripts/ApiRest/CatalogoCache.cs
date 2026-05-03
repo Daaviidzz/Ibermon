@@ -14,6 +14,9 @@ public class CatalogoCache : MonoBehaviour
 
     private readonly Dictionary<int,string> _ibermonNombres = new();
     private readonly Dictionary<string,int> _ibermonNumeros = new();
+    // path del sprite tal como lo da la API (ej: "1.png", "back/1.png")
+    private readonly Dictionary<int,string> _ibermonSpriteFrontal = new();
+    private readonly Dictionary<int,string> _ibermonSpriteTrasero = new();
     private readonly Dictionary<int,string> _movimientoNombres = new();
     private readonly Dictionary<string,int> _movimientoNumeros = new();
 
@@ -48,10 +51,14 @@ public class CatalogoCache : MonoBehaviour
             {
                 _ibermonNombres.Clear();
                 _ibermonNumeros.Clear();
+                _ibermonSpriteFrontal.Clear();
+                _ibermonSpriteTrasero.Clear();
                 foreach (var ib in lista)
                 {
                     _ibermonNombres[ib.numero] = ib.nombre;
                     _ibermonNumeros[ib.nombre] = ib.numero;
+                    _ibermonSpriteFrontal[ib.numero] = ib.sprite_frontal;
+                    _ibermonSpriteTrasero[ib.numero] = ib.sprite_trasero;
                 }
                 Debug.Log($"[CatalogoCache] Ibermon cargados: {lista.Count}");
                 ibermonListo = true;
@@ -100,4 +107,12 @@ public class CatalogoCache : MonoBehaviour
 
     public int GetMovimientoNumero(string nombre) =>
         _movimientoNumeros.TryGetValue(nombre, out var n) ? n : -1;
+
+    // path del sprite frontal tal como viene de la API (ej: "1.png")
+    public string GetSpriteFrontal(int numero) =>
+        _ibermonSpriteFrontal.TryGetValue(numero, out var s) ? s : null;
+
+    // path del sprite trasero tal como viene de la API (ej: "back/1.png")
+    public string GetSpriteTrasero(int numero) =>
+        _ibermonSpriteTrasero.TryGetValue(numero, out var s) ? s : null;
 }
