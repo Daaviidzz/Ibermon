@@ -52,8 +52,9 @@ public class InventoryUI : MonoBehaviour
     }
     private void Start()
     {
-        UpdateItemList();
+        inventory.OnUpdated -= UpdateItemList; // evitar doble suscripción
         inventory.OnUpdated += UpdateItemList;
+        UpdateItemList();
     }
     void UpdateItemList()
     {
@@ -146,23 +147,32 @@ public class InventoryUI : MonoBehaviour
     IEnumerator UseItem()
     {
         state = InventoryUIState.Busy;
-        var usedItem= inventory.UseItem(selectedItem, partyScreen.SelectedMember);
-        if(usedItem != null)
+
+        // Desuscribirse para evitar que RemoveItem destruya los slots durante la corrutina
+        inventory.OnUpdated -= UpdateItemList;
+
+        var usedItem = inventory.UseItem(selectedItem, partyScreen.SelectedMember, selectedCategory);
+
+        if (usedItem != null)
         {
-            //Mostrar mensaje de se ha usado el item
             yield return DialogManager.Instance.ShowDialogText($"Usaste {usedItem.Name}");
             OnItemUsed?.Invoke();
         }
         else
         {
-            //Mostrar mensaje de no se pudo usar el item
             yield return DialogManager.Instance.ShowDialogText($"No se pudo usar el item");
         }
-         ClosePartyScreen();
+
+        // Ahora que la corrutina terminó, volver a suscribirse y actualizar
+        inventory.OnUpdated += UpdateItemList;
+        UpdateItemList();
+        yield return null;
+        ClosePartyScreen();
     }
     void UpdateItemSelection()
     {
         var slots = inventory.GetSlotsByCategory(selectedCategory);
+        selectedItem = Mathf.Clamp(selectedItem, 0, slots.Count - 1);
 
         for (int i = 0; i < slotUIList.Count; ++i)
         {
@@ -171,7 +181,6 @@ public class InventoryUI : MonoBehaviour
             else
                 slotUIList[i].NameText.color = Color.black;
         }
-        selectedItem = Mathf.Clamp(selectedItem, 0, slots.Count - 1);
 
         if(slots.Count > 0)
         {
@@ -242,5 +251,10 @@ public class InventoryUI : MonoBehaviour
             return ControlesMoviles.Instance.botonCorrer.SePresionoEsteFrame();
         }
         return Input.GetKeyDown(KeyCode.Escape);
+    }
+    private void OnDestroy()
+    {
+        if (inventory != null)
+            inventory.OnUpdated -= UpdateItemList;
     }
 }

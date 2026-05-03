@@ -237,35 +237,21 @@ public class BattleSystem : MonoBehaviour
             {
                 dialogBox.EnableActionSelector(false);
 
-                // Si el inventario ya usó el ítem (poción, etc.), el enemigo ataca directamente
-                // Si fue una pokeball, ThrowPokeball ya habrá gestionado BattleOver o puesto pokeballFallo=true
-                if (pokeballFallo)
+                // Actualizar el HUD del jugador después de usar el ítem
+                yield return playerUnit.Hud.UpdateHPCoroutine();
+
+                if (state != BattleState.BATTLEOVER)
                 {
-                    // La pokeball falló, el enemigo contraataca
                     var enemyMove = enemyUnit.Pokemon.GetRandomMove();
-                    if(enemyMove == null)
+                    if (enemyMove == null)
                     {
-                        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
+                        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos!");
                         yield break;
                     }
                     yield return RunMove(enemyUnit, playerUnit, enemyMove);
                     yield return RunAfterTurn(enemyUnit);
                     if (state == BattleState.BATTLEOVER) yield break;
                 }
-                else if (state != BattleState.BATTLEOVER)
-                {
-                    // Poción u otro ítem usado: el enemigo ataca normalmente
-                    var enemyMove = enemyUnit.Pokemon.GetRandomMove();
-                    if(enemyMove == null)
-                    {
-                        yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos para usar!");
-                        yield break;
-                    }
-                    yield return RunMove(enemyUnit, playerUnit, enemyMove);
-                    yield return RunAfterTurn(enemyUnit);
-                    if (state == BattleState.BATTLEOVER) yield break;
-                }
-                // Si state == BATTLEOVER (pokémon capturado), no hacemos nada más
             }
             else if(playerAction == BattleAction.RUN)
             {
@@ -479,6 +465,8 @@ public class BattleSystem : MonoBehaviour
         else
             yield return dialogBox.TypeDialog("Has sido derrotado...");
 
+        // Guardar ANTES de cambiar de escena
+        SistemGuardadoPokemon.GuardarEquipo(playerParty.Pokemons);
         yield return new WaitForSeconds(1.5f);
         string sceneToLoad = !string.IsNullOrEmpty(JugadorSpawn.escenaAnterior)
             ? JugadorSpawn.escenaAnterior
