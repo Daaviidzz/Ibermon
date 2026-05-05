@@ -9,7 +9,7 @@ using UnityEngine;
 //   1. Al interactuar comprueba si el jugador ya tiene starter en la sesion
 //   2. Si no tiene starter muestra el panel de eleccion y espera a que pulse un boton
 //   3. Cuando elige llama a la API para guardar el starter
-//   4. Asigna el Charmander al equipo del jugador a la fuerza
+//   4. Pide el equipo a la API y lo carga en el PokemonParty del jugador
 //   5. Lanza el dialogo normal del profesor
 public class ProfesorController : MonoBehaviour
 {
@@ -40,10 +40,6 @@ public class ProfesorController : MonoBehaviour
         {
             canvasEleccionStarter.SetActive(false);
         }
-
-        // Si el jugador ya tiene starter al entrar en la escena le asignamos el Charmander
-        // por si acaso no lo tiene en el equipo todavia (por ejemplo al cargar una partida)
-        AsignarCharmander();
     }
 
     // Llamado desde Interactuable cuando el jugador interactua con el profesor
@@ -132,7 +128,7 @@ public class ProfesorController : MonoBehaviour
     }
 
     // Se ejecuta cuando la API confirma que el starter se guardo correctamente
-    // Cierra el panel, asigna el Charmander y lanza el dialogo
+    // Cierra el panel y pide el equipo actualizado a la API
     private void ManejarStarterElegidoExitoso(PartidaCompleta partidaActualizada)
     {
         // Actualizamos la partida en sesion con el starter ya asignado
@@ -145,10 +141,28 @@ public class ProfesorController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Asignamos el Charmander al equipo ahora que tiene starter en la API
-        AsignarCharmander();
+        // Pedimos el equipo a la API para que meta el starter recien creado en el PokemonParty
+        ApiSetup.IbermonJugador.ObtenerEquipo(partidaActualizada.id,
+            ManejarEquipoRecibido, ManejarErrorEquipo);
+    }
 
-        // Reseteamos la guardia y lanzamos el dialogo
+    // Se ejecuta cuando llega el equipo de la API tras elegir starter
+    // Lo guarda en sesion, hace que el PokemonParty del jugador se recargue y lanza el dialogo
+    private void ManejarEquipoRecibido(List<IbermonJugador> equipo)
+    {
+        SessionManager.Instance.SetEquipoAPI(equipo);
+
+        // Forzamos al PokemonParty del jugador a recargar el equipo desde la sesion
+        var player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            var party = player.GetComponent<PokemonParty>();
+            if (party != null)
+            {
+                party.CargarEquipoGuardado();
+            }
+        }
+
         _interaccionEnCurso = false;
 
         if (_interactuable != null)
@@ -164,55 +178,6 @@ public class ProfesorController : MonoBehaviour
                 mov.estaEnInteraccion = false;
             }
         }
-    }
-
-    // Asigna el Charmander al equipo del jugador si tiene starter elegido y el equipo esta vacio
-    // Es una chapuza temporal hasta que se implemente bien la conversion desde la API
-    private void AsignarCharmander()
-    {
-        // Solo asignamos si hay partida activa con starter elegido
-        if (SessionManager.Instance == null || SessionManager.Instance.PartidaActual == null)
-        {
-            return;
-        }
-
-        if (SessionManager.Instance.PartidaActual.starter_elegido <= 0)
-        {
-            return;
-        }
-
-        var player = GameObject.FindWithTag("Player");
-        if (player == null)
-        {
-            return;
-        }
-
-        var party = player.GetComponent<PokemonParty>();
-        if (party == null)
-        {
-            return;
-        }
-
-        // Solo añadimos si el equipo esta vacio para no duplicar
-        if (party.Pokemons != null && party.Pokemons.Count > 0)
-        {
-            Debug.Log("[ProfesorController] El jugador ya tiene pokemon en el equipo, no asignamos Charmander");
-            return;
-        }
-
-        // Cargamos el ScriptableObject de Charmander desde Resources/Pokemons/
-        PokemonBase charmander = Resources.Load<PokemonBase>("Pokemons/Charmander");
-        if (charmander == null)
-        {
-            Debug.LogError("[ProfesorController] No se encontro el PokemonBase 'Charmander' en Resources/Pokemons/");
-            return;
-        }
-
-        // Creamos el pokemon a nivel 5 igual que hace la API con el starter
-        Pokemon pokemonStarter = new Pokemon(charmander, 5);
-        party.AddPokemon(pokemonStarter);
-
-        Debug.Log("[ProfesorController] Charmander asignado al equipo del jugador");
     }
 
     // Se ejecuta si no se pudo obtener el equipo de la API

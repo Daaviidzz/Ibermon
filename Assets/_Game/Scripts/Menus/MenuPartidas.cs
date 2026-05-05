@@ -179,10 +179,23 @@ public class MenuPartidas : MonoBehaviour
     }
 
     // Se ejecuta cuando se reciben los datos completos de la partida
-    // Inicia la sesion y navega a la escena donde estaba el jugador
+    // Pide el equipo a la API antes de iniciar la sesion para que PokemonParty pueda cargarlo
     private void ManejarPartidaCompletaRecibida(PartidaCompleta partidaRecibida)
     {
-        SessionManager.Instance.IniciarConPartida(partidaRecibida, new List<IbermonJugador>());
+        ApiSetup.IbermonJugador.ObtenerEquipo(partidaRecibida.id,
+            equipoRecibido => IniciarSesionYCargarEscena(partidaRecibida, equipoRecibido),
+            mensajeError =>
+            {
+                // Si falla pedir el equipo seguimos igualmente con lista vacia para no bloquear al jugador
+                Debug.LogError($"Error al obtener equipo de la partida: {mensajeError}");
+                IniciarSesionYCargarEscena(partidaRecibida, new List<IbermonJugador>());
+            });
+    }
+
+    // Inicia la sesion con la partida y el equipo recibidos y carga la escena correspondiente
+    private void IniciarSesionYCargarEscena(PartidaCompleta partidaRecibida, List<IbermonJugador> equipo)
+    {
+        SessionManager.Instance.IniciarConPartida(partidaRecibida, equipo);
 
         creadorPersonaje.personajeElegido = partidaRecibida.personaje_elegido;
 
