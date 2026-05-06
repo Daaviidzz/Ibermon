@@ -70,7 +70,7 @@ public class Movimiento : MonoBehaviour
             Cursor.visible = false;
         }
 
-        uiOpcionesPanel = GetComponent<UIOpcionesPanel>();
+        uiOpcionesPanel = GetComponentInChildren<UIOpcionesPanel>();
         pokemonParty = GetComponent<PokemonParty>();
     }
 
