@@ -38,8 +38,8 @@ public class Pokemon
 
     // Cola de mensajes para notificar cambios de estado o buffs en la interfaz.
     public Queue<string> StatusChanges { get; private set; } 
-    public bool HpChanged { get; set; }
     public event System.Action OnStatusChanged; // Evento para notificar cambios de estado
+    public event System.Action OnHpChanged; // Evento para notificar cambios de HP
 
     public void Init()
     {
@@ -154,14 +154,21 @@ public class Pokemon
         float d = a * move.Base.Power * ((float)attack / defense) + 2;
         int damage = Mathf.FloorToInt(d * modifiers);
 
-       UpdateHP(damage);
+        DecreaseHP(damage);
 
         return damageDetails;
     }
-    public void UpdateHP(int damage)
+    public void DecreaseHP(int damage)
     {
         HP=Mathf.Clamp(HP - damage, 0, MaxHp);
-        HpChanged = true;
+        OnHpChanged?.Invoke();
+       
+    }
+    public void IncreaseHP(int amount)
+    {
+        HP=Mathf.Clamp(HP + amount, 0, MaxHp);
+        OnHpChanged?.Invoke();
+        
     }
     public void SetStatus(ConditionID conditionId)
     {
@@ -202,6 +209,8 @@ public class Pokemon
     public Move GetRandomMove() 
     {
         var movesWithPP = Moves.FindAll(m => m.PP > 0);
+        if (movesWithPP.Count == 0)
+            return null;
         return movesWithPP[Random.Range(0, movesWithPP.Count)];
     } 
     public bool OnBeforeMove() 

@@ -4955,8 +4955,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MenuPartida
   panelPartidas: {fileID: 1024567124}
   panelNuevaPartida: {fileID: 854723663}
-  panelDetallePartida: {fileID: 2088712455}
   panelEleccionDePersonaje: {fileID: 686601364}
+  panelDetallePartida: {fileID: 2088712455}
   panelCarga: {fileID: 2020482526}
   contenedorPartidas: {fileID: 1688743102}
   prefabPartida: {fileID: 6247851499642641647, guid: c79a45fe8e033204eb2884921b6ccacf, type: 3}
@@ -4983,7 +4983,7 @@ MonoBehaviour:
   escenaDestino: CasaPersonaje
   posicionSpawn: {x: -7.008884, y: 6.872112}
   personajes:
-  - {fileID: 4358655981738566930, guid: b1b2157ce9be1ce4083ae40ac94ff25b, type: 3}
+  - {fileID: 3848672463340311081, guid: b1b2157ce9be1ce4083ae40ac94ff25b, type: 3}
   - {fileID: 6019570471271983842, guid: d5c60630020aa854d9e2e16af02dee2e, type: 3}
   personajeElegido: 
 --- !u!222 &1456130838

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,49 +10,166 @@ public class PartyScreen : MonoBehaviour
 
     PartyMemberUI[] memberSlots;
     List<Pokemon> pokemons;
+    /// <summary>
+    /// Party Screen puede ser llamado desde diferentes estados de batalla (por ejemplo, selección de ataque o selección de pokemon).
+    /// </summary>
+    public BattleState? CalledFrom { get; set; }
 
-    public void Init()
+    int selection = 0;
+    public Pokemon SelectedMember 
+    { 
+        get 
+        {
+            if (pokemons == null || pokemons.Count == 0)
+            {
+                Debug.LogError("? SelectedMember: No hay Pokémons disponibles");
+                return null;
+            }
+            return pokemons[selection];
+        }
+    }
+    PokemonParty party;
+    private bool initialized = false; // Flag para asegurar que Init() solo se ejecuta una vez
+
+    // --- VARIABLES CONTROL MOVIL ---
+    private bool esMovil;
+    private float tiempoSiguienteInput = 0f; // Cooldown para que el joystick no se mueva demasiado rápido
+    private float intervaloInput = 0.2f; // Tiempo de espera entre movimientos del cursor
+
+    public void Awake()
     {
-        // Si partyList existe buscamos ahí, si no, en este mismo objeto (gameObject).
-        // Usamos el operador ternario para decidir el origen en una línea.
+        // Detectar si estamos en móvil o PC
+#if UNITY_ANDROID || UNITY_IOS
+         esMovil = true;
+#else
+        esMovil = false;
+#endif
+    }
+    public void Init(PokemonParty pokemonParty = null)
+    {
         GameObject target = partyList != null ? partyList : gameObject;
-
         memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
+
+        party = pokemonParty ?? PokemonParty.GetPlayerParty();
+
+        // Suscribirse solo si no estaba ya suscrito
+        party.OnUpdated -= SetPartyData;
+        party.OnUpdated += SetPartyData;
+
+        SetPartyData();
     }
 
-    public void SetPartyData(List<Pokemon> pokemons)
+
+    public void SetPartyData()
     {
-        this.pokemons = pokemons;
+        // Auto-recuperación: si party o memberSlots son null, los obtenemos aquí
+        if (party == null)
+            party = PokemonParty.GetPlayerParty();
 
-        if (memberSlots == null) Init(); // Inicialización de seguridad
-
-        if (pokemons == null)
+        if (memberSlots == null)
         {
-            Debug.LogError("La lista de Pokemons enviada a PartyScreen es NULA.");
+            GameObject target = partyList != null ? partyList : gameObject;
+            memberSlots = target.GetComponentsInChildren<PartyMemberUI>(true);
+        }
+
+        if (party == null || memberSlots == null)
+        {
+            Debug.LogError("PartyScreen: No se pudo obtener party o memberSlots.");
             return;
+        }
+
+        pokemons = party.Pokemons;
+
+        if (pokemons == null || pokemons.Count == 0)
+        {
+            // Último intento: forzar carga directa
+            party?.CargarEquipoGuardado();
+            pokemons = party?.Pokemons;
+
+            if (pokemons == null || pokemons.Count == 0)
+            {
+                Debug.LogError("PartyScreen: La lista de Pokémons está vacía.");
+                return;
+            }
         }
 
         for (int i = 0; i < memberSlots.Length; i++)
         {
-            if (memberSlots[i] == null) continue; // Si el slot es nulo, saltamos
-
-            // Verificamos si este slot corresponde a un pokemon existente
+            if (memberSlots[i] == null) continue;
             bool isActive = i < pokemons.Count;
-
             memberSlots[i].gameObject.SetActive(isActive);
-
             if (isActive)
+            {
                 memberSlots[i].SetData(pokemons[i]);
+                memberSlots[i].RefreshDisplay();
+            }
         }
+
+        UpdateMemberSelection(selection);
 
         if (messageText != null)
         {
             messageText.gameObject.SetActive(true);
             messageText.text = "Elige con quien combatir";
-            messageText.color = Color.black; 
+            messageText.color = Color.black;
         }
     }
 
+    public void HandleUpdate(Action onSelected, Action onBack)
+    {
+    // Validar inicialización
+    if (pokemons == null || pokemons.Count == 0)
+    {
+        Debug.LogError("? PartyScreen.HandleUpdate: pokemons es null o vacío.\n" +
+            "Intentando reinicializar...");
+        SetPartyData(); // Reintentar cargar datos
+
+        if (pokemons == null || pokemons.Count == 0)
+        {
+            Debug.LogError("FALLO CRÍTICO: No se pudieron cargar los Pokémons.");
+            return;
+        }
+    }
+
+    var prevSelection = selection;
+
+    if (Time.time >= tiempoSiguienteInput)
+    {
+        if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+        {
+            ++selection;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+        {
+            --selection;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+        {
+            selection += 2;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+        {
+            selection -= 2;
+            tiempoSiguienteInput = Time.time + intervaloInput;
+        }
+    }
+
+    selection = Math.Clamp(selection, 0, pokemons.Count - 1);
+    if(selection != prevSelection)
+        UpdateMemberSelection(selection);
+
+    if (InputConfirmar())
+    {
+        onSelected?.Invoke();
+    }
+    else if (InputCancelar())
+    {
+       onBack?.Invoke();
+    }
+}
     public void UpdateMemberSelection(int selectedMember)
     {
         for (int i = 0; i < pokemons.Count; i++)
@@ -63,4 +181,25 @@ public class PartyScreen : MonoBehaviour
     }
 
     public void SetMessageText(string message) => messageText.text = message;
+
+
+    bool InputConfirmar()
+    {
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            return ControlesMoviles.Instance.botonInteraccion.SePresionoEsteFrame();
+        }
+        return Input.GetKeyDown(KeyCode.Return);
+    }
+
+    // Detectar "Escape" o Botón Correr (que usaremos como botón B/Atrás)
+    bool InputCancelar()
+    {
+        if (esMovil && ControlesMoviles.Instance != null)
+        {
+            // Usamos el botón de correr como "Atrás" en los menús
+            return ControlesMoviles.Instance.botonCorrer.SePresionoEsteFrame();
+        }
+        return Input.GetKeyDown(KeyCode.Escape);
+    }
 }

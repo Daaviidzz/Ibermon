@@ -4,15 +4,17 @@ using UnityEngine;
 public class HPBar : MonoBehaviour
 {
     [SerializeField] GameObject health;
-
+    public bool IsUpdating { get; private set; }
     public void SetHP(float hpNormalized)
     {
-        //actualiza la barra de vida
+        if (health == null || !health) return; //  protección extra
         health.transform.localScale = new Vector3(hpNormalized, 1f, 1f);
     }
     //Anima la barra de vida para que cambie suavemente a la nueva cantidad de vida
     public IEnumerator SetHPSmooth(float newHP)
     {
+        IsUpdating = true;
+
         float currentHP = health.transform.localScale.x;
         float changeAmt = currentHP - newHP;
 
@@ -25,5 +27,8 @@ public class HPBar : MonoBehaviour
             yield return null;
         }
         health.transform.localScale = new Vector3(newHP, 1f, 1f);
+
+        IsUpdating = false;
     }
+    
 }

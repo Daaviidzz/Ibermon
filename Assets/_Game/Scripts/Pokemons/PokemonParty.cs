@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ApiRest.Models;
@@ -10,7 +11,18 @@ public class PokemonParty : MonoBehaviour
 
     private bool esBatallaTemp = false;
 
-    public List<Pokemon> Pokemons => pokemons;
+    // Evento que se dispara cuando el equipo cambia (usado por PartyScreen)
+    public event Action OnUpdated;
+
+    public List<Pokemon> Pokemons
+    {
+        get { return pokemons; }
+        set
+        {
+            pokemons = value;
+            OnUpdated?.Invoke();
+        }
+    }
 
     // ─── Lifecycle ────────────────────────────────────────────────────────────
 
@@ -23,11 +35,9 @@ public class PokemonParty : MonoBehaviour
 
     // ─── Carga de equipo ──────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Carga el equipo desde la sesión activa de la API.
-    /// Prioridad 1: SessionManager (API) — usa IbermonConverter.
-    /// Prioridad 2: PlayerPrefs (fallback legacy, solo si no hay sesión API).
-    /// </summary>
+    // Carga el equipo desde la sesión activa de la API.
+    // Prioridad 1: SessionManager (API) — usa IbermonConverter.
+    // Prioridad 2: PlayerPrefs (fallback legacy, solo si no hay sesión API).
     public void CargarEquipoGuardado()
     {
         // ── Prioridad 1: datos de la API (sesión activa) ─────────────────────
@@ -43,6 +53,7 @@ public class PokemonParty : MonoBehaviour
                 if (pokemons.Count > 0)
                 {
                     Debug.Log($"[PokemonParty] Equipo cargado desde API: {pokemons.Count} ibermon.");
+                    OnUpdated?.Invoke();
                     return;
                 }
                 Debug.LogWarning("[PokemonParty] La API devolvió equipo pero no se pudieron convertir. " +
@@ -52,6 +63,7 @@ public class PokemonParty : MonoBehaviour
             {
                 Debug.Log("[PokemonParty] La partida no tiene ibermon en el equipo todavía.");
                 pokemons = new List<Pokemon>();
+                OnUpdated?.Invoke();
                 return;
             }
         }
@@ -64,6 +76,7 @@ public class PokemonParty : MonoBehaviour
             {
                 pokemons = cargado;
                 Debug.Log("[PokemonParty] Equipo cargado desde PlayerPrefs (modo sin API).");
+                OnUpdated?.Invoke();
                 return;
             }
         }
@@ -73,6 +86,7 @@ public class PokemonParty : MonoBehaviour
 
     // ─── Batalla de entrenador ────────────────────────────────────────────────
 
+    // Asigna los pokémon del entrenador para la batalla temporal
     public void SetPokemonsForBattle(List<Pokemon> pokemonsEntrenador)
     {
         esBatallaTemp = true;
@@ -82,14 +96,15 @@ public class PokemonParty : MonoBehaviour
 
     // ─── Helpers de combate ───────────────────────────────────────────────────
 
-    /// <summary>Devuelve el primer ibermon con HP > 0.</summary>
-    public Pokemon GetHealtyPokemon() =>
-        pokemons?.FirstOrDefault(p => p.HP > 0);
+    // Devuelve el primer ibermon con HP > 0
+    public Pokemon GetHealtyPokemon()
+    {
+        if (pokemons == null) return null;
+        return pokemons.FirstOrDefault(p => p.HP > 0);
+    }
 
-    /// <summary>
-    /// Añade un nuevo ibermon al equipo local (al capturar).
-    /// La persistencia en la API se gestiona desde BattleSystem mediante SessionManager.
-    /// </summary>
+    // Añade un nuevo ibermon al equipo local (al capturar)
+    // La persistencia en la API se gestiona desde BattleSystem mediante SessionManager
     public bool AddPokemon(Pokemon newPokemon)
     {
         if (pokemons == null) pokemons = new List<Pokemon>();
@@ -97,12 +112,13 @@ public class PokemonParty : MonoBehaviour
         if (pokemons.Count < 6)
         {
             pokemons.Add(newPokemon);
+            OnUpdated?.Invoke();
             return true;
         }
         return false;
     }
 
-    /// <summary>Cura a todos los ibermon del equipo (HP máximo, sin status).</summary>
+    // Cura a todos los ibermon del equipo (HP máximo, sin status)
     public void HealAllPokemonsInParty()
     {
         if (pokemons == null) return;
@@ -112,6 +128,13 @@ public class PokemonParty : MonoBehaviour
             p.CureStatus();
         }
         // La sincronización con la API se hace explícitamente (SessionManager.SincronizarEquipo)
-        // no aquí, para evitar llamadas duplicadas.
+        // no aquí, para evitar llamadas duplicadas
+        OnUpdated?.Invoke();
+    }
+
+    // Devuelve el PokemonParty del jugador buscando por tag
+    public static PokemonParty GetPlayerParty()
+    {
+        return GameObject.FindGameObjectWithTag("Player").GetComponent<PokemonParty>();
     }
 }

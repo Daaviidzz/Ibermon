@@ -175,16 +175,24 @@ public class UIOpcionesPanel : MonoBehaviour
         }
     }
 
-    // Sin funcionalidad por ahora
+    // Abre la pantalla de equipo pokemon
     private void AbrirPokemons()
     {
-        Debug.Log("[UIOpcionesPanel] Pokemons: sin implementar");
+        CerrarPanel();
+        if (movimiento != null)
+        {
+            movimiento.AbrirPartyScreen();
+        }
     }
 
-    // Sin funcionalidad por ahora
+    // Abre el inventario
     private void AbrirMochila()
     {
-        Debug.Log("[UIOpcionesPanel] Mochila: sin implementar");
+        CerrarPanel();
+        if (movimiento != null)
+        {
+            movimiento.AbrirMochila();
+        }
     }
     private void SalirJuego()
     {

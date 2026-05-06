@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public enum GameState { FreeRoam, UIPanel }
+public enum GameState { FreeRoam, UIPanel, PartyScreen, Bag }
 
 public class Movimiento : MonoBehaviour
 {
@@ -36,6 +36,11 @@ public class Movimiento : MonoBehaviour
     // Referencia al panel de opciones integrado en el prefab del jugador
     private UIOpcionesPanel uiOpcionesPanel;
 
+    // Referencias a las pantallas de partido e inventario
+    [SerializeField] private PartyScreen partyScreen;
+    [SerializeField] private InventoryUI inventoryUI;
+    private PokemonParty pokemonParty;
+
     //Parte movil
     [Header("Controles Móviles (Opcional)")]
     [SerializeField] private JoystickVirtual joystick;            // Referencia al joystick
@@ -66,6 +71,7 @@ public class Movimiento : MonoBehaviour
         }
 
         uiOpcionesPanel = GetComponent<UIOpcionesPanel>();
+        pokemonParty = GetComponent<PokemonParty>();
     }
 
     // Método Start que se ejecuta después del Awake
@@ -76,6 +82,19 @@ public class Movimiento : MonoBehaviour
         if (ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
+        }
+
+        // Inicializamos la pantalla de equipo con el partido actual
+        if (partyScreen != null && pokemonParty != null)
+        {
+            partyScreen.Init(pokemonParty);
+        }
+
+        // Si volvemos de Opciones con el panel abierto, restauramos el estado UIPanel
+        // El propio UIOpcionesPanel.Start() ya habrá reabierto el panel y activado _ignorarInputEsteFrame
+        if (UIOpcionesPanel.estaAbierto)
+        {
+            state = GameState.UIPanel;
         }
     }
 
@@ -140,6 +159,33 @@ public class Movimiento : MonoBehaviour
                 }
             }
         }
+        else if (state == GameState.PartyScreen)
+        {
+            // Gestionamos la navegación dentro de la pantalla de equipo
+            if (partyScreen != null)
+            {
+                partyScreen.HandleUpdate(
+                    onSelected: () => { },  // de momento vacío
+                    onBack: () =>
+                    {
+                        partyScreen.gameObject.SetActive(false);
+                        state = GameState.FreeRoam;
+                    }
+                );
+            }
+        }
+        else if (state == GameState.Bag)
+        {
+            // Gestionamos la navegación dentro del inventario
+            if (inventoryUI != null)
+            {
+                inventoryUI.HandleUpdate(onBack: () =>
+                {
+                    inventoryUI.gameObject.SetActive(false);
+                    state = GameState.FreeRoam;
+                });
+            }
+        }
         // En estado UIPanel no procesamos ningún input de movimiento ni de menú
         // El panel se gestiona íntegramente desde UIOpcionesPanel
     }
@@ -169,6 +215,26 @@ public class Movimiento : MonoBehaviour
     public void CerrarUIPanel()
     {
         state = GameState.FreeRoam;
+    }
+
+    // Lo llama UIOpcionesPanel cuando el jugador pulsa el botón Pokemons
+    public void AbrirPartyScreen()
+    {
+        if (partyScreen != null)
+        {
+            partyScreen.gameObject.SetActive(true);
+            state = GameState.PartyScreen;
+        }
+    }
+
+    // Lo llama UIOpcionesPanel cuando el jugador pulsa el botón Mochila
+    public void AbrirMochila()
+    {
+        if (inventoryUI != null)
+        {
+            inventoryUI.gameObject.SetActive(true);
+            state = GameState.Bag;
+        }
     }
 
     // ========== FUNCIONES MULTIPLATAFORMA ==========

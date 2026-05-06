@@ -10,7 +10,6 @@ using UnityEngine;
 public class BattleHud : MonoBehaviour
 {
     
-
     [SerializeField] TextMeshProUGUI NameText; // Texto para el nombre del Pokémon.
     [SerializeField] TextMeshProUGUI LevelText; // Texto para el nivel (ej: "Lvl 15").
     [SerializeField] HPBar hpBar; // Referencia al script 'HPBar' que controla visualmente la barra de vida (el relleno verde).
@@ -30,6 +29,11 @@ public class BattleHud : MonoBehaviour
     // Se llama al iniciar la batalla o cuando se cambia de Pokémon.
     public void SetData(Pokemon pokemon)
     {
+        if(_pokemon != null)
+        {
+            _pokemon.OnStatusChanged -= SetStatusText;
+            _pokemon.OnHpChanged -= UpdateHP;
+        }
         _pokemon = pokemon; // Guardamos la referencia para uso futuro.
 
         // Asignamos el nombre y el nivel a los textos de la UI.
@@ -49,28 +53,37 @@ public class BattleHud : MonoBehaviour
 
         SetStatusText();
         _pokemon.OnStatusChanged += SetStatusText;
+        _pokemon.OnHpChanged += UpdateHP;
         SetExp();
     }
 
     // Corrutina para actualizar la barra de vida con una animación suave.
     // Se debe llamar después de que el Pokémon reciba daño o se cure.
-    public IEnumerator UpdateHP()
+    public IEnumerator UpdateHPAsync()
     {
-        // Llamamos a SetHPSmooth del script HPBar, que se encargará de bajar la barra poco a poco visualmente.
-        // 'yield return' significa que el código esperará aquí hasta que la animación de la barra termine.
-        if (_pokemon.HpChanged) 
-        {
-            yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
-            _pokemon.HpChanged = false;
-        }
+       
+       yield return hpBar.SetHPSmooth((float)_pokemon.HP / _pokemon.MaxHp);
         
     }
+    public void UpdateHP()
+    {
+        if (this == null || !gameObject.activeInHierarchy) return;
+        StartCoroutine(UpdateHPAsync());
+    }
+
+    // Método que retorna la corrutina para que BattleSystem pueda esperar
+    public IEnumerator UpdateHPCoroutine()
+    {
+        yield return StartCoroutine(UpdateHPAsync());
+    }
+
     public void SetLevel()
     {
         LevelText.text = "Lvl " + _pokemon.Level;
     }
     public void SetStatusText()
     {
+        if (this == null || !gameObject.activeInHierarchy) return;
         if (_pokemon.Status==null)
         {
             statusText.text = "";
@@ -80,7 +93,6 @@ public class BattleHud : MonoBehaviour
             statusText.text=_pokemon.Status.Id.ToString().ToUpper();
             statusText.color=statusColors[_pokemon.Status.Id];
         }
-        
     }
     public void SetExp()
     {
@@ -107,5 +119,17 @@ public class BattleHud : MonoBehaviour
 
         float normalizedExp = (float)(_pokemon.Exp - currLevelExp) / (nextLevelExp - currLevelExp);
         return Mathf.Clamp01(normalizedExp);
+    }
+
+    public IEnumerator WaitForHPUpdate()
+    {
+        yield return new WaitWhile(() => hpBar.IsUpdating == true);
+    }
+    private void OnDestroy()
+    {
+        if (_pokemon != null)
+        {
+            _pokemon.OnHpChanged -= UpdateHP;
+        }
     }
 }
