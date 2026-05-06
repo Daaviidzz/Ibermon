@@ -90,7 +90,10 @@ public enum PokemonType
     Bicho,
     Roca,
     Fantasma,
-    Dragon
+    Dragon,
+    Siniestro,   // necesario para Nenzen y movimientos custom
+    Acero,       // existe en BD, lo dejamos preparado
+    Hada         // idem
 }
 
 public class TypeChart
@@ -123,6 +126,9 @@ public class TypeChart
         // Ajustar índices para que coincidan con la matriz (restar 1)
         int row = (int)attackType - 1;
         int col = (int)defenseType - 1;
+        // Tipos fuera de la matriz (Siniestro, Acero, Hada) devuelven neutro hasta que se actualice chart
+        if (row < 0 || row >= chart.Length || col < 0 || col >= chart[0].Length)
+            return 1f;
         return chart[row][col];
     }
 }
