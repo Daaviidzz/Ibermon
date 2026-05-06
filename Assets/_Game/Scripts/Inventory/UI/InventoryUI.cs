@@ -41,13 +41,19 @@ public class InventoryUI : MonoBehaviour
 
     public void Awake()
     {
-        // Detectar si estamos en móvil o PC
 #if UNITY_ANDROID || UNITY_IOS
-         esMovil = true;
+    esMovil = true;
 #else
         esMovil = false;
 #endif
         inventory = Inventory.GetInventory();
+
+        if (inventory == null)
+        {
+            Debug.LogError("INVENTORY ES NULL - No existe un objeto Inventory en la escena");
+            return;
+        }
+
         itemListRect = itemList.GetComponent<RectTransform>();
     }
     private void Start()
@@ -225,7 +231,7 @@ public class InventoryUI : MonoBehaviour
     {
         state = InventoryUIState.PartySelection;
         partyScreen.gameObject.SetActive(true);
-        partyScreen.Init(); // Reinicializar PartyScreen para asegurar datos frescos
+        partyScreen.SetPartyData(); // Reinicializar PartyScreen para asegurar datos frescos
     }
 
     void ClosePartyScreen()

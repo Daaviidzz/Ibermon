@@ -8,6 +8,7 @@ public class PokemonParty : MonoBehaviour
 {
     [SerializeField] List<Pokemon> pokemons;
     [SerializeField] bool esEquipoJugador = false;
+    private bool equipoCargado = false;
 
     private bool esBatallaTemp = false;
 
@@ -40,6 +41,8 @@ public class PokemonParty : MonoBehaviour
     // Prioridad 2: PlayerPrefs (fallback legacy, solo si no hay sesión API).
     public void CargarEquipoGuardado()
     {
+        if(equipoCargado) return;
+        equipoCargado = true;
         // ── Prioridad 1: datos de la API (sesión activa) ─────────────────────
         if (SessionManager.Instance != null &&
             SessionManager.Instance.TienePartida &&
@@ -54,6 +57,7 @@ public class PokemonParty : MonoBehaviour
                 {
                     Debug.Log($"[PokemonParty] Equipo cargado desde API: {pokemons.Count} ibermon.");
                     OnUpdated?.Invoke();
+                    equipoCargado=false;
                     return;
                 }
                 Debug.LogWarning("[PokemonParty] La API devolvió equipo pero no se pudieron convertir. " +
@@ -64,6 +68,7 @@ public class PokemonParty : MonoBehaviour
                 Debug.Log("[PokemonParty] La partida no tiene ibermon en el equipo todavía.");
                 pokemons = new List<Pokemon>();
                 OnUpdated?.Invoke();
+                equipoCargado=false;
                 return;
             }
         }
@@ -77,11 +82,13 @@ public class PokemonParty : MonoBehaviour
                 pokemons = cargado;
                 Debug.Log("[PokemonParty] Equipo cargado desde PlayerPrefs (modo sin API).");
                 OnUpdated?.Invoke();
+                equipoCargado = false;
                 return;
             }
         }
 
         Debug.LogWarning("[PokemonParty] No se encontró equipo. El partido puede no haberse cargado aún.");
+        equipoCargado = false;
     }
 
     // ─── Batalla de entrenador ────────────────────────────────────────────────

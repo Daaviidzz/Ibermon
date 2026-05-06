@@ -82,15 +82,9 @@ public class PartyScreen : MonoBehaviour
 
         if (pokemons == null || pokemons.Count == 0)
         {
-            // Último intento: forzar carga directa
-            party?.CargarEquipoGuardado();
-            pokemons = party?.Pokemons;
-
-            if (pokemons == null || pokemons.Count == 0)
-            {
-                Debug.LogError("PartyScreen: La lista de Pokémons está vacía.");
-                return;
-            }
+           
+            Debug.LogWarning("PartyScreen: Lista vacía, el equipo aún no se ha cargado.");
+            return;
         }
 
         for (int i = 0; i < memberSlots.Length; i++)
@@ -117,59 +111,50 @@ public class PartyScreen : MonoBehaviour
 
     public void HandleUpdate(Action onSelected, Action onBack)
     {
-    // Validar inicialización
-    if (pokemons == null || pokemons.Count == 0)
-    {
-        Debug.LogError("? PartyScreen.HandleUpdate: pokemons es null o vacío.\n" +
-            "Intentando reinicializar...");
-        SetPartyData(); // Reintentar cargar datos
-
         if (pokemons == null || pokemons.Count == 0)
         {
-            Debug.LogError("FALLO CRÍTICO: No se pudieron cargar los Pokémons.");
-            return;
+            return; // simplemente salir sin hacer nada
+        }
+
+        var prevSelection = selection;
+
+        if (Time.time >= tiempoSiguienteInput)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
+            {
+                ++selection;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
+            {
+                --selection;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
+            {
+                selection += 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
+            {
+                selection -= 2;
+                tiempoSiguienteInput = Time.time + intervaloInput;
+            }
+        }
+
+        selection = Math.Clamp(selection, 0, pokemons.Count - 1);
+        if(selection != prevSelection)
+            UpdateMemberSelection(selection);
+
+        if (InputConfirmar())
+        {
+            onSelected?.Invoke();
+        }
+        else if (InputCancelar())
+        {
+           onBack?.Invoke();
         }
     }
-
-    var prevSelection = selection;
-
-    if (Time.time >= tiempoSiguienteInput)
-    {
-        if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
-        {
-            ++selection;
-            tiempoSiguienteInput = Time.time + intervaloInput;
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
-        {
-            --selection;
-            tiempoSiguienteInput = Time.time + intervaloInput;
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
-        {
-            selection += 2;
-            tiempoSiguienteInput = Time.time + intervaloInput;
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
-        {
-            selection -= 2;
-            tiempoSiguienteInput = Time.time + intervaloInput;
-        }
-    }
-
-    selection = Math.Clamp(selection, 0, pokemons.Count - 1);
-    if(selection != prevSelection)
-        UpdateMemberSelection(selection);
-
-    if (InputConfirmar())
-    {
-        onSelected?.Invoke();
-    }
-    else if (InputCancelar())
-    {
-       onBack?.Invoke();
-    }
-}
     public void UpdateMemberSelection(int selectedMember)
     {
         for (int i = 0; i < pokemons.Count; i++)
