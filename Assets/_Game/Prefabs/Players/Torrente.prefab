@@ -591,8 +591,6 @@ MonoBehaviour:
     count: 1
   - item: {fileID: 11400000, guid: 76122f997bc46e94b9ff514172627f17, type: 2}
     count: 5
-  - item: {fileID: 11400000, guid: 5adc2c37b97c41b4b82920cbec1d6d9e, type: 2}
-    count: 12
   - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
     count: 1
   pokeballSlots:
@@ -1767,6 +1765,18 @@ PrefabInstance:
       propertyPath: partyScreen
       value: 
       objectReference: {fileID: 8062682712086849403}
+    - target: {fileID: 7219752127101926344, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
+      propertyPath: higthlighedColor.b
+      value: 0.9924528
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219752127101926344, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
+      propertyPath: higthlighedColor.g
+      value: 0.517828
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219752127101926344, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
+      propertyPath: higthlighedColor.r
+      value: 0.080519676
+      objectReference: {fileID: 0}
     - target: {fileID: 7619954869690224978, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
