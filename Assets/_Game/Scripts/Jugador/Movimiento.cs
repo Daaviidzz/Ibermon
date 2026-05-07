@@ -84,17 +84,16 @@ public class Movimiento : MonoBehaviour
             ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
         }
 
-        // Inicializamos la pantalla de equipo con el partido actual
-        if (partyScreen != null && pokemonParty != null)
-        {
-            partyScreen.Init(pokemonParty);
-        }
-
         // Si volvemos de Opciones con el panel abierto, restauramos el estado UIPanel
         // El propio UIOpcionesPanel.Start() ya habrá reabierto el panel y activado _ignorarInputEsteFrame
         if (UIOpcionesPanel.estaAbierto)
         {
             state = GameState.UIPanel;
+        }
+
+        if (partyScreen != null)
+        {
+            partyScreen.Init(pokemonParty);
         }
     }
 
@@ -170,6 +169,11 @@ public class Movimiento : MonoBehaviour
                     {
                         partyScreen.gameObject.SetActive(false);
                         state = GameState.FreeRoam;
+                        if (!esMovil)
+                        {
+                            Cursor.lockState = CursorLockMode.Locked;
+                            Cursor.visible = false;
+                        }
                     }
                 );
             }
@@ -183,6 +187,11 @@ public class Movimiento : MonoBehaviour
                 {
                     inventoryUI.gameObject.SetActive(false);
                     state = GameState.FreeRoam;
+                    if (!esMovil)
+                    {
+                        Cursor.lockState = CursorLockMode.Locked;
+                        Cursor.visible = false;
+                    }
                 });
             }
         }
@@ -215,6 +224,11 @@ public class Movimiento : MonoBehaviour
     public void CerrarUIPanel()
     {
         state = GameState.FreeRoam;
+        if (!esMovil)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     // Lo llama UIOpcionesPanel cuando el jugador pulsa el botón Pokemons
@@ -223,6 +237,7 @@ public class Movimiento : MonoBehaviour
         if (partyScreen != null)
         {
             partyScreen.gameObject.SetActive(true);
+            partyScreen.SetPartyData();
             state = GameState.PartyScreen;
         }
     }
@@ -233,6 +248,7 @@ public class Movimiento : MonoBehaviour
         if (inventoryUI != null)
         {
             inventoryUI.gameObject.SetActive(true);
+            inventoryUI.Abrir();
             state = GameState.Bag;
         }
     }

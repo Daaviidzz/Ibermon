@@ -40,6 +40,14 @@ public class SessionManager : MonoBehaviour
     // Llámalo después de obtener la PartidaCompleta y el equipo de la API
     public void IniciarConPartida(PartidaCompleta partida, List<IbermonJugador> equipo)
     {
+        if (partida == null)
+        {
+            Debug.LogError("[SessionManager] No se puede iniciar sesion con una partida null");
+            return;
+        }
+
+        CompletarDatosPartida(partida);
+
         PartidaId = partida.id;
         PartidaActual = partida;
         _equipo = equipo ?? new List<IbermonJugador>();
@@ -47,6 +55,46 @@ public class SessionManager : MonoBehaviour
         CombatesGanados = partida.combates_ganados;
         CombatesPerdidos = partida.combates_perdidos;
         _contandoTiempo = true;
+    }
+
+    private void CompletarDatosPartida(PartidaCompleta partida)
+    {
+        if (string.IsNullOrWhiteSpace(partida.id))
+            partida.id = PartidaId;
+
+        if (PartidaActual != null && PartidaActual.id == partida.id)
+        {
+            if (string.IsNullOrWhiteSpace(partida.nombre))
+                partida.nombre = PartidaActual.nombre;
+
+            if (string.IsNullOrWhiteSpace(partida.personaje_elegido))
+                partida.personaje_elegido = PartidaActual.personaje_elegido;
+
+            if (string.IsNullOrWhiteSpace(partida.fecha_creacion))
+                partida.fecha_creacion = PartidaActual.fecha_creacion;
+
+            if (string.IsNullOrWhiteSpace(partida.ultima_conexion))
+                partida.ultima_conexion = PartidaActual.ultima_conexion;
+        }
+
+        if (string.IsNullOrWhiteSpace(partida.nombre))
+            partida.nombre = "Mi Partida";
+    }
+
+    public void ActualizarPartidaActual(PartidaCompleta partida)
+    {
+        if (partida == null)
+        {
+            Debug.LogWarning("[SessionManager] No se puede actualizar la partida con datos null");
+            return;
+        }
+
+        CompletarDatosPartida(partida);
+        PartidaId = partida.id;
+        PartidaActual = partida;
+        _tiempoSesion = partida.tiempo_jugado;
+        CombatesGanados = partida.combates_ganados;
+        CombatesPerdidos = partida.combates_perdidos;
     }
 
     // Llámalo al hacer logout o al volver al menú principal
@@ -175,7 +223,7 @@ public class SessionManager : MonoBehaviour
         }
 
         ApiSetup.Partida.GuardarPartida(PartidaId, datos,
-            partida => { PartidaActual = partida; onDone?.Invoke(); },
+            partida => { ActualizarPartidaActual(partida); onDone?.Invoke(); },
             onError);
     }
 

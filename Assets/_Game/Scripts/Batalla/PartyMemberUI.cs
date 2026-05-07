@@ -12,7 +12,7 @@ public class PartyMemberUI : MonoBehaviour
 
     public void SetData(Pokemon pokemon)
     {
-        // Si ya tenemos un Pok√©mon, desuscribirse del anterior
+        // Si ya tenemos un PokÈmon, desuscribirse del anterior
         if (_pokemon != null)
         {
             _pokemon.OnHpChanged -= UpdateData;
@@ -21,15 +21,14 @@ public class PartyMemberUI : MonoBehaviour
         _pokemon = pokemon;
         UpdateData();
 
-        // Suscribirse al evento del nuevo Pok√©mon
+        // Suscribirse al evento del nuevo PokÈmon
         _pokemon.OnHpChanged += UpdateData;
     }
 
     void UpdateData()
     {
         if (_pokemon == null) return;
-        if (this == null || !gameObject) return; // ‚Üê el objeto ya fue destruido
-
+        if (this == null || !gameObject) return; // ? el objeto ya fue destruido
         NameText.text = _pokemon.Base.Name;
         LevelText.text = "Lvl " + _pokemon.Level;
         hpBar.SetHP((float)_pokemon.HP / _pokemon.MaxHp);

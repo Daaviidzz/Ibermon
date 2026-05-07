@@ -58,8 +58,14 @@ public class InventoryUI : MonoBehaviour
     }
     private void Start()
     {
-        inventory.OnUpdated -= UpdateItemList; // evitar doble suscripción
         inventory.OnUpdated += UpdateItemList;
+        UpdateItemList();
+    }
+
+    public void Abrir()
+    {
+        state = InventoryUIState.ItemSelection;
+        selectedItem = 0;
         UpdateItemList();
     }
     void UpdateItemList()
@@ -69,20 +75,26 @@ public class InventoryUI : MonoBehaviour
 
         slotUIList = new List<ItemSlotUI>();
 
-        foreach (var itemSlot in inventory.GetSlotsByCategory(selectedCategory))
+        var slotsCategoria = inventory.GetSlotsByCategory(selectedCategory);
+        foreach (var itemSlot in slotsCategoria)
         {
             var itemSlotUIObj = Instantiate(itemSlotUI, itemList.transform);
             itemSlotUIObj.SetData(itemSlot);
             slotUIList.Add(itemSlotUIObj);
         }
 
-        selectedItem = Mathf.Clamp(selectedItem, 0, Mathf.Max(0, inventory.GetSlotsByCategory(selectedCategory).Count - 1));
+        selectedItem = Mathf.Clamp(selectedItem, 0, Mathf.Max(0, slotsCategoria.Count - 1));
 
         // forzar rebuild del layout
-        LayoutRebuilder.ForceRebuildLayoutImmediate(itemListRect);
+        if (itemListRect != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(itemListRect);
+        }
 
         if (slotUIList.Count > 0)
             UpdateItemSelection();
+        else
+            ResetSelection();
     }
     public void HandleUpdate(Action onBack,Action<ItemBase> onItemUsed=null)
     {
@@ -112,7 +124,8 @@ public class InventoryUI : MonoBehaviour
                 selectedCategory = Inventory.ItemCategories.Count - 1;
             }
 
-            selectedItem = Math.Clamp(selectedItem, 0, inventory.GetSlotsByCategory(selectedCategory).Count - 1);
+            var slotsCategoria = inventory.GetSlotsByCategory(selectedCategory);
+            selectedItem = Mathf.Clamp(selectedItem, 0, Mathf.Max(0, slotsCategoria.Count - 1));
             
 
             if(prevCategory != selectedCategory)
@@ -130,7 +143,10 @@ public class InventoryUI : MonoBehaviour
 
             if (InputConfirmar())
             {
-                ItemSelected();
+                if (slotUIList != null && slotUIList.Count > 0)
+                {
+                    ItemSelected();
+                }
             }
             else if (InputCancelar())
             {
