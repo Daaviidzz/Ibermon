@@ -797,7 +797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccad9bdd407c1c841996742d26f21d74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ApiRest.Managers.ApiSetup
-  baseUrl: http://localhost:8000
+  urlServidor: http://localhost:8000
 --- !u!4 &1039097842
 Transform:
   m_ObjectHideFlags: 0
@@ -873,7 +873,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3835579247118368046, guid: f18fb9561b6d4a44fa79224782c2864e, type: 3}
+  m_Sprite: {fileID: 454313768589739951, guid: 411b7063816a536469311d8f293ea3f0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
