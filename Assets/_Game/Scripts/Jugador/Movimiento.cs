@@ -268,9 +268,13 @@ public class Movimiento : MonoBehaviour
         if (centroIbermonUI == null)
         {
             var prefab = Resources.Load<CentroIbermonUI>("UI/CentroIbermonCanvas");
-            centroIbermonUI = prefab != null
-                ? Instantiate(prefab)
-                : CentroIbermonUI.CrearRuntime();
+            if (prefab == null)
+            {
+                Debug.LogError("[Movimiento] No se encontro Resources/UI/CentroIbermonCanvas.");
+                return;
+            }
+
+            centroIbermonUI = Instantiate(prefab);
         }
 
         centroIbermonUI.gameObject.SetActive(true);
