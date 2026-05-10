@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +37,27 @@ public class Inventory : MonoBehaviour
     {
        return allSlots[categoryIndex];
     }
-    
+
+    public void ClearAllSlots()
+    {
+        slots.Clear();
+        pokeballSlots.Clear();
+        OnUpdated?.Invoke();
+    }
+
+    public void AddItem(ItemBase item, int count, ItemCategory category)
+    {
+        var targetList = category == ItemCategory.Pokeballs ? pokeballSlots : slots;
+        var existingSlot = targetList.FirstOrDefault(s => s.Item == item);
+
+        if (existingSlot != null)
+            existingSlot.Count += count;
+        else
+            targetList.Add(new ItemSlot(item, count));
+
+        OnUpdated?.Invoke();
+    }
+
     public ItemBase UseItem(int itemIndex, Pokemon selectedPokemon,int selectedCategory)
     {
         var currentSlots = GetSlotsByCategory(selectedCategory);
@@ -57,6 +76,8 @@ public class Inventory : MonoBehaviour
         var currentSlots = GetSlotsByCategory(category);
 
         var itemSlot = currentSlots.FirstOrDefault(s => s.Item == item);
+        if (itemSlot == null) return;
+
         itemSlot.Count--;
         if (itemSlot.Count == 0)
         {
@@ -71,6 +92,14 @@ public class ItemSlot
 {
     [SerializeField] ItemBase item;
     [SerializeField] int count;
+
+    public ItemSlot() { }
+
+    public ItemSlot(ItemBase item, int count)
+    {
+        this.item = item;
+        this.count = count;
+    }
 
     public ItemBase Item => item;
     public int Count 

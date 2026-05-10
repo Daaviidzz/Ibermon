@@ -43,6 +43,7 @@ public class BattleSystem : MonoBehaviour
     bool esTrainerBattle = false;
 
     int escapeAttempts; // Contador de intentos para escapar
+    bool escapo;        // true si el jugador huyó con éxito (evita mensaje de derrota)
     MoveBase moveToLearn; // Movimiento que el Pokémon quiere aprender al subir de nivel
 
     // --- VARIABLES CONTROL MOVIL ---
@@ -142,7 +143,16 @@ public class BattleSystem : MonoBehaviour
             dialogBox.SetMoveNames(playerUnit.Pokemon.Moves);
         }
 
-        partyScreen.Init();
+        if (partyScreen != null && CatalogoCache.Instance != null && CatalogoCache.Instance.EstaListo)
+        {
+            partyScreen.Init();
+        }
+        else
+        {
+            if (partyScreen == null) Debug.LogError("[BattleSystem] partyScreen no asignado en la escena de combate.");
+            if (CatalogoCache.Instance == null || !CatalogoCache.Instance.EstaListo)
+                Debug.LogWarning("[BattleSystem] CatalogoCache no está listo. PartyScreen se inicializará cuando esté disponible.");
+        }
         ActionSelection();
     }
 
@@ -461,7 +471,7 @@ public class BattleSystem : MonoBehaviour
                 BattleData.NombreEntrenador = null;
             }
         }
-        else
+        else if (!escapo)
         {
             yield return dialogBox.TypeDialog("Has sido derrotado...");
         }
@@ -971,6 +981,7 @@ public class BattleSystem : MonoBehaviour
         if (enemySpeed < playerSpeed)
         {
             yield return dialogBox.TypeDialog($"Puedes huir del combate a salvo!");
+            escapo = true;
             BattleOver(false);
         }
         else
@@ -981,6 +992,7 @@ public class BattleSystem : MonoBehaviour
             if (UnityEngine.Random.Range(0, 256) < f)
             {
                 yield return dialogBox.TypeDialog($"Puedes huir a salvo!");
+                escapo = true;
                 BattleOver(false);
             }
             else

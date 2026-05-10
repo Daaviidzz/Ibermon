@@ -93,7 +93,15 @@ public class Movimiento : MonoBehaviour
 
         if (partyScreen != null)
         {
-            partyScreen.Init(pokemonParty);
+            if (CatalogoCache.Instance != null && CatalogoCache.Instance.EstaListo)
+            {
+                partyScreen.Init(pokemonParty);
+            }
+            else
+            {
+                Debug.LogWarning("[Movimiento] CatalogoCache no está listo al iniciar PartyScreen. " +
+                    "Asegúrate de que ApiSetup se ejecute antes de cargar la escena del juego.");
+            }
         }
     }
 
@@ -195,8 +203,6 @@ public class Movimiento : MonoBehaviour
                 });
             }
         }
-        // En estado UIPanel no procesamos ningún input de movimiento ni de menú
-        // El panel se gestiona íntegramente desde UIOpcionesPanel
     }
 
     private void FixedUpdate()
@@ -237,7 +243,9 @@ public class Movimiento : MonoBehaviour
         if (partyScreen != null)
         {
             partyScreen.gameObject.SetActive(true);
-            partyScreen.SetPartyData();
+            // Re-invocar Init() para asegurar que memberSlots y sprites
+            // se inicialicen incluso si falló la primera vez (p. ej. CatalogoCache no listo)
+            partyScreen.Init(pokemonParty);
             state = GameState.PartyScreen;
         }
     }

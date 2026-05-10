@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PartyScreen : MonoBehaviour
 {
@@ -16,10 +17,9 @@ public class PartyScreen : MonoBehaviour
     public Pokemon SelectedMember => pokemons[selection];
     PokemonParty party;
 
-    // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
-    private float tiempoSiguienteInput = 0f; // Cooldown para que el joystick no se mueva demasiado rapido
-    private float intervaloInput = 0.2f; // Tiempo de espera entre movimientos del cursor
+    private float tiempoSiguienteInput = 0f;
+    private float intervaloInput = 0.2f;
 
     public void Awake()
     {
@@ -39,65 +39,84 @@ public class PartyScreen : MonoBehaviour
             return;
         }
 
-        memberSlots = partyList.GetComponentsInChildren<PartyMemberUI>();
+        if (partyList == null)
+        {
+            Debug.LogError("PartyScreen: partyList no asignado.");
+            return;
+        }
+
+        memberSlots = partyList.GetComponentsInChildren<PartyMemberUI>(true);
+
+        if (memberSlots == null || memberSlots.Length == 0)
+        {
+            Debug.LogError("PartyScreen: No se encontraron PartyMemberUI en partyList.");
+            return;
+        }
 
         party.OnUpdated -= SetPartyData;
         party.OnUpdated += SetPartyData;
+
+        // Usar GridLayoutGroup del prefab en vez de posicionar a mano
+        var grid = partyList.GetComponent<GridLayoutGroup>();
+        if (grid != null) grid.enabled = true;
+
+        if (CatalogoCache.Instance != null && !CatalogoCache.Instance.EstaListo)
+            Debug.LogWarning("[PartyScreen] CatalogoCache no listo al iniciar.");
 
         SetPartyData();
     }
 
     public void SetPartyData()
     {
+        if (party == null) return;
         pokemons = party.Pokemons;
+        pokemons ??= new List<Pokemon>();
 
-        for (int i = 0; i < pokemons.Count; i++)
+        if ((memberSlots == null || memberSlots.Length == 0) && partyList != null)
+            memberSlots = partyList.GetComponentsInChildren<PartyMemberUI>(true);
+
+        if (memberSlots == null) return;
+
+        selection = Mathf.Clamp(selection, 0, Mathf.Max(0, pokemons.Count - 1));
+
+        for (int i = 0; i < memberSlots.Length; i++)
         {
-            memberSlots[i].SetData(pokemons[i]);
-            memberSlots[i].RefreshDisplay();
+            bool tienePokemon = i < pokemons.Count;
+            memberSlots[i].gameObject.SetActive(tienePokemon);
+
+            if (tienePokemon)
+                memberSlots[i].SetData(pokemons[i]);
         }
 
-        UpdateMemberSelection(selection);
+        if (pokemons.Count > 0)
+            UpdateMemberSelection(selection);
 
         if (messageText != null)
         {
             messageText.gameObject.SetActive(true);
-            messageText.text = "Elige con quien combatir";
+            messageText.text = pokemons.Count > 0
+                ? "Elige un Ibermon"
+                : "No hay Ibermon en el equipo.";
             messageText.color = Color.black;
         }
     }
 
     public void HandleUpdate(Action onSelected, Action onBack)
     {
-        if (pokemons == null || pokemons.Count == 0)
-        {
-            return;
-        }
+        if (pokemons == null || pokemons.Count == 0) return;
 
         var prevSelection = selection;
 
         if (Time.time >= tiempoSiguienteInput)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() > 0.5f))
-            {
-                ++selection;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
+            { ++selection; tiempoSiguienteInput = Time.time + intervaloInput; }
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || (esMovil && ControlesMoviles.Instance.joystick.Horizontal() < -0.5f))
-            {
-                --selection;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
+            { --selection; tiempoSiguienteInput = Time.time + intervaloInput; }
             else if (Input.GetKeyDown(KeyCode.DownArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() < -0.5f))
-            {
-                selection += 2;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
+            { selection += 2; tiempoSiguienteInput = Time.time + intervaloInput; }
             else if (Input.GetKeyDown(KeyCode.UpArrow) || (esMovil && ControlesMoviles.Instance.joystick.Vertical() > 0.5f))
-            {
-                selection -= 2;
-                tiempoSiguienteInput = Time.time + intervaloInput;
-            }
+            { selection -= 2; tiempoSiguienteInput = Time.time + intervaloInput; }
         }
 
         selection = Math.Clamp(selection, 0, pokemons.Count - 1);
@@ -105,21 +124,17 @@ public class PartyScreen : MonoBehaviour
             UpdateMemberSelection(selection);
 
         if (InputConfirmar())
-        {
             onSelected?.Invoke();
-        }
         else if (InputCancelar())
-        {
-           onBack?.Invoke();
-        }
+            onBack?.Invoke();
     }
 
     public void UpdateMemberSelection(int selectedMember)
     {
-        for (int i = 0; i < pokemons.Count; i++)
-        {
+        if (pokemons == null || memberSlots == null) return;
+        int total = Mathf.Min(pokemons.Count, memberSlots.Length);
+        for (int i = 0; i < total; i++)
             memberSlots[i].SetSelected(i == selectedMember);
-        }
     }
 
     public void SetMessageText(string message) => messageText.text = message;
@@ -127,18 +142,14 @@ public class PartyScreen : MonoBehaviour
     bool InputConfirmar()
     {
         if (esMovil && ControlesMoviles.Instance != null)
-        {
             return ControlesMoviles.Instance.botonInteraccion.SePresionoEsteFrame();
-        }
         return Input.GetKeyDown(KeyCode.Return);
     }
 
     bool InputCancelar()
     {
         if (esMovil && ControlesMoviles.Instance != null)
-        {
             return ControlesMoviles.Instance.botonCorrer.SePresionoEsteFrame();
-        }
         return Input.GetKeyDown(KeyCode.Escape);
     }
 }
