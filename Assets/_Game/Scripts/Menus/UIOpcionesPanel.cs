@@ -190,7 +190,7 @@ public class UIOpcionesPanel : MonoBehaviour
         CerrarPanel();
         if (movimiento != null)
         {
-            movimiento.AbrirPartyScreen();
+            movimiento.AbrirCentroIbermon();
         }
     }
 

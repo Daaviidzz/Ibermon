@@ -120,6 +120,7 @@ public class SessionManager : MonoBehaviour
         int catalogoId,
         int nivel,
         int hpActual,
+        int hpMaximo,
         List<int> movimientos,
         string ubicacion,
         Action<IbermonJugador> onSuccess,
@@ -132,6 +133,7 @@ public class SessionManager : MonoBehaviour
             ibermon_catalogo_id = catalogoId,
             nivel = nivel,
             hp_actual = hpActual,
+            hp_maximo = hpMaximo,
             ubicacion = ubicacion,
         };
 

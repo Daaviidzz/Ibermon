@@ -30,6 +30,12 @@ public class PartyScreen : MonoBehaviour
 #endif
     }
 
+    private void OnDestroy()
+    {
+        if (party != null)
+            party.OnUpdated -= SetPartyData;
+    }
+
     public void Init(PokemonParty pokemonParty = null)
     {
         party = pokemonParty ?? PokemonParty.GetPlayerParty();
@@ -77,10 +83,28 @@ public class PartyScreen : MonoBehaviour
 
         if (memberSlots == null) return;
 
+        bool slotsInvalidos = false;
+        for (int i = 0; i < memberSlots.Length; i++)
+        {
+            if (memberSlots[i] == null)
+            {
+                slotsInvalidos = true;
+                break;
+            }
+        }
+
+        if (slotsInvalidos)
+        {
+            memberSlots = partyList != null ? partyList.GetComponentsInChildren<PartyMemberUI>(true) : null;
+            if (memberSlots == null || memberSlots.Length == 0) return;
+        }
+
         selection = Mathf.Clamp(selection, 0, Mathf.Max(0, pokemons.Count - 1));
 
         for (int i = 0; i < memberSlots.Length; i++)
         {
+            if (memberSlots[i] == null) continue;
+
             bool tienePokemon = i < pokemons.Count;
             memberSlots[i].gameObject.SetActive(tienePokemon);
 

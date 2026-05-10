@@ -39,6 +39,7 @@ public class Movimiento : MonoBehaviour
     // Referencias a las pantallas de partido e inventario
     [SerializeField] private PartyScreen partyScreen;
     [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private CentroIbermonUI centroIbermonUI;
     private PokemonParty pokemonParty;
 
     //Parte movil
@@ -259,6 +260,22 @@ public class Movimiento : MonoBehaviour
             inventoryUI.Abrir();
             state = GameState.Bag;
         }
+    }
+
+    // Abre la pantalla de gestion de pokemon en overworld
+    public void AbrirCentroIbermon()
+    {
+        if (centroIbermonUI == null)
+        {
+            var prefab = Resources.Load<CentroIbermonUI>("UI/CentroIbermonCanvas");
+            centroIbermonUI = prefab != null
+                ? Instantiate(prefab)
+                : CentroIbermonUI.CrearRuntime();
+        }
+
+        centroIbermonUI.gameObject.SetActive(true);
+        centroIbermonUI.Abrir();
+        state = GameState.UIPanel;
     }
 
     // ========== FUNCIONES MULTIPLATAFORMA ==========

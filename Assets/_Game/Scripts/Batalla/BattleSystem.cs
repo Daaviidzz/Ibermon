@@ -895,13 +895,14 @@ public class BattleSystem : MonoBehaviour
             yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido capturado");
             yield return pokeball.DOFade(0, 1.5f).WaitForCompletion();
 
-            if (playerParty.AddPokemon(enemyUnit.Pokemon))
+            bool anadidoAlEquipo = playerParty.AddPokemon(enemyUnit.Pokemon);
+            if (anadidoAlEquipo)
             {
                 yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} ha sido añadido a tu equipo");
             }
             else
             {
-                yield return dialogBox.TypeDialog($"Equipo lleno");
+                yield return dialogBox.TypeDialog($"Equipo lleno. Se enviara al centro");
             }
 
             // Registrar ibermon capturado en la API
@@ -918,12 +919,29 @@ public class BattleSystem : MonoBehaviour
                         if (num > 0) moveNums.Add(num);
                     }
                 }
+                bool registroTerminado = false;
+                string errorRegistro = null;
+                string ubicacion = anadidoAlEquipo ? "equipo" : "centro";
+
                 SessionManager.Instance.AnadirIbermon(
-                    catalogoId, enemyUnit.Pokemon.Level, enemyUnit.Pokemon.HP,
-                    moveNums, "equipo",
-                    _ => Debug.Log($"[BattleSystem] Ibermon #{catalogoId} registrado en API."),
-                    err => Debug.LogWarning($"[BattleSystem] Error registrando ibermon: {err}")
+                    catalogoId, enemyUnit.Pokemon.Level, enemyUnit.Pokemon.HP, enemyUnit.Pokemon.MaxHp,
+                    moveNums, ubicacion,
+                    _ =>
+                    {
+                        Debug.Log($"[BattleSystem] Ibermon #{catalogoId} registrado en API.");
+                        registroTerminado = true;
+                    },
+                    err =>
+                    {
+                        errorRegistro = err;
+                        registroTerminado = true;
+                    }
                 );
+
+                yield return new WaitUntil(() => registroTerminado);
+
+                if (!string.IsNullOrEmpty(errorRegistro))
+                    Debug.LogWarning($"[BattleSystem] Error registrando ibermon: {errorRegistro}");
             }
 
             Destroy(pokeballObJ);

@@ -11,6 +11,7 @@ namespace ApiRest.Models
         public string nickname;
         public int nivel = 1;
         public int hp_actual;
+        public int hp_maximo;
         // Donde se guarda el ibermon. Por defecto en el equipo
         public string ubicacion = "equipo";
     }
