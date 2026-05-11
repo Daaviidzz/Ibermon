@@ -37,7 +37,7 @@ public class MenuOpciones : MonoBehaviour
         botonVolverPanelOpciones.onClick.AddListener(Volver);
         botonControles.onClick.AddListener(AbrirControles);
         botonVolverPanelControles.onClick.AddListener(VolverAOpciones);
-        botonSalirJuego.onClick.AddListener(SalirJuego);
+        //botonSalirJuego.onClick.AddListener(SalirJuego); como ahora no se usa pues lo comento para que no explote
     }
 
     private void Update()
