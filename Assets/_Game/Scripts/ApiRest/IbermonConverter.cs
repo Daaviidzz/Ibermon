@@ -152,6 +152,8 @@ public static class IbermonConverter
     private static Sprite CargarSpriteDesdePath(string apiPath)
     {
         if (string.IsNullOrEmpty(apiPath)) return null;
+        if (apiPath.StartsWith("http://") || apiPath.StartsWith("https://"))
+            return null;
 
         // "1.png"  "1"   |   "back/1.png"  "back/1"
         string sinExt = apiPath.EndsWith(".png") ? apiPath[..^4] : apiPath;

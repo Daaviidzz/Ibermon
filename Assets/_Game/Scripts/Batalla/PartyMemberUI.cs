@@ -9,15 +9,8 @@ public class PartyMemberUI : MonoBehaviour
     [SerializeField] HPBar hpBar;
     [SerializeField] Image pokemonIcon;
 
-    [SerializeField] Color highligthedColor;
     Pokemon _pokemon;
-    Image fondo;
     bool seleccionado;
-
-    private void Awake()
-    {
-        fondo = GetComponent<Image>();
-    }
 
     public void SetData(Pokemon pokemon)
     {
@@ -67,17 +60,11 @@ public class PartyMemberUI : MonoBehaviour
 
         if (selected)
         {
-            NameText.color = highligthedColor;
             NameText.text = "> " + NameText.text.TrimStart('>', ' ');
-            if (fondo != null)
-                fondo.color = new Color(0.92f, 0.96f, 1f, 1f);
         }
         else
         {
-            NameText.color = Color.black;
             NameText.text = NameText.text.TrimStart('>', ' ');
-            if (fondo != null)
-                fondo.color = new Color(1f, 1f, 1f, 0.94f);
         }
     }
 
@@ -89,24 +76,30 @@ public class PartyMemberUI : MonoBehaviour
             _pokemon.OnHpChanged -= UpdateData;
     }
 
-    // Solo crea el Image si no existe. Tamaño/posición van en el prefab.
+    // Tamaño/posición van en el prefab.
     private void PrepararIcono()
     {
-        if (pokemonIcon != null) return;
-
-        var iconTransform = transform.Find("PokemonIcon") as RectTransform;
-        if (iconTransform == null)
+        if (pokemonIcon == null)
         {
-            var obj = new GameObject("PokemonIcon", typeof(RectTransform), typeof(Image));
-            iconTransform = obj.GetComponent<RectTransform>();
-            iconTransform.SetParent(transform, false);
+            var iconTransform = transform.Find("PokemonIcon") as RectTransform;
+            if (iconTransform == null)
+            {
+                Debug.LogWarning("[PartyMemberUI] Falta PokemonIcon en el prefab.");
+                return;
+            }
+
+            pokemonIcon = iconTransform.GetComponent<Image>();
         }
 
-        pokemonIcon = iconTransform.GetComponent<Image>();
+        if (pokemonIcon == null)
+        {
+            Debug.LogWarning("[PartyMemberUI] PokemonIcon no tiene componente Image.");
+            return;
+        }
+
         pokemonIcon.preserveAspect = true;
         pokemonIcon.raycastTarget = false;
         pokemonIcon.color = Color.white;
-        pokemonIcon.transform.SetAsLastSibling();
     }
 
     private Sprite GetPokemonSprite()

@@ -54,6 +54,12 @@ public class CentroIbermonUI : MonoBehaviour
     {
         _cargando = false;
         LimpiarSeleccion();
+
+        // Refresca el equipo local tras mover ibermon en el centro
+        var party = GameObject.FindWithTag("Player")?.GetComponent<PokemonParty>();
+        if (party != null)
+            party.CargarEquipoGuardado();
+
         gameObject.SetActive(false);
 
         var movimiento = GameObject.FindWithTag("Player")?.GetComponent<Movimiento>();

@@ -1,10 +1,11 @@
-using Assets.Scripts.Batalla;
+﻿using Assets.Scripts.Batalla;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public enum GameState { FreeRoam, UIPanel, PartyScreen, Bag }
+public enum GameState { FreeRoam, UIPanel, Bag }
 
 public class Movimiento : MonoBehaviour
 {
@@ -17,18 +18,18 @@ public class Movimiento : MonoBehaviour
     public LayerMask grassLayer;            // Capa de la hierba
     public float probabilidad = 60f;        // 60% de probabilidad
     private float cronometroPasos;          // Tiempo acumulado caminando
-    public float tiempoEntreChequeos = 0.5f;// Cada cuánto tiempo tira el dado
+    public float tiempoEntreChequeos = 0.5f;// Cada cuÃ¡nto tiempo tira el dado
 
     //Variable para hacer referencia al RigidBody
     private Rigidbody2D rigidbody2D;
 
-    //Variable para la animación
+    //Variable para la animaciÃ³n
     private Animator animacion;
 
-    //creamos una variable tipo vector2 que es la que nos permitirá el movimiento
+    //creamos una variable tipo vector2 que es la que nos permitirÃ¡ el movimiento
     private Vector2 entradaMovimiento;
 
-    //Para saber si el personaje está en interacción o no
+    //Para saber si el personaje estÃ¡ en interacciÃ³n o no
     public bool estaEnInteraccion = false;
 
     GameState state;
@@ -43,23 +44,23 @@ public class Movimiento : MonoBehaviour
     private PokemonParty pokemonParty;
 
     //Parte movil
-    [Header("Controles Móviles (Opcional)")]
+    [Header("Controles MÃ³viles (Opcional)")]
     [SerializeField] private JoystickVirtual joystick;            // Referencia al joystick
-    [SerializeField] private ActivacionBoton botonCorrer;         // Referencia al botón de correr
-    [SerializeField] private ActivacionBoton botonMenuOpciones;   // Referencia al botón de menu opciones
+    [SerializeField] private ActivacionBoton botonCorrer;         // Referencia al botÃ³n de correr
+    [SerializeField] private ActivacionBoton botonMenuOpciones;   // Referencia al botÃ³n de menu opciones
 
-    // Detectar si estamos en móvil o PC
+    // Detectar si estamos en mÃ³vil o PC
     private bool esMovil;
 
-    //Metodo que se ejecuta nada más iniciar
+    //Metodo que se ejecuta nada mÃ¡s iniciar
     private void Awake()
     {
-        //Para la parte móvil
+        //Para la parte mÃ³vil
         comprobacionInicialParteMovil();
 
         //coger el rigidbody del objeto y ponerselo a la variable que hemos creado
         rigidbody2D = GetComponent<Rigidbody2D>();
-        //lo mismo pero como la animación no está en el padre y está en el hijo haré
+        //lo mismo pero como la animaciÃ³n no estÃ¡ en el padre y estÃ¡ en el hijo harÃ©
         animacion = GetComponentInChildren<Animator>();
 
         // Solo bloquear cursor en PC
@@ -75,18 +76,18 @@ public class Movimiento : MonoBehaviour
         pokemonParty = GetComponent<PokemonParty>();
     }
 
-    // Método Start que se ejecuta después del Awake
+    // MÃ©todo Start que se ejecuta despuÃ©s del Awake
     private void Start()
     {
         // Al cargar la escena del juego, bloquear controles brevemente
-        // Esto evita que inputs de escenas anteriores se cuelen aquí
+        // Esto evita que inputs de escenas anteriores se cuelen aquÃ­
         if (ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.BloquearControlesTemporalmente(0.3f);
         }
 
         // Si volvemos de Opciones con el panel abierto, restauramos el estado UIPanel
-        // El propio UIOpcionesPanel.Start() ya habrá reabierto el panel y activado _ignorarInputEsteFrame
+        // El propio UIOpcionesPanel.Start() ya habrÃ¡ reabierto el panel y activado _ignorarInputEsteFrame
         if (UIOpcionesPanel.estaAbierto)
         {
             state = GameState.UIPanel;
@@ -100,20 +101,20 @@ public class Movimiento : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("[Movimiento] CatalogoCache no está listo al iniciar PartyScreen. " +
-                    "Asegúrate de que ApiSetup se ejecute antes de cargar la escena del juego.");
+                Debug.LogWarning("[Movimiento] CatalogoCache no estÃ¡ listo al iniciar PartyScreen. " +
+                    "AsegÃºrate de que ApiSetup se ejecute antes de cargar la escena del juego.");
             }
         }
     }
 
-    //Este método es el que se usa para hacer el movimiento del personaje
+    //Este mÃ©todo es el que se usa para hacer el movimiento del personaje
     private void Update()
     {
         if (state == GameState.FreeRoam)
         {
             if (!estaEnInteraccion)
             {
-                //llamamos a detectar correr para saber si está corriendo o no
+                //llamamos a detectar correr para saber si estÃ¡ corriendo o no
                 if (DetectarCorrer())
                 {
                     velocidad = velocidadMaxima;
@@ -135,8 +136,8 @@ public class Movimiento : MonoBehaviour
                 animacion.SetFloat("Vertical", entradaMovimiento.y);
                 animacion.SetFloat("Velocidad", entradaMovimiento.magnitude);
 
-                // --- Llamada a la función de chequeo de hierba ---
-                // Solo chequeamos si el jugador se está moviendo realmente
+                // --- Llamada a la funciÃ³n de chequeo de hierba ---
+                // Solo chequeamos si el jugador se estÃ¡ moviendo realmente
                 if (entradaMovimiento.magnitude > 0.1f)
                 {
                     ChequearHierba();
@@ -167,29 +168,9 @@ public class Movimiento : MonoBehaviour
                 }
             }
         }
-        else if (state == GameState.PartyScreen)
-        {
-            // Gestionamos la navegación dentro de la pantalla de equipo
-            if (partyScreen != null)
-            {
-                partyScreen.HandleUpdate(
-                    onSelected: () => { },  // de momento vacío
-                    onBack: () =>
-                    {
-                        partyScreen.gameObject.SetActive(false);
-                        state = GameState.FreeRoam;
-                        if (!esMovil)
-                        {
-                            Cursor.lockState = CursorLockMode.Locked;
-                            Cursor.visible = false;
-                        }
-                    }
-                );
-            }
-        }
         else if (state == GameState.Bag)
         {
-            // Gestionamos la navegación dentro del inventario
+            // Gestionamos la navegaciÃ³n dentro del inventario
             if (inventoryUI != null)
             {
                 inventoryUI.HandleUpdate(onBack: () =>
@@ -218,10 +199,10 @@ public class Movimiento : MonoBehaviour
         }
     }
 
-    // --- Método para chequear encuentros en hierba ---
+    // --- MÃ©todo para chequear encuentros en hierba ---
     private void ChequearHierba()
     {
-        // Delegamos toda la lógica al PlayerCharacterController
+        // Delegamos toda la lÃ³gica al PlayerCharacterController
         var controller = GetComponent<PlayerCharacterController>();
         if (controller != null)
             controller.ChequearHierba(transform.position);
@@ -238,35 +219,31 @@ public class Movimiento : MonoBehaviour
         }
     }
 
-    // Lo llama UIOpcionesPanel cuando el jugador pulsa el botón Pokemons
-    public void AbrirPartyScreen()
-    {
-        if (partyScreen != null)
-        {
-            partyScreen.gameObject.SetActive(true);
-            // Re-invocar Init() para asegurar que memberSlots y sprites
-            // se inicialicen incluso si falló la primera vez (p. ej. CatalogoCache no listo)
-            partyScreen.Init(pokemonParty);
-            state = GameState.PartyScreen;
-        }
-    }
-
-    // Lo llama UIOpcionesPanel cuando el jugador pulsa el botón Mochila
     public void AbrirMochila()
     {
         if (inventoryUI != null)
         {
+            Debug.Log("[Movimiento] Abriendo mochila.");
             inventoryUI.gameObject.SetActive(true);
             inventoryUI.Abrir();
             state = GameState.Bag;
+        }
+        else
+        {
+            Debug.LogWarning("[Movimiento] No hay InventoryUI asignado.");
         }
     }
 
     // Abre la pantalla de gestion de pokemon en overworld
     public void AbrirCentroIbermon()
     {
-        if (centroIbermonUI == null)
+        if (!CentroIbermonTieneCanvasPropio())
         {
+            if (centroIbermonUI != null)
+            {
+                centroIbermonUI.gameObject.SetActive(false);
+            }
+
             var prefab = Resources.Load<CentroIbermonUI>("UI/CentroIbermonCanvas");
             if (prefab == null)
             {
@@ -278,8 +255,28 @@ public class Movimiento : MonoBehaviour
         }
 
         centroIbermonUI.gameObject.SetActive(true);
+        AjustarEscaladoCentroIbermon();
         centroIbermonUI.Abrir();
         state = GameState.UIPanel;
+    }
+
+    private bool CentroIbermonTieneCanvasPropio()
+    {
+        return centroIbermonUI != null
+            && centroIbermonUI.transform.parent == null
+            && centroIbermonUI.GetComponent<Canvas>() != null
+            && centroIbermonUI.GetComponent<CanvasScaler>() != null;
+    }
+
+    private void AjustarEscaladoCentroIbermon()
+    {
+        var scaler = centroIbermonUI.GetComponent<CanvasScaler>();
+        if (scaler == null) return;
+
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1100f, 620f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
     }
 
     // ========== FUNCIONES MULTIPLATAFORMA ==========
@@ -306,7 +303,7 @@ public class Movimiento : MonoBehaviour
     {
         if (esMovil && ControlesMoviles.Instance.joystick != null)
         {
-            // Usar joystick en móvil
+            // Usar joystick en mÃ³vil
             return ControlesMoviles.Instance.joystick.Horizontal();
         }
         else
@@ -321,7 +318,7 @@ public class Movimiento : MonoBehaviour
     {
         if (esMovil && ControlesMoviles.Instance.joystick != null)
         {
-            // Usar joystick en móvil
+            // Usar joystick en mÃ³vil
             return ControlesMoviles.Instance.joystick.Vertical();
         }
         else
@@ -331,12 +328,12 @@ public class Movimiento : MonoBehaviour
         }
     }
 
-    // Detectar si se presionó el botón de correr
+    // Detectar si se presionÃ³ el botÃ³n de correr
     bool DetectarCorrer()
     {
         if (esMovil && ControlesMoviles.Instance.botonCorrer != null)
         {
-            // Usar botón táctil en móvil
+            // Usar botÃ³n tÃ¡ctil en mÃ³vil
             return ControlesMoviles.Instance.botonCorrer.EstaPresionado();
         }
         else
@@ -346,12 +343,12 @@ public class Movimiento : MonoBehaviour
         }
     }
 
-    // Detectar si se presionó el botón de abrir menu opciones
+    // Detectar si se presionÃ³ el botÃ³n de abrir menu opciones
     bool DetectarMenuOpciones()
     {
         if (esMovil && ControlesMoviles.Instance.botonMenuOpciones != null)
         {
-            // Usar botón táctil en móvil
+            // Usar botÃ³n tÃ¡ctil en mÃ³vil
             return ControlesMoviles.Instance.botonMenuOpciones.SePresionoEsteFrame();
         }
         else

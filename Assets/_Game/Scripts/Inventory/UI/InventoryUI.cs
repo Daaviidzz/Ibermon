@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum InventoryUIState { ItemSelection,PartySelection,Busy}
@@ -23,6 +24,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] Image downArrow;
 
     [SerializeField] PartyScreen partyScreen;
+    [SerializeField] bool aplicarEstiloPorCodigo = false;
 
     InventoryUIState state;
     RectTransform itemListRect;
@@ -33,6 +35,7 @@ public class InventoryUI : MonoBehaviour
     List<ItemSlotUI> slotUIList;
     const int ITEMS_IN_VIEWPORT = 8; // Número de items visibles sin necesidad de hacer scroll
     Action<ItemBase> OnItemUsed;
+    bool cargandoInventario;
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
@@ -54,14 +57,33 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
+        AsegurarReferenciasUI();
+
+        if (itemList == null)
+        {
+            Debug.LogError("[InventoryUI] No se encontro itemList/Content en la mochila.");
+            return;
+        }
+
         itemListRect = itemList.GetComponent<RectTransform>();
-        AplicarEstiloMochila();
+        if (aplicarEstiloPorCodigo)
+            AplicarEstiloMochila();
     }
     private void Start()
     {
         if (!AsegurarInventory()) return;
         inventory.OnUpdated += UpdateItemList;
         UpdateItemList();
+    }
+
+    private void OnEnable()
+    {
+        if (!AsegurarInventory()) return;
+
+        AplicarEstiloMochila();
+
+        if (state == InventoryUIState.ItemSelection)
+            CargarInventarioDesdeAPI();
     }
 
     // intenta recuperar el Inventory si se perdio (cambio de escena, etc.)
@@ -74,6 +96,7 @@ public class InventoryUI : MonoBehaviour
 
     public void Abrir()
     {
+        Debug.Log("[InventoryUI] Abriendo mochila y cargando inventario desde API.");
         state = InventoryUIState.ItemSelection;
         selectedItem = 0;
         ActualizarTextoCategoria();
@@ -82,16 +105,25 @@ public class InventoryUI : MonoBehaviour
 
     private void CargarInventarioDesdeAPI()
     {
+        if (cargandoInventario) return;
+        cargandoInventario = true;
+
         if (Inventory.Instance == null)
         {
             Debug.LogError("[InventoryUI] Inventory no disponible.");
+            cargandoInventario = false;
             return;
         }
 
         InventoryApiBridge.Instance.CargarInventario(
-            onSuccess: () => UpdateItemList(),
+            onSuccess: () =>
+            {
+                cargandoInventario = false;
+                UpdateItemList();
+            },
             onError: error =>
             {
+                cargandoInventario = false;
                 Debug.LogError($"[InventoryUI] {error}");
                 UpdateItemList();
                 StartCoroutine(MostrarErrorMochila());
@@ -107,6 +139,11 @@ public class InventoryUI : MonoBehaviour
     void UpdateItemList()
     {
         if (!AsegurarInventory()) return;
+        if (itemList == null || itemSlotUI == null)
+        {
+            Debug.LogError("[InventoryUI] Faltan referencias de lista o slot.");
+            return;
+        }
 
         foreach (Transform child in itemList.transform)
             Destroy(child.gameObject);
@@ -295,13 +332,17 @@ public class InventoryUI : MonoBehaviour
         float itemHeight = slotUIList[0].Height;
         float scrollPos = Mathf.Clamp(selectedItem - ITEMS_IN_VIEWPORT / 2, 0, selectedItem) * itemHeight;
 
+        if (itemListRect == null) return;
+
         itemListRect.localPosition = new Vector2(itemListRect.localPosition.x, scrollPos);
 
         bool showUpArrow = selectedItem > ITEMS_IN_VIEWPORT / 2;
-        upArrow.gameObject.SetActive(showUpArrow);
+        if (upArrow != null)
+            upArrow.gameObject.SetActive(showUpArrow);
 
         bool showDownArrow = selectedItem + ITEMS_IN_VIEWPORT / 2 < slotUIList.Count;
-        downArrow.gameObject.SetActive(showDownArrow);
+        if (downArrow != null)
+            downArrow.gameObject.SetActive(showDownArrow);
     }
     void ResetSelection(bool mostrarVacia)
     {
@@ -372,6 +413,8 @@ public class InventoryUI : MonoBehaviour
         var rootRect = GetComponent<RectTransform>();
         if (rootRect != null)
         {
+            rootRect.localScale = Vector3.one;
+            rootRect.localRotation = Quaternion.identity;
             rootRect.anchorMin = Vector2.zero;
             rootRect.anchorMax = Vector2.one;
             rootRect.offsetMin = Vector2.zero;
@@ -383,6 +426,42 @@ public class InventoryUI : MonoBehaviour
         if (fondo != null)
             fondo.color = new Color(0.98f, 0.97f, 0.92f, 1f);
 
+        var barraSuperior = BuscarHijo(transform, "BarraSuperior") as RectTransform;
+        if (barraSuperior != null)
+        {
+            barraSuperior.localScale = Vector3.one;
+            barraSuperior.localRotation = Quaternion.identity;
+            barraSuperior.anchorMin = new Vector2(0.06f, 0.76f);
+            barraSuperior.anchorMax = new Vector2(0.42f, 0.92f);
+            barraSuperior.pivot = new Vector2(0.5f, 0.5f);
+            barraSuperior.offsetMin = Vector2.zero;
+            barraSuperior.offsetMax = Vector2.zero;
+        }
+
+        var panelDescripcion = BuscarHijo(transform, "DescripcionItem") as RectTransform;
+        if (panelDescripcion != null)
+        {
+            panelDescripcion.localScale = Vector3.one;
+            panelDescripcion.localRotation = Quaternion.identity;
+            panelDescripcion.anchorMin = Vector2.zero;
+            panelDescripcion.anchorMax = Vector2.one;
+            panelDescripcion.pivot = new Vector2(0.5f, 0.5f);
+            panelDescripcion.offsetMin = Vector2.zero;
+            panelDescripcion.offsetMax = Vector2.zero;
+        }
+
+        var barraLateral = BuscarHijo(transform, "BarraLateralDerecha") as RectTransform;
+        if (barraLateral != null)
+        {
+            barraLateral.localScale = Vector3.one;
+            barraLateral.localRotation = Quaternion.identity;
+            barraLateral.anchorMin = new Vector2(0.90f, 0.46f);
+            barraLateral.anchorMax = new Vector2(0.96f, 0.88f);
+            barraLateral.pivot = new Vector2(0.5f, 0.5f);
+            barraLateral.offsetMin = Vector2.zero;
+            barraLateral.offsetMax = Vector2.zero;
+        }
+
         var panelLista = itemList != null ? itemList.GetComponentInParent<Image>() : null;
         if (panelLista != null)
         {
@@ -393,8 +472,10 @@ public class InventoryUI : MonoBehaviour
         if (categoryText != null)
         {
             var rect = categoryText.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.06f, 0.76f);
-            rect.anchorMax = new Vector2(0.42f, 0.92f);
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
@@ -403,6 +484,11 @@ public class InventoryUI : MonoBehaviour
             categoryText.color = new Color(0.05f, 0.05f, 0.05f);
             categoryText.alignment = TextAlignmentOptions.Center;
             categoryText.margin = new Vector4(72f, 0f, 72f, 0f);
+            categoryText.enableWordWrapping = false;
+            categoryText.overflowMode = TextOverflowModes.Ellipsis;
+            categoryText.enableAutoSizing = true;
+            categoryText.fontSizeMin = 20f;
+            categoryText.fontSizeMax = 30f;
 
             AjustarFlechasCategoria();
         }
@@ -410,6 +496,8 @@ public class InventoryUI : MonoBehaviour
         if (itemIcon != null)
         {
             var rect = itemIcon.GetComponent<RectTransform>();
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
             rect.anchorMin = new Vector2(0.16f, 0.46f);
             rect.anchorMax = new Vector2(0.32f, 0.70f);
             rect.pivot = new Vector2(0.5f, 0.5f);
@@ -424,17 +512,30 @@ public class InventoryUI : MonoBehaviour
             if (scrollRect != null)
             {
                 var rect = scrollRect.GetComponent<RectTransform>();
+                rect.localScale = Vector3.one;
+                rect.localRotation = Quaternion.identity;
                 rect.anchorMin = new Vector2(0.42f, 0.46f);
                 rect.anchorMax = new Vector2(0.88f, 0.88f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 rect.offsetMin = Vector2.zero;
                 rect.offsetMax = Vector2.zero;
             }
+
+            var grid = itemList.GetComponent<GridLayoutGroup>();
+            if (grid != null)
+            {
+                grid.cellSize = new Vector2(420f, 44f);
+                grid.spacing = new Vector2(0f, 4f);
+                grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                grid.constraintCount = 1;
+            }
         }
 
         if (itemDescription != null)
         {
             var rect = itemDescription.GetComponent<RectTransform>();
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
             rect.anchorMin = new Vector2(0.06f, 0.06f);
             rect.anchorMax = new Vector2(0.94f, 0.24f);
             rect.pivot = new Vector2(0.5f, 0.5f);
@@ -449,27 +550,31 @@ public class InventoryUI : MonoBehaviour
 
     void AjustarFlechasCategoria()
     {
-        foreach (Transform hijo in categoryText.transform)
+        var barraSuperior = BuscarHijo(transform, "BarraSuperior");
+        if (barraSuperior == null) return;
+
+        int flechaIndex = 0;
+        foreach (Transform hijo in barraSuperior)
         {
             var rect = hijo.GetComponent<RectTransform>();
             if (rect == null) continue;
+            if (hijo == categoryText.transform) continue;
 
-            if (hijo.name.Contains("Left"))
+            if (hijo.name.Contains("Flecha"))
             {
-                rect.anchorMin = new Vector2(0f, 0.5f);
-                rect.anchorMax = new Vector2(0f, 0.5f);
+                bool izquierda = flechaIndex == 0;
+                rect.localScale = Vector3.one;
+                rect.localRotation = izquierda
+                    ? Quaternion.Euler(0f, 0f, 90f)
+                    : Quaternion.Euler(0f, 0f, -90f);
+                rect.anchorMin = izquierda ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
+                rect.anchorMax = izquierda ? new Vector2(0f, 0.5f) : new Vector2(1f, 0.5f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = new Vector2(28f, 0f);
-            }
-            else if (hijo.name.Contains("Rigth") || hijo.name.Contains("Right"))
-            {
-                rect.anchorMin = new Vector2(1f, 0.5f);
-                rect.anchorMax = new Vector2(1f, 0.5f);
-                rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = new Vector2(-28f, 0f);
-            }
+                rect.anchoredPosition = izquierda ? new Vector2(26f, 0f) : new Vector2(-26f, 0f);
+                rect.sizeDelta = new Vector2(38f, 38f);
 
-            rect.sizeDelta = new Vector2(56f, 56f);
+                flechaIndex++;
+            }
         }
     }
 
@@ -477,22 +582,109 @@ public class InventoryUI : MonoBehaviour
     {
         if (slot == null) return;
 
+        var layout = slot.GetComponent<HorizontalLayoutGroup>();
+        if (layout != null)
+            layout.enabled = false;
+
+        var slotRect = slot.GetComponent<RectTransform>();
+        if (slotRect != null)
+        {
+            slotRect.localScale = Vector3.one;
+            slotRect.localRotation = Quaternion.identity;
+            slotRect.anchorMin = new Vector2(0f, 1f);
+            slotRect.anchorMax = new Vector2(1f, 1f);
+            slotRect.pivot = new Vector2(0.5f, 1f);
+        }
+
         if (slot.NameText != null)
         {
-            slot.NameText.fontSize = 28f;
+            var rect = slot.NameText.GetComponent<RectTransform>();
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchorMin = new Vector2(0f, 0f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.offsetMin = new Vector2(0f, 0f);
+            rect.offsetMax = new Vector2(-88f, 0f);
+
+            slot.NameText.fontSize = 26f;
             slot.NameText.color = Color.black;
             slot.NameText.alignment = TextAlignmentOptions.MidlineLeft;
+            slot.NameText.enableWordWrapping = false;
+            slot.NameText.overflowMode = TextOverflowModes.Ellipsis;
         }
 
         if (slot.CountText != null)
         {
+            var rect = slot.CountText.GetComponent<RectTransform>();
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchorMin = new Vector2(1f, 0f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(76f, 0f);
+
             slot.CountText.fontSize = 23f;
             slot.CountText.color = Color.black;
             slot.CountText.alignment = TextAlignmentOptions.MidlineRight;
+            slot.CountText.enableWordWrapping = false;
+            slot.CountText.overflowMode = TextOverflowModes.Overflow;
         }
     }
+
+    void AsegurarReferenciasUI()
+    {
+        if (itemList == null)
+            itemList = BuscarHijo(transform, "Content")?.gameObject;
+
+        if (categoryText == null)
+            categoryText = BuscarHijo(transform, "NombreCategoria")?.GetComponent<TextMeshProUGUI>();
+
+        if (itemIcon == null)
+            itemIcon = BuscarHijo(transform, "Itemicon")?.GetComponent<Image>();
+
+        if (itemDescription == null)
+            itemDescription = BuscarHijo(transform, "Description")?.GetComponent<TextMeshProUGUI>();
+
+        Transform barraLateral = BuscarHijo(transform, "BarraLateralDerecha");
+        if (barraLateral != null)
+        {
+            if (upArrow == null)
+                upArrow = BuscarHijo(barraLateral, "FlechaArriba")?.GetComponent<Image>();
+
+            if (downArrow == null)
+                downArrow = BuscarHijo(barraLateral, "FlechaAbajo")?.GetComponent<Image>();
+        }
+
+        if (partyScreen == null)
+            partyScreen = FindAnyObjectByType<PartyScreen>(FindObjectsInactive.Include);
+    }
+
+    Transform BuscarHijo(Transform raiz, string nombre)
+    {
+        if (raiz == null) return null;
+
+        foreach (Transform hijo in raiz)
+        {
+            if (hijo.name == nombre)
+                return hijo;
+
+            Transform encontrado = BuscarHijo(hijo, nombre);
+            if (encontrado != null)
+                return encontrado;
+        }
+
+        return null;
+    }
+
     void OpenPartyScreen()
     {
+        if (partyScreen == null)
+        {
+            Debug.LogError("[InventoryUI] No hay PartyScreen asignado.");
+            return;
+        }
+
         state = InventoryUIState.PartySelection;
         partyScreen.gameObject.SetActive(true);
         partyScreen.SetPartyData(); // Reinicializar PartyScreen para asegurar datos frescos
@@ -501,7 +693,8 @@ public class InventoryUI : MonoBehaviour
     void ClosePartyScreen()
     {
         state = InventoryUIState.ItemSelection;
-        partyScreen.gameObject.SetActive(false);
+        if (partyScreen != null)
+            partyScreen.gameObject.SetActive(false);
         
     }
     bool InputConfirmar()
@@ -532,11 +725,22 @@ public class InventoryUI : MonoBehaviour
     {
         if(selectedCategory==(int) ItemCategory.Pokeballs)
         {
+            if (SceneManager.GetActiveScene().name != "Combate")
+            {
+                StartCoroutine(MostrarPokeballFueraDeCombate());
+                return;
+            }
+
             StartCoroutine(UseItem());
         }
         else
         {
             OpenPartyScreen();
         }
+    }
+
+    IEnumerator MostrarPokeballFueraDeCombate()
+    {
+        yield return DialogManager.Instance.ShowDialogText("Solo puedes usar Pokeballs en combate.");
     }
 }

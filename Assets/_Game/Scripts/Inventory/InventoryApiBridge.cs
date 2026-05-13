@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
@@ -30,13 +32,21 @@ public class InventoryApiBridge
         { "Super Pocion", "SuperPocion" },
         { "SuperPocion", "SuperPocion" },
         { "Pocion Maxima", "PocionMaxima" },
-        { "PocionMaxima", "PocionMaxima" }
+        { "PocionMaxima", "PocionMaxima" },
+        { "Antidoto", "Antidoto" },
+        { "Ether", "Ether" },
+        { "Revivir", "Revivir" }
     };
 
     private readonly Dictionary<string, ItemJugador> _itemsJugador = new();
 
     public void CargarInventario(Action onSuccess, Action<string> onError)
     {
+        Inventory inventory = Inventory.GetInventory();
+        if (inventory != null)
+            inventory.ClearAllSlots();
+        _itemsJugador.Clear();
+
         string partidaId = SessionManager.Instance?.PartidaId;
         if (string.IsNullOrEmpty(partidaId))
         {
@@ -73,11 +83,13 @@ public class InventoryApiBridge
             items =>
             {
                 itemsJugador = items;
+                Debug.Log($"[InventoryApiBridge] Inventario API recibido: {itemsJugador?.Count ?? 0} items.");
                 inventarioListo = true;
                 IntentarFinalizar();
             },
             err =>
             {
+                Debug.LogWarning($"[InventoryApiBridge] Error cargando inventario API: {err}");
                 error = err;
                 inventarioListo = true;
                 IntentarFinalizar();
@@ -87,11 +99,13 @@ public class InventoryApiBridge
             lista =>
             {
                 catalogo = lista;
+                Debug.Log($"[InventoryApiBridge] Catalogo items API recibido: {catalogo?.Count ?? 0} items.");
                 catalogoListo = true;
                 IntentarFinalizar();
             },
             err =>
             {
+                Debug.LogWarning($"[InventoryApiBridge] Error cargando catalogo items API: {err}");
                 error = err;
                 catalogoListo = true;
                 IntentarFinalizar();
@@ -131,8 +145,11 @@ public class InventoryApiBridge
             }
 
             string nombreRecurso = ObtenerNombreRecurso(itemCatalogo.nombre);
+            string claveRecurso = NormalizarClave(nombreRecurso);
             ItemBase itemLocal = itemsLocales.FirstOrDefault(item =>
-                item != null && (item.name == nombreRecurso || item.Name == nombreRecurso));
+                item != null &&
+                (NormalizarClave(item.name) == claveRecurso ||
+                 NormalizarClave(item.Name) == claveRecurso));
 
             if (itemLocal == null)
             {
@@ -142,9 +159,10 @@ public class InventoryApiBridge
 
             ItemCategory categoria = ObtenerCategoria(itemCatalogo.tipo);
             inventory.AddItem(itemLocal, itemJugador.cantidad, categoria);
-            _itemsJugador[itemLocal.Name] = itemJugador;
+            RegistrarItemJugador(itemLocal, nombreRecurso, itemJugador);
         }
 
+        Debug.Log($"[InventoryApiBridge] Inventario local construido desde API: {itemsJugador.Count} registros.");
         onSuccess?.Invoke();
     }
 
@@ -153,7 +171,9 @@ public class InventoryApiBridge
         if (string.IsNullOrEmpty(nombreRecursoLocal))
             return;
 
-        if (!_itemsJugador.TryGetValue(nombreRecursoLocal, out ItemJugador itemJugador))
+        string claveNormalizada = NormalizarClave(nombreRecursoLocal);
+        if (!_itemsJugador.TryGetValue(nombreRecursoLocal, out ItemJugador itemJugador) &&
+            !_itemsJugador.TryGetValue(claveNormalizada, out itemJugador))
         {
             Debug.LogWarning($"[InventoryApiBridge] Item '{nombreRecursoLocal}' no esta en datos API.");
             return;
@@ -169,7 +189,7 @@ public class InventoryApiBridge
         if (cantidadRestante <= 0)
         {
             ApiSetup.ItemJugador.EliminarItem(partidaId, itemJugador.id,
-                () => _itemsJugador.Remove(nombreRecursoLocal),
+                () => QuitarItemJugador(itemJugador),
                 err =>
                 {
                     Debug.LogWarning($"[InventoryApiBridge] Error eliminando {nombreRecursoLocal}: {err}");
@@ -179,7 +199,7 @@ public class InventoryApiBridge
         }
 
         ApiSetup.ItemJugador.ActualizarItem(partidaId, itemJugador.id, cantidadRestante,
-            itemActualizado => _itemsJugador[nombreRecursoLocal] = itemActualizado,
+            ActualizarItemJugador,
             err =>
             {
                 Debug.LogWarning($"[InventoryApiBridge] Error actualizando {nombreRecursoLocal}: {err}");
@@ -192,9 +212,78 @@ public class InventoryApiBridge
         if (string.IsNullOrWhiteSpace(nombreApi))
             return string.Empty;
 
-        return NombreApiToRecurso.TryGetValue(nombreApi, out string nombreRecurso)
-            ? nombreRecurso
-            : nombreApi.Replace(" ", string.Empty);
+        if (NombreApiToRecurso.TryGetValue(nombreApi, out string nombreRecurso))
+            return nombreRecurso;
+
+        string claveApi = NormalizarClave(nombreApi);
+        foreach (var nombre in NombreApiToRecurso)
+        {
+            if (NormalizarClave(nombre.Key) == claveApi)
+                return nombre.Value;
+        }
+
+        return nombreApi.Replace(" ", string.Empty);
+    }
+
+    private void RegistrarItemJugador(ItemBase itemLocal, string nombreRecurso, ItemJugador itemJugador)
+    {
+        GuardarClave(itemLocal.Name, itemJugador);
+        GuardarClave(itemLocal.name, itemJugador);
+        GuardarClave(nombreRecurso, itemJugador);
+    }
+
+    private void GuardarClave(string clave, ItemJugador itemJugador)
+    {
+        if (string.IsNullOrWhiteSpace(clave)) return;
+
+        _itemsJugador[clave] = itemJugador;
+        _itemsJugador[NormalizarClave(clave)] = itemJugador;
+    }
+
+    private void QuitarItemJugador(ItemJugador itemJugador)
+    {
+        if (itemJugador == null) return;
+
+        var claves = _itemsJugador
+            .Where(par => par.Value != null && par.Value.id == itemJugador.id)
+            .Select(par => par.Key)
+            .ToList();
+
+        foreach (string clave in claves)
+            _itemsJugador.Remove(clave);
+    }
+
+    private void ActualizarItemJugador(ItemJugador itemActualizado)
+    {
+        if (itemActualizado == null) return;
+
+        var claves = _itemsJugador
+            .Where(par => par.Value != null && par.Value.id == itemActualizado.id)
+            .Select(par => par.Key)
+            .ToList();
+
+        foreach (string clave in claves)
+            _itemsJugador[clave] = itemActualizado;
+    }
+
+    private static string NormalizarClave(string clave)
+    {
+        if (string.IsNullOrWhiteSpace(clave))
+            return string.Empty;
+
+        string normalizada = clave.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder();
+
+        foreach (char caracter in normalizada)
+        {
+            UnicodeCategory categoria = CharUnicodeInfo.GetUnicodeCategory(caracter);
+            if (categoria == UnicodeCategory.NonSpacingMark || char.IsWhiteSpace(caracter))
+                continue;
+
+            builder.Append(char.ToLowerInvariant(caracter));
+        }
+
+        return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 
     private static ItemCategory ObtenerCategoria(string tipoApi)

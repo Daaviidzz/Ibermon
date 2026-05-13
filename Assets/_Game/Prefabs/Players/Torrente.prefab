@@ -834,32 +834,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac63b5b9ec5e304e9fd228f32a0ddd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
-  slots:
-  - item: {fileID: 11400000, guid: d549b83d243f8a243a1f3022cbbb65f6, type: 2}
-    count: 3
-  - item: {fileID: 11400000, guid: 76122f997bc46e94b9ff514172627f17, type: 2}
-    count: 5
-  - item: {fileID: 11400000, guid: 842e4656d8b977b4886c9abbbd35f8f0, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: 1cd70523d86f99941aeb8c5d0efb6017, type: 2}
-    count: 4
-  - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
-    count: 1
-  - item: {fileID: 11400000, guid: 76122f997bc46e94b9ff514172627f17, type: 2}
-    count: 5
-  - item: {fileID: 11400000, guid: ea0023c5f85570447a3dcef08ff356a8, type: 2}
-    count: 1
-  pokeballSlots:
-  - item: {fileID: 11400000, guid: 21cf03298badafe428de760636fee699, type: 2}
-    count: 5
-  - item: {fileID: 11400000, guid: de60902a3bfcca64dbe60c4c7bcaba89, type: 2}
-    count: 2
+  slots: []
+  pokeballSlots: []
 --- !u!1 &4386126452694574811
 GameObject:
   m_ObjectHideFlags: 0
