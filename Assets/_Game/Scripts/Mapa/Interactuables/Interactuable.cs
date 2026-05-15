@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+#pragma warning disable 0108
+
 // Clase que representa una fase de diálogo del NPC
 // Básicamente es una lista de frases que pertenecen a una fase concreta
 [System.Serializable]
@@ -17,7 +19,7 @@ public class Interactuable : MonoBehaviour
 {
     //Parte de sonido
     public AudioSource archivoAudio;
-    public new AudioClip audio;
+    public AudioClip audio;
 
     //Si es entrenador o no
     public bool esEntrenador = false;
@@ -396,3 +398,5 @@ public class Interactuable : MonoBehaviour
         }
     }
 }
+
+#pragma warning restore 0108

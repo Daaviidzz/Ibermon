@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+#pragma warning disable 0108
+
 public enum GameState { FreeRoam, UIPanel, Bag }
 
 public class Movimiento : MonoBehaviour
@@ -20,7 +22,7 @@ public class Movimiento : MonoBehaviour
     public float tiempoEntreChequeos = 0.5f;// Cada cuÃ¡nto tiempo tira el dado
 
     //Variable para hacer referencia al RigidBody
-    private new Rigidbody2D rigidbody2D;
+    private Rigidbody2D rigidbody2D;
 
     //Variable para la animaciÃ³n
     private Animator animacion;
@@ -357,3 +359,5 @@ public class Movimiento : MonoBehaviour
         }
     }
 }
+
+#pragma warning restore 0108
