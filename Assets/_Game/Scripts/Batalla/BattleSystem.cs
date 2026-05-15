@@ -32,7 +32,6 @@ public class BattleSystem : MonoBehaviour
     int currentMove;
     int currentMember;
     bool aboutToUseChoice = true;
-    bool pokeballFallo = false;
 
     BattleState state;
     BattleState? prevState;

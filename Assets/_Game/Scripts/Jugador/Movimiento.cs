@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Batalla;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;

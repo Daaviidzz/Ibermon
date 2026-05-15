@@ -1,9 +1,5 @@
-﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 public class DialogManager : MonoBehaviour
 {
     public static DialogManager Instance { get; private set; }

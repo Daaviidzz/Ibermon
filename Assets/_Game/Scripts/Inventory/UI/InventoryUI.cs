@@ -1,9 +1,7 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -39,8 +37,6 @@ public class InventoryUI : MonoBehaviour
 
     // --- VARIABLES CONTROL MOVIL ---
     private bool esMovil;
-    private float tiempoSiguienteInput = 0f; // Cooldown para que el joystick no se mueva demasiado rápido
-    private float intervaloInput = 0.2f; // Tiempo de espera entre movimientos del cursor
 
     public void Awake()
     {
@@ -367,39 +363,6 @@ public class InventoryUI : MonoBehaviour
         }
 
         // El mensaje va en la descripcion para no pisar las flechas.
-    }
-
-    void MostrarMensajeVacio()
-    {
-        if (itemList == null) return;
-
-        var mensajeObj = new GameObject("EmptyInventoryMessage", typeof(RectTransform), typeof(Image));
-        mensajeObj.transform.SetParent(itemList.transform, false);
-
-        var rect = mensajeObj.GetComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 1f);
-        rect.anchorMax = new Vector2(0.5f, 1f);
-        rect.pivot = new Vector2(0.5f, 1f);
-        rect.anchoredPosition = new Vector2(0f, -60f);
-        rect.sizeDelta = new Vector2(540f, 105f);
-
-        var fondo = mensajeObj.GetComponent<Image>();
-        fondo.color = new Color(0.98f, 0.98f, 0.95f, 0.96f);
-
-        var textoObj = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
-        textoObj.transform.SetParent(mensajeObj.transform, false);
-
-        var textoRect = textoObj.GetComponent<RectTransform>();
-        textoRect.anchorMin = Vector2.zero;
-        textoRect.anchorMax = Vector2.one;
-        textoRect.offsetMin = new Vector2(18f, 10f);
-        textoRect.offsetMax = new Vector2(-18f, -10f);
-
-        var texto = textoObj.GetComponent<TextMeshProUGUI>();
-        texto.text = "Mochila vacia\nNo llevas objetos en este bolsillo.";
-        texto.fontSize = 23f;
-        texto.color = new Color(0.12f, 0.12f, 0.12f);
-        texto.alignment = TextAlignmentOptions.Center;
     }
 
     void ActualizarTextoCategoria()

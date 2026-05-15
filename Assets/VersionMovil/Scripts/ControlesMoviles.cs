@@ -20,7 +20,7 @@ public class ControlesMoviles : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
 
             // Obtener o crear el CanvasGroup principal
             canvasGroupPrincipal = GetComponent<CanvasGroup>();
