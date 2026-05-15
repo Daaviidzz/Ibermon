@@ -22,7 +22,7 @@ namespace ApiRest.Managers
         private void Awake()
         {
             // Si ya hay otro ApiSetup en la escena destruimos este para evitar duplicados
-            ApiSetup[] copiasExistentes = FindObjectsByType<ApiSetup>(FindObjectsSortMode.None);
+            ApiSetup[] copiasExistentes = FindObjectsByType<ApiSetup>(FindObjectsInactive.Exclude);
             if (copiasExistentes.Length > 1)
             {
                 Destroy(gameObject);

@@ -4,8 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Pokemon", menuName = "Pokemons/New Pokemon")]
 public class PokemonBase : ScriptableObject
 {
-    // Datos básicos
-    [SerializeField] string name;
+    // Datos bï¿½sicos
+    [SerializeField] new string name;
     [TextArea]
     [SerializeField] string description;
 
@@ -123,7 +123,7 @@ public class TypeChart
     {
         if (attackType == PokemonType.None || defenseType == PokemonType.None)
             return 1f;
-        // Ajustar índices para que coincidan con la matriz (restar 1)
+        // Ajustar ï¿½ndices para que coincidan con la matriz (restar 1)
         int row = (int)attackType - 1;
         int col = (int)defenseType - 1;
         // Tipos fuera de la matriz (Siniestro, Acero, Hada) devuelven neutro hasta que se actualice chart
@@ -144,7 +144,7 @@ public enum Stat
     AtaqueEspecial,
     DefensaEspecial,
     Velocidad,
-    // Estas dos no son estadisticas, son modificadores de la precisión
+    // Estas dos no son estadisticas, son modificadores de la precisiï¿½n
     Accuracy,
     Evasion
 

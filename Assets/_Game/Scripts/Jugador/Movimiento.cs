@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Batalla;
+using Assets.Scripts.Batalla;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,7 +20,7 @@ public class Movimiento : MonoBehaviour
     public float tiempoEntreChequeos = 0.5f;// Cada cuÃ¡nto tiempo tira el dado
 
     //Variable para hacer referencia al RigidBody
-    private Rigidbody2D rigidbody2D;
+    private new Rigidbody2D rigidbody2D;
 
     //Variable para la animaciÃ³n
     private Animator animacion;

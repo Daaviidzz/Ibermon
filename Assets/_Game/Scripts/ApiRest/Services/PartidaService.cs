@@ -4,6 +4,8 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
+#pragma warning disable 0649
+
 namespace ApiRest.Services
 {
     // Servicio que gestiona las partidas del jugador en el servidor
@@ -150,3 +152,5 @@ namespace ApiRest.Services
         }
     }
 }
+
+#pragma warning restore 0649

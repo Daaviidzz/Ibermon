@@ -4,6 +4,8 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
+#pragma warning disable 0649
+
 namespace ApiRest.Services
 {
     // Servicio que gestiona los ibermon del jugador dentro de una partida
@@ -180,3 +182,5 @@ namespace ApiRest.Services
         }
     }
 }
+
+#pragma warning restore 0649

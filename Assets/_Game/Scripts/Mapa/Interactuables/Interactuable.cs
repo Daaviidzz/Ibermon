@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Batalla;
+using Assets.Scripts.Batalla;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +17,7 @@ public class Interactuable : MonoBehaviour
 {
     //Parte de sonido
     public AudioSource archivoAudio;
-    public AudioClip audio;
+    public new AudioClip audio;
 
     //Si es entrenador o no
     public bool esEntrenador = false;

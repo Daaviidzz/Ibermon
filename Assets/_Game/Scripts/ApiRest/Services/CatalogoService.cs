@@ -4,6 +4,8 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
+#pragma warning disable 0649
+
 namespace ApiRest.Services
 {
     // Servicio que consulta los catalogos del juego
@@ -146,3 +148,5 @@ namespace ApiRest.Services
         [Serializable] private class LogroWrapper { public List<LogroCatalogo> items; }
     }
 }
+
+#pragma warning restore 0649

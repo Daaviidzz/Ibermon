@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Permite crear nuevos movimientos como archivos de datos (Assets) desde el menú de Unity.
+// Permite crear nuevos movimientos como archivos de datos (Assets) desde el menï¿½ de Unity.
 [CreateAssetMenu(fileName = "Move", menuName = "Pokemons/New Move")]
 public class MoveBase : ScriptableObject
 {
 
-    [SerializeField] string name;
+    [SerializeField] new string name;
 
-    [TextArea] // Crea un cuadro de texto más grande en el Inspector para la descripción.
+    [TextArea] // Crea un cuadro de texto mï¿½s grande en el Inspector para la descripciï¿½n.
     [SerializeField] string description;
 
     [SerializeField] PokemonType type;
@@ -23,7 +23,7 @@ public class MoveBase : ScriptableObject
     [SerializeField] int pp;
     [SerializeField] int priority;
 
-    // Clasificación: Físico, Especial o Estado 
+    // Clasificaciï¿½n: Fï¿½sico, Especial o Estado 
     [SerializeField] MoveCategory category;
 
     // Efectos secundarios 
@@ -31,7 +31,7 @@ public class MoveBase : ScriptableObject
     [SerializeField] List<SecondaryEffects> secondries;
 
 
-    // Define a quién golpea: al enemigo o al propio usuario (útil para 2vs2 en el futuro).
+    // Define a quiï¿½n golpea: al enemigo o al propio usuario (ï¿½til para 2vs2 en el futuro).
     [SerializeField] MoveTarget target;
 
     // --- PROPIEDADES (GETTERS) ---
@@ -54,7 +54,7 @@ public class MoveBase : ScriptableObject
 public class MoveEffects
 {
     [SerializeField] List<StatBoost> boosts;
-    [SerializeField] ConditionID status; // Condición de estado que puede causar el movimiento (Envenenado, Paralizado, etc.)
+    [SerializeField] ConditionID status; // Condiciï¿½n de estado que puede causar el movimiento (Envenenado, Paralizado, etc.)
     [SerializeField] ConditionID volatileStatus;
 
     public List<StatBoost> Boosts => boosts;
@@ -73,20 +73,20 @@ public class SecondaryEffects : MoveEffects
 [System.Serializable]
 public class StatBoost
 {
-    public Stat stat; // La estadística que se ve afectada (Ataque, Defensa, etc.)
+    public Stat stat; // La estadï¿½stica que se ve afectada (Ataque, Defensa, etc.)
     public int boost; // El nivel de cambio (ej: +1, -1)
 }
 
 
 public enum MoveCategory
 {
-    Fisico,   // Basado en la estadística de Ataque.
-    Especial, // Basado en la estadística de Ataque Especial.
-    Estado    // Movimientos que no hacen daño directo, sino que alteran el combate.
+    Fisico,   // Basado en la estadï¿½stica de Ataque.
+    Especial, // Basado en la estadï¿½stica de Ataque Especial.
+    Estado    // Movimientos que no hacen daï¿½o directo, sino que alteran el combate.
 }
 
 public enum MoveTarget
 {
     Foe,  // Objetivo: El enemigo.
-    Self  // Objetivo: El propio Pokémon que usa el movimiento.
+    Self  // Objetivo: El propio Pokï¿½mon que usa el movimiento.
 }

@@ -272,6 +272,17 @@ public class BattleSystem : MonoBehaviour
             {
                 yield return TryToEscape();
                 if (state == BattleState.BATTLEOVER) yield break;
+
+                var enemyMove = enemyUnit.Pokemon.GetRandomMove();
+                if (enemyMove == null)
+                {
+                    yield return dialogBox.TypeDialog($"{enemyUnit.Pokemon.Base.Name} no tiene movimientos!");
+                    yield break;
+                }
+
+                yield return RunMove(enemyUnit, playerUnit, enemyMove);
+                yield return RunAfterTurn(enemyUnit);
+                if (state == BattleState.BATTLEOVER) yield break;
             }
         }
 

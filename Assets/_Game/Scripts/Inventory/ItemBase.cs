@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ItemBase : ScriptableObject
 {
-    [SerializeField] string name;
+    [SerializeField] new string name;
     [SerializeField] string description;
     [SerializeField] Sprite icon;
 

@@ -64,6 +64,8 @@ public class UIOpcionesPanel : MonoBehaviour
         {
             textoGuardadoOk.SetActive(false);
         }
+
+        AplicarEstiloMenu();
     }
 
     private void Update()
@@ -93,6 +95,8 @@ public class UIOpcionesPanel : MonoBehaviour
         {
             textoGuardadoOk.SetActive(false);
         }
+
+        AplicarEstiloMenu();
         // Solo en PC desbloqueamos el cursor para poder pulsar los botones
         if (!esMovil)
         {
@@ -148,22 +152,22 @@ public class UIOpcionesPanel : MonoBehaviour
             int horas = segundos / 3600;
             int minutos = (segundos % 3600) / 60;
             int segs = segundos % 60;
-            textoTiempoJugado.text = $"{horas}h {minutos}m {segs}s";
+            textoTiempoJugado.text = $"Tiempo jugado\n{horas}h {minutos}m {segs}s";
         }
 
         if (textoFechaCreacion != null)
         {
             if (string.IsNullOrWhiteSpace(partida.fecha_creacion))
             {
-                textoFechaCreacion.text = "-";
+                textoFechaCreacion.text = "Creada\n-";
             }
             else if (DateTime.TryParse(partida.fecha_creacion, out DateTime fechaCreacion))
             {
-                textoFechaCreacion.text = fechaCreacion.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+                textoFechaCreacion.text = $"Creada\n{fechaCreacion.ToLocalTime():dd/MM/yyyy HH:mm}";
             }
             else
             {
-                textoFechaCreacion.text = partida.fecha_creacion;
+                textoFechaCreacion.text = $"Creada\n{partida.fecha_creacion}";
             }
         }
 
@@ -171,17 +175,283 @@ public class UIOpcionesPanel : MonoBehaviour
         {
             if (string.IsNullOrWhiteSpace(partida.ultima_conexion))
             {
-                textoUltimaConexion.text = "-";
+                textoUltimaConexion.text = "Ultima conexion\n-";
             }
             else if (DateTime.TryParse(partida.ultima_conexion, out DateTime ultimaConexion))
             {
-                textoUltimaConexion.text = ultimaConexion.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss");
+                textoUltimaConexion.text = $"Ultima conexion\n{ultimaConexion.ToLocalTime():dd/MM/yyyy HH:mm}";
             }
             else
             {
-                textoUltimaConexion.text = partida.ultima_conexion;
+                textoUltimaConexion.text = $"Ultima conexion\n{partida.ultima_conexion}";
             }
         }
+    }
+
+    private void AplicarEstiloMenu()
+    {
+        if (panel == null) return;
+
+        var panelRect = panel.GetComponent<RectTransform>();
+        if (panelRect != null)
+        {
+            panelRect.localScale = Vector3.one;
+            panelRect.localRotation = Quaternion.identity;
+            panelRect.anchorMin = Vector2.zero;
+            panelRect.anchorMax = Vector2.one;
+            panelRect.offsetMin = Vector2.zero;
+            panelRect.offsetMax = Vector2.zero;
+        }
+
+        var fondo = panel.GetComponent<Image>();
+        if (fondo != null)
+            fondo.color = new Color(0.06f, 0.08f, 0.07f, 0.18f);
+
+        EstilizarFondo();
+        EstilizarPanelInfo();
+        EstilizarPanelBotones();
+        EstilizarTextoGuardado();
+    }
+
+    private void EstilizarFondo()
+    {
+        var panelFondo = BuscarHijo(panel.transform, "PanelFondo") as RectTransform;
+        if (panelFondo == null) return;
+
+        panelFondo.localScale = Vector3.one;
+        panelFondo.localRotation = Quaternion.identity;
+        panelFondo.anchorMin = Vector2.zero;
+        panelFondo.anchorMax = Vector2.one;
+        panelFondo.offsetMin = Vector2.zero;
+        panelFondo.offsetMax = Vector2.zero;
+
+        var imagen = panelFondo.GetComponent<Image>();
+        if (imagen != null)
+            imagen.color = new Color(0.06f, 0.08f, 0.07f, 0.18f);
+    }
+
+    private void EstilizarPanelInfo()
+    {
+        var panelIzquierda = BuscarHijo(panel.transform, "PanelIzquierda") as RectTransform;
+        if (panelIzquierda == null) return;
+
+        panelIzquierda.localScale = Vector3.one;
+        panelIzquierda.localRotation = Quaternion.identity;
+        panelIzquierda.anchorMin = new Vector2(0.035f, 0.12f);
+        panelIzquierda.anchorMax = new Vector2(0.33f, 0.88f);
+        panelIzquierda.offsetMin = Vector2.zero;
+        panelIzquierda.offsetMax = Vector2.zero;
+
+        var imagen = panelIzquierda.GetComponent<Image>();
+        if (imagen != null)
+        {
+            imagen.color = new Color(0.96f, 0.98f, 0.93f, 0.96f);
+            AsegurarBorde(imagen, new Color(0.05f, 0.22f, 0.15f, 1f), new Vector2(3f, -3f));
+        }
+
+        EstilizarTexto(textoNombre, 17f, TextAlignmentOptions.TopLeft, new Color(0.05f, 0.09f, 0.08f));
+        EstilizarTexto(textoTiempoJugado, 20f, TextAlignmentOptions.TopLeft, new Color(0.08f, 0.12f, 0.11f));
+        EstilizarTexto(textoFechaCreacion, 17f, TextAlignmentOptions.TopLeft, new Color(0.12f, 0.16f, 0.15f));
+        EstilizarTexto(textoUltimaConexion, 17f, TextAlignmentOptions.TopLeft, new Color(0.12f, 0.16f, 0.15f));
+
+        if (textoNombre != null)
+        {
+            textoNombre.textWrappingMode = TextWrappingModes.NoWrap;
+            textoNombre.characterSpacing = 0f;
+            textoNombre.fontSizeMin = 11f;
+            textoNombre.fontSizeMax = 17f;
+        }
+
+        ColocarTexto(textoNombre, new Vector2(0.35f, 0.80f), new Vector2(0.96f, 0.96f));
+        ColocarTexto(textoTiempoJugado, new Vector2(0.08f, 0.54f), new Vector2(0.92f, 0.70f));
+        ColocarTexto(textoFechaCreacion, new Vector2(0.08f, 0.32f), new Vector2(0.92f, 0.48f));
+        ColocarTexto(textoUltimaConexion, new Vector2(0.08f, 0.12f), new Vector2(0.92f, 0.28f));
+
+        var cajaPokeball = BuscarHijo(panelIzquierda, "CajaPokeball") as RectTransform;
+        if (cajaPokeball != null)
+        {
+            cajaPokeball.anchorMin = new Vector2(0.07f, 0.80f);
+            cajaPokeball.anchorMax = new Vector2(0.28f, 0.94f);
+            cajaPokeball.offsetMin = Vector2.zero;
+            cajaPokeball.offsetMax = Vector2.zero;
+
+            var fondoCaja = cajaPokeball.GetComponent<Image>();
+            if (fondoCaja != null)
+            {
+                fondoCaja.color = Color.clear;
+                fondoCaja.enabled = false;
+                fondoCaja.raycastTarget = false;
+            }
+        }
+    }
+
+    private void EstilizarPanelBotones()
+    {
+        var panelDerecha = BuscarHijo(panel.transform, "PanelDerecha") as RectTransform;
+        if (panelDerecha == null) return;
+
+        panelDerecha.localScale = Vector3.one;
+        panelDerecha.localRotation = Quaternion.identity;
+        panelDerecha.anchorMin = new Vector2(0.80f, 0.13f);
+        panelDerecha.anchorMax = new Vector2(0.965f, 0.87f);
+        panelDerecha.offsetMin = Vector2.zero;
+        panelDerecha.offsetMax = Vector2.zero;
+
+        var imagen = panelDerecha.GetComponent<Image>();
+        if (imagen != null)
+        {
+            imagen.color = new Color(0.96f, 0.98f, 0.93f, 0.96f);
+            AsegurarBorde(imagen, new Color(0.05f, 0.22f, 0.15f, 1f), new Vector2(3f, -3f));
+        }
+
+        Button[] botones =
+        {
+            botonPokemons, botonMochila, botonOpciones,
+            botonGuardar, botonVolver, botonSalir
+        };
+
+        for (int i = 0; i < botones.Length; i++)
+        {
+            EstilizarBoton(botones[i], i, botones.Length);
+        }
+    }
+
+    private void EstilizarBoton(Button boton, int indice, int total)
+    {
+        if (boton == null) return;
+
+        var rect = boton.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            float alto = 1f / total;
+            float arriba = 1f - indice * alto;
+            float abajo = arriba - alto;
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchorMin = new Vector2(0.08f, abajo + 0.012f);
+            rect.anchorMax = new Vector2(0.92f, arriba - 0.012f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+        }
+
+        Color colorBase = indice == total - 1
+            ? new Color(0.62f, 0.18f, 0.15f, 0.92f)
+            : new Color(0.05f, 0.35f, 0.19f, 0.92f);
+
+        var imagen = boton.GetComponent<Image>();
+        if (imagen != null)
+        {
+            imagen.color = colorBase;
+            AsegurarBorde(imagen, new Color(0.02f, 0.16f, 0.09f, 1f), new Vector2(2f, -2f));
+        }
+
+        var colores = boton.colors;
+        colores.normalColor = colorBase;
+        colores.highlightedColor = indice == total - 1
+            ? new Color(0.78f, 0.26f, 0.20f, 1f)
+            : new Color(0.08f, 0.46f, 0.25f, 1f);
+        colores.pressedColor = indice == total - 1
+            ? new Color(0.45f, 0.10f, 0.08f, 1f)
+            : new Color(0.03f, 0.24f, 0.13f, 1f);
+        colores.selectedColor = colores.highlightedColor;
+        colores.colorMultiplier = 1f;
+        boton.colors = colores;
+
+        var texto = boton.GetComponentInChildren<TextMeshProUGUI>();
+        if (texto != null)
+        {
+            texto.fontSize = 21f;
+            texto.enableAutoSizing = true;
+            texto.fontSizeMin = 15f;
+            texto.fontSizeMax = 21f;
+            texto.textWrappingMode = TextWrappingModes.NoWrap;
+            texto.overflowMode = TextOverflowModes.Ellipsis;
+            texto.alignment = TextAlignmentOptions.Center;
+            texto.color = Color.white;
+        }
+    }
+
+    private void EstilizarTextoGuardado()
+    {
+        if (textoGuardadoOk == null) return;
+
+        var texto = textoGuardadoOk.GetComponent<TextMeshProUGUI>();
+        if (texto != null)
+        {
+            texto.text = "Partida guardada";
+            texto.fontSize = 24f;
+            texto.color = new Color(0.94f, 1f, 0.78f);
+            texto.alignment = TextAlignmentOptions.Center;
+        }
+
+        var rect = textoGuardadoOk.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.anchorMin = new Vector2(0.36f, 0.07f);
+            rect.anchorMax = new Vector2(0.78f, 0.16f);
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+        }
+    }
+
+    private void EstilizarTexto(TextMeshProUGUI texto, float size, TextAlignmentOptions alineacion, Color color)
+    {
+        if (texto == null) return;
+
+        texto.fontSize = size;
+        texto.enableAutoSizing = true;
+        texto.fontSizeMin = Mathf.Max(12f, size - 6f);
+        texto.fontSizeMax = size;
+        texto.textWrappingMode = TextWrappingModes.Normal;
+        texto.overflowMode = TextOverflowModes.Ellipsis;
+        texto.alignment = alineacion;
+        texto.color = color;
+        texto.fontStyle = FontStyles.Bold;
+        texto.characterSpacing = 1.5f;
+        texto.lineSpacing = 3f;
+    }
+
+    private void AsegurarBorde(Graphic graphic, Color color, Vector2 distancia)
+    {
+        if (graphic == null) return;
+
+        var outline = graphic.GetComponent<Outline>();
+        if (outline == null)
+            outline = graphic.gameObject.AddComponent<Outline>();
+
+        outline.effectColor = color;
+        outline.effectDistance = distancia;
+        outline.useGraphicAlpha = true;
+    }
+
+    private void ColocarTexto(TextMeshProUGUI texto, Vector2 min, Vector2 max)
+    {
+        if (texto == null) return;
+
+        var rect = texto.GetComponent<RectTransform>();
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+        rect.anchorMin = min;
+        rect.anchorMax = max;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+    }
+
+    private Transform BuscarHijo(Transform raiz, string nombre)
+    {
+        if (raiz == null) return null;
+
+        foreach (Transform hijo in raiz)
+        {
+            if (hijo.name == nombre)
+                return hijo;
+
+            Transform encontrado = BuscarHijo(hijo, nombre);
+            if (encontrado != null)
+                return encontrado;
+        }
+
+        return null;
     }
 
     // Abre la pantalla de equipo pokemon

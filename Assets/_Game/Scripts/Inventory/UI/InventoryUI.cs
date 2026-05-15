@@ -395,7 +395,7 @@ public class InventoryUI : MonoBehaviour
             barraSuperior.localScale = Vector3.one;
             barraSuperior.localRotation = Quaternion.identity;
             barraSuperior.anchorMin = new Vector2(0.06f, 0.76f);
-            barraSuperior.anchorMax = new Vector2(0.42f, 0.92f);
+            barraSuperior.anchorMax = new Vector2(0.46f, 0.92f);
             barraSuperior.pivot = new Vector2(0.5f, 0.5f);
             barraSuperior.offsetMin = Vector2.zero;
             barraSuperior.offsetMax = Vector2.zero;
@@ -443,15 +443,15 @@ public class InventoryUI : MonoBehaviour
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
 
-            categoryText.fontSize = 30f;
+            categoryText.fontSize = 26f;
             categoryText.color = new Color(0.05f, 0.05f, 0.05f);
             categoryText.alignment = TextAlignmentOptions.Center;
-            categoryText.margin = new Vector4(72f, 0f, 72f, 0f);
-            categoryText.enableWordWrapping = false;
+            categoryText.margin = new Vector4(42f, 0f, 42f, 0f);
+            categoryText.textWrappingMode = TextWrappingModes.NoWrap;
             categoryText.overflowMode = TextOverflowModes.Ellipsis;
             categoryText.enableAutoSizing = true;
-            categoryText.fontSizeMin = 20f;
-            categoryText.fontSizeMax = 30f;
+            categoryText.fontSizeMin = 14f;
+            categoryText.fontSizeMax = 26f;
 
             AjustarFlechasCategoria();
         }
@@ -572,7 +572,7 @@ public class InventoryUI : MonoBehaviour
             slot.NameText.fontSize = 26f;
             slot.NameText.color = Color.black;
             slot.NameText.alignment = TextAlignmentOptions.MidlineLeft;
-            slot.NameText.enableWordWrapping = false;
+            slot.NameText.textWrappingMode = TextWrappingModes.NoWrap;
             slot.NameText.overflowMode = TextOverflowModes.Ellipsis;
         }
 
@@ -590,7 +590,7 @@ public class InventoryUI : MonoBehaviour
             slot.CountText.fontSize = 23f;
             slot.CountText.color = Color.black;
             slot.CountText.alignment = TextAlignmentOptions.MidlineRight;
-            slot.CountText.enableWordWrapping = false;
+            slot.CountText.textWrappingMode = TextWrappingModes.NoWrap;
             slot.CountText.overflowMode = TextOverflowModes.Overflow;
         }
     }

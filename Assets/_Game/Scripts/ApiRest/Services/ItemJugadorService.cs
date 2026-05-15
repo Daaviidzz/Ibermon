@@ -4,6 +4,8 @@ using ApiRest.Managers;
 using ApiRest.Models;
 using UnityEngine;
 
+#pragma warning disable 0649
+
 namespace ApiRest.Services
 {
     // Servicio que gestiona el inventario de items del jugador
@@ -87,3 +89,5 @@ namespace ApiRest.Services
         }
     }
 }
+
+#pragma warning restore 0649
