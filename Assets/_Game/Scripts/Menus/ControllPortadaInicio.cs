@@ -42,10 +42,7 @@ public class ControllPortadaInicio : MonoBehaviour
         // Solo bloquear cursor en PC
         if (!esMovil)
         {
-            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
-            Cursor.lockState = CursorLockMode.Locked;
-            //Y ahora le quitamos la visibilidad
-            Cursor.visible = false;
+            CursorSeguro.Bloquear();
         }
     }
 

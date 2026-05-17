@@ -66,14 +66,11 @@ public class MenuOpciones : MonoBehaviour
     // Cierra el menu y vuelve al mapa donde estaba el jugador
     private void Volver()
     {
-        // Solo bloquear cursor en PC si el UIOpcionesPanel NO está abierto
-        // Si está abierto, él mismo gestiona el cursor al volver
+        // Solo bloquear cursor en PC si el UIOpcionesPanel NO estï¿½ abierto
+        // Si estï¿½ abierto, ï¿½l mismo gestiona el cursor al volver
         if (!esMovil && !UIOpcionesPanel.estaAbierto)
         {
-            // Para que el cursor se quede en el medio
-            Cursor.lockState = CursorLockMode.Locked;
-            // Y ahora le quitamos la visibilidad
-            Cursor.visible = false;
+            CursorSeguro.Bloquear();
         }
 
         // Limpiar el estado de todos los botones moviles antes de cambiar de escena

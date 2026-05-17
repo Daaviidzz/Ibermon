@@ -100,8 +100,7 @@ public class UIOpcionesPanel : MonoBehaviour
         // Solo en PC desbloqueamos el cursor para poder pulsar los botones
         if (!esMovil)
         {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorSeguro.Mostrar();
         }
     }
 
@@ -114,8 +113,7 @@ public class UIOpcionesPanel : MonoBehaviour
         // Solo en PC volvemos a bloquear el cursor
         if (!esMovil)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            CursorSeguro.Bloquear();
         }
 
         // Avisamos a Movimiento para que vuelva al estado FreeRoam

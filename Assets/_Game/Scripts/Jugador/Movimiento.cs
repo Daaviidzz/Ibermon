@@ -67,10 +67,7 @@ public class Movimiento : MonoBehaviour
         // Solo bloquear cursor en PC
         if (!esMovil)
         {
-            //Para que el cursor se quede en el medio, es basicamente una forma de bloquearlo
-            Cursor.lockState = CursorLockMode.Locked;
-            //Y ahora le quitamos la visibilidad
-            Cursor.visible = false;
+            CursorSeguro.Bloquear();
         }
 
         uiOpcionesPanel = GetComponentInChildren<UIOpcionesPanel>();
@@ -180,8 +177,7 @@ public class Movimiento : MonoBehaviour
                     state = GameState.FreeRoam;
                     if (!esMovil)
                     {
-                        Cursor.lockState = CursorLockMode.Locked;
-                        Cursor.visible = false;
+                        CursorSeguro.Bloquear();
                     }
                 });
             }
@@ -215,8 +211,7 @@ public class Movimiento : MonoBehaviour
         state = GameState.FreeRoam;
         if (!esMovil)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            CursorSeguro.Bloquear();
         }
     }
 

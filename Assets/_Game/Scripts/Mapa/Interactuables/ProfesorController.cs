@@ -94,8 +94,7 @@ public class ProfesorController : MonoBehaviour
             }
 
             // Activamos el cursor para que el jugador pueda clicar en los botones del starter
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            CursorSeguro.Mostrar();
 
             canvasEleccionStarter.SetActive(true);
         }
@@ -138,8 +137,7 @@ public class ProfesorController : MonoBehaviour
         canvasEleccionStarter.SetActive(false);
 
         // Volvemos a bloquear el cursor al cerrar el panel
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorSeguro.Bloquear();
 
         // Pedimos el equipo a la API para que meta el starter recien creado en el PokemonParty
         ApiSetup.IbermonJugador.ObtenerEquipo(partidaActualizada.id,
@@ -197,8 +195,7 @@ public class ProfesorController : MonoBehaviour
         canvasEleccionStarter.SetActive(false);
 
         // Volvemos a bloquear el cursor al cerrar el panel
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorSeguro.Bloquear();
 
         _interaccionEnCurso = false;
 

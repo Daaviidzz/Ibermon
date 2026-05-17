@@ -65,8 +65,7 @@ public class LoginUI : MonoBehaviour
         panelCargando.SetActive(false);
 
         // En el panel de inicio el cursor se oculta porque el jugador navega con botones
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorSeguro.Bloquear();
 
         // Limpiamos los mensajes de error por si quedaron de un intento anterior
         LimpiarErrores();
@@ -82,8 +81,7 @@ public class LoginUI : MonoBehaviour
         panelCargando.SetActive(false);
 
         // En los paneles con campos de texto el cursor debe ser visible para hacer clic
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorSeguro.Mostrar();
 
         LimpiarErrores();
     }
@@ -98,8 +96,7 @@ public class LoginUI : MonoBehaviour
         panelCargando.SetActive(false);
 
         // Igual que en el login necesitamos el cursor visible para los campos de texto
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        CursorSeguro.Mostrar();
 
         LimpiarErrores();
     }
@@ -120,8 +117,7 @@ public class LoginUI : MonoBehaviour
         }
 
         // Mientras carga no hace falta el cursor, lo ocultamos para que quede mas limpio
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        CursorSeguro.Bloquear();
     }
 
     // Cierra el juego
