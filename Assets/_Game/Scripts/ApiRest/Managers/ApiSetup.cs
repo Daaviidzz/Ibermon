@@ -8,6 +8,8 @@ namespace ApiRest.Managers
     [DefaultExecutionOrder(-100)]
     public class ApiSetup : MonoBehaviour
     {
+        public const string PrefKeyUrlServidor = "url_api_servidor";
+
         // Direccion del servidor FastAPI que se configura desde el inspector
         [Header("URL del servidor FastAPI")]
         [SerializeField] private string urlServidor = "http://localhost:8000";
@@ -39,14 +41,15 @@ namespace ApiRest.Managers
 
             // Anadimos el ApiManager al contenedor
             ApiManager apiManager = contenedorServicios.AddComponent<ApiManager>();
+            string urlFinal = ResolverUrlServidor();
 
             // El ApiManager tiene una variable privada baseUrl
-            // Usamos reflexion para asignarle la URL que tenemos en el inspector
+            // Usamos reflexion para asignarle la URL resuelta para esta plataforma
             System.Reflection.FieldInfo campoUrlPrivado = typeof(ApiManager).GetField("baseUrl",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (campoUrlPrivado != null)
             {
-                campoUrlPrivado.SetValue(apiManager, urlServidor);
+                campoUrlPrivado.SetValue(apiManager, urlFinal);
             }
 
             // Anadimos todos los servicios de la API al contenedor
@@ -60,7 +63,52 @@ namespace ApiRest.Managers
             contenedorServicios.AddComponent<SessionManager>();
             contenedorServicios.AddComponent<CatalogoCache>();
 
-            Debug.Log("ApiSetup listo");
+            Debug.Log("[ApiSetup] Listo con URL: " + urlFinal);
+        }
+
+        public static void AplicarUrlServidor(string urlServidor)
+        {
+            if (string.IsNullOrWhiteSpace(urlServidor))
+            {
+                return;
+            }
+
+            if (ApiManager.Instance == null)
+            {
+                Debug.LogWarning("[ApiSetup] No se puede aplicar la URL porque ApiManager aun no existe.");
+                return;
+            }
+
+            string urlLimpia = urlServidor.Trim();
+            ApiManager.Instance.SetBaseUrl(urlLimpia);
+            Debug.Log("[ApiSetup] URL aplicada sin reiniciar: " + urlLimpia);
+        }
+
+        private string ResolverUrlServidor()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            try
+            {
+                System.Uri uriOrigen = new System.Uri(Application.absoluteURL);
+                string urlWeb = uriOrigen.GetLeftPart(System.UriPartial.Authority) + "/api";
+                Debug.Log("[ApiSetup] URL WebGL detectada: " + urlWeb);
+                return urlWeb;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("[ApiSetup] No se pudo detectar la URL WebGL: " + ex.Message);
+            }
+#endif
+
+            string urlGuardada = PlayerPrefs.GetString(PrefKeyUrlServidor, string.Empty);
+            if (!string.IsNullOrWhiteSpace(urlGuardada))
+            {
+                Debug.Log("[ApiSetup] URL guardada: " + urlGuardada);
+                return urlGuardada;
+            }
+
+            Debug.Log("[ApiSetup] URL del Inspector: " + urlServidor);
+            return urlServidor;
         }
     }
 }

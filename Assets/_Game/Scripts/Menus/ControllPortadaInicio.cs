@@ -5,8 +5,8 @@ using System.Collections;
 
 public class ControllPortadaInicio : MonoBehaviour
 {
-    //Variable que almacena el número de la escena de destino
-    //también podría ser un String y poner el nombre de la escena
+    //Variable que almacena el numero de la escena de destino
+    //tambien podria ser un String y poner el nombre de la escena
     public string escenaDestino;
 
     //Texto de pulsar enter
@@ -15,10 +15,10 @@ public class ControllPortadaInicio : MonoBehaviour
     //Velocidad de parpadeo del texto
     public float velocidadParpadeo = 2f;
 
-    // Detectar si estamos en móvil o PC
+    // Detectar si estamos en movil o PC
     private bool esMovil;
 
-    // Variable para evitar múltiples cambios de escena
+    // Variable para evitar multiples cambios de escena
     private bool cambiandoEscena = false;
 
     //bloqueamos el cursor desde el principio del juego
@@ -26,7 +26,7 @@ public class ControllPortadaInicio : MonoBehaviour
     {
         comprobacionInicialParteMovil();
 
-        // Cambiamos el texto dinámicamente según la plataforma
+        // Cambiamos el texto dinamicamente segun la plataforma
         if (textoPulsarEnter != null)
         {
             if (esMovil)
@@ -54,7 +54,7 @@ public class ControllPortadaInicio : MonoBehaviour
         //Hacemos parpadear el texto de pulsar enter
         if (textoPulsarEnter != null)
         {
-            //Calculamos la transparencia del texto usando una función PingPong para que varíe entre 0 y 1
+            //Calculamos la transparencia del texto usando una funcion PingPong para que varie entre 0 y 1
             float alpha = Mathf.PingPong(Time.time * velocidadParpadeo, 1f);
             //Asignamos la transparencia al color del texto
             Color c = textoPulsarEnter.color;
@@ -64,7 +64,7 @@ public class ControllPortadaInicio : MonoBehaviour
             textoPulsarEnter.color = c;
         }
 
-        // DETECCIÓN DE ENTRADA - solo si no estamos ya cambiando de escena
+        // DETECCION DE ENTRADA - solo si no estamos ya cambiando de escena
         if (!cambiandoEscena && DetectarEntrada())
         {
             StartCoroutine(CambiarEscenaConBloqueo());
@@ -79,7 +79,7 @@ public class ControllPortadaInicio : MonoBehaviour
 
         Debug.Log("[Portada] Iniciando cambio de escena");
 
-        // Bloquear inmediatamente todos los controles móviles
+        // Bloquear inmediatamente todos los controles moviles
         if (ControlesMoviles.Instance != null)
         {
             ControlesMoviles.Instance.DeshabilitarBotones();
@@ -96,7 +96,7 @@ public class ControllPortadaInicio : MonoBehaviour
             ControlesMoviles.Instance.LimpiarEstadoBotones();
         }
 
-        // Pequeño delay adicional para asegurar que todo está limpio
+        // Pequeno delay adicional para asegurar que todo este limpio
         yield return new WaitForSeconds(0.15f);
 
         // Limpieza final antes de cambiar de escena
@@ -111,7 +111,7 @@ public class ControllPortadaInicio : MonoBehaviour
         SceneManager.LoadScene(escenaDestino);
     }
 
-    // Método que unifica la detección según la plataforma
+    // Metodo que unifica la deteccion segun la plataforma
     private bool DetectarEntrada()
     {
         if (esMovil)

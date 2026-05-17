@@ -33,6 +33,7 @@ namespace ApiRest.Managers
 
         public void SetToken(string token) => _token = token;
         public void ClearToken() => _token = null;
+        public void SetBaseUrl(string nuevaBaseUrl) => baseUrl = nuevaBaseUrl;
 
         // GET público (catálogos, etc.)
         public Coroutine Get(string endpoint, Action<string> onSuccess, Action<string> onError)
