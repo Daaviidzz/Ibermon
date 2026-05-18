@@ -295,4 +295,67 @@ public class InventoryApiBridge
             ? categoria
             : ItemCategory.Items;
     }
+    // Anade un item al inventario LOCAL y lo persiste en el servidor.
+    // Si el item ya existe en la partida actualiza la cantidad; si no, lo crea.
+    public void AnadirItemConSync(ItemBase item, int cantidad, Action onDone)
+    {
+        if (item == null || cantidad <= 0) { onDone?.Invoke(); return; }
+
+        Inventory inv = Inventory.GetInventory();
+        if (inv == null) { onDone?.Invoke(); return; }
+
+        // 1. Anadir al inventario local (se ve en la UI inmediatamente)
+        ItemCategory categoria = item is PokeballItem ? ItemCategory.Pokeballs : ItemCategory.Items;
+        inv.AddItem(item, cantidad, categoria);
+
+        // 2. Sincronizar con la API
+        string partidaId = SessionManager.Instance?.PartidaId;
+        if (string.IsNullOrEmpty(partidaId) || ApiSetup.ItemJugador == null || ApiSetup.Catalogo == null)
+        {
+            onDone?.Invoke();
+            return;
+        }
+
+        // Si ya teniamos este item en la partida (esta en el dict), actualizamos cantidad
+        if (_itemsJugador.TryGetValue(item.Name, out ItemJugador existente))
+        {
+            int nuevaCantidad = existente.cantidad + cantidad;
+            ApiSetup.ItemJugador.ActualizarItem(partidaId, existente.id, nuevaCantidad,
+                actualizado => { existente.cantidad = actualizado.cantidad; onDone?.Invoke(); },
+                err =>
+                {
+                    Debug.LogWarning($"[InventoryApiBridge] Error actualizando item: {err}");
+                    onDone?.Invoke();
+                });
+            return;
+        }
+
+        // Si NO existe, buscamos el numero del catalogo y lo creamos
+        ApiSetup.Catalogo.ListarItems(
+            catalogo =>
+            {
+                ItemCatalogoResumen cat = catalogo.FirstOrDefault(c =>
+                    ObtenerNombreRecurso(c.nombre) == item.Name || c.nombre == item.Name);
+
+                if (cat == null)
+                {
+                    Debug.LogWarning($"[InventoryApiBridge] Item '{item.Name}' no esta en el catalogo de la API");
+                    onDone?.Invoke();
+                    return;
+                }
+
+                ApiSetup.ItemJugador.AnadirItem(partidaId, cat.numero, cantidad,
+                    nuevoItem =>
+                    {
+                        _itemsJugador[item.Name] = nuevoItem;
+                        onDone?.Invoke();
+                    },
+                    err =>
+                    {
+                        Debug.LogWarning($"[InventoryApiBridge] Error anadiendo item: {err}");
+                        onDone?.Invoke();
+                    });
+            },
+            err => { onDone?.Invoke(); });
+    }
 }
