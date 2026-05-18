@@ -960,6 +960,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: -267923863
@@ -1207,7 +1208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 312259180186911258, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 11.912
+      value: 11.912018
       objectReference: {fileID: 0}
     - target: {fileID: 312259180186911258, guid: 7fb108829b115c644aa6b6f860f8078e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3754,15 +3755,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8395876437419159926, guid: 4261aed85b7ae624c80ed776367e7d10, type: 3}
       propertyPath: m_MatchWidthOrHeight
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8395876437419159926, guid: 4261aed85b7ae624c80ed776367e7d10, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 1920
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 8395876437419159926, guid: 4261aed85b7ae624c80ed776367e7d10, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 1080
+      value: 320
       objectReference: {fileID: 0}
     - target: {fileID: 9194720922275282168, guid: 4261aed85b7ae624c80ed776367e7d10, type: 3}
       propertyPath: m_Pivot.x
@@ -4134,6 +4135,7 @@ GameObject:
   - component: {fileID: 1146333760}
   - component: {fileID: 1146333762}
   - component: {fileID: 1146333761}
+  - component: {fileID: 1146333763}
   m_Layer: 5
   m_Name: BackGround
   m_TagString: Untagged
@@ -4155,10 +4157,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 105612560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.509, y: 59.586}
-  m_SizeDelta: {x: 673.616, y: 262.969}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146333761
 MonoBehaviour:
@@ -4198,6 +4200,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1146333759}
   m_CullTransparentMesh: 1
+--- !u!114 &1146333763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146333759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 3
+  m_AspectRatio: 1.5
 --- !u!224 &1224927640 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6932110409960093778, guid: 389fd08f6efe3784f9248f5ccad98146, type: 3}
