@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Batalla;
 using System.Collections;
 using System.Collections.Generic;
+using ApiRest.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -122,10 +123,65 @@ public class TrainerController : MonoBehaviour
 
         JugadorSpawn.posicion = jugador.position;
         JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
-        BattleData.TrainerPokemons = new List<Pokemon>(trainerParty.Pokemons);
+        BattleData.TrainerPokemons = CrearEquipoEntrenadorDesdeApi() ?? new List<Pokemon>(trainerParty.Pokemons);
         BattleData.EsEntrenador = true;
         BattleData.WildPokemon = null;
         BattleData.NombreEntrenador = gameObject.name; // ← AÑADE ESTO
         SceneManager.LoadScene("Combate");
+    }
+
+    private List<Pokemon> CrearEquipoEntrenadorDesdeApi()
+    {
+        if (CatalogoCache.Instance == null || !CatalogoCache.Instance.EstaListo)
+            return null;
+
+        if (trainerParty.Pokemons == null || trainerParty.Pokemons.Count == 0)
+            return null;
+
+        var catalogo = CatalogoCache.Instance;
+        var equipoApi = new List<IbermonJugador>();
+
+        foreach (var pokemonLocal in trainerParty.Pokemons)
+        {
+            if (pokemonLocal?.Base == null)
+                return null;
+
+            int ibermonCatalogoId = catalogo.GetIbermonNumero(pokemonLocal.Base.Name);
+            if (ibermonCatalogoId <= 0)
+            {
+                Debug.LogWarning($"[TrainerController] '{pokemonLocal.Base.Name}' no está en el catálogo API. Se usa equipo local.");
+                return null;
+            }
+
+            var pokemonTemporal = new Pokemon(pokemonLocal.Base, pokemonLocal.Level);
+            var movimientos = new List<MovimientoAprendido>();
+
+            if (pokemonTemporal.Moves != null)
+            {
+                foreach (var move in pokemonTemporal.Moves)
+                {
+                    int numeroMovimiento = catalogo.GetMovimientoNumero(move.Base.Name);
+                    if (numeroMovimiento > 0)
+                        movimientos.Add(new MovimientoAprendido { numero = numeroMovimiento, pp = move.PP });
+                }
+            }
+
+            equipoApi.Add(new IbermonJugador
+            {
+                ibermon_catalogo_id = ibermonCatalogoId,
+                nivel = pokemonTemporal.Level,
+                experiencia = pokemonTemporal.Exp,
+                hp_actual = pokemonTemporal.MaxHp,
+                ubicacion = "equipo",
+                movimientos_aprendidos = movimientos,
+            });
+        }
+
+        var equipoConvertido = IbermonConverter.ToPokemons(equipoApi, catalogo);
+        if (equipoConvertido.Count != equipoApi.Count)
+            return null;
+
+        Debug.Log($"[TrainerController] Equipo de entrenador cargado desde API: {equipoConvertido.Count} ibermon.");
+        return equipoConvertido;
     }
 }
