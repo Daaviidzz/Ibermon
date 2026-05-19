@@ -297,7 +297,9 @@ public class InventoryApiBridge
     }
     // Anade un item al inventario LOCAL y lo persiste en el servidor.
     // Si el item ya existe en la partida actualiza la cantidad; si no, lo crea.
-    public void AnadirItemConSync(ItemBase item, int cantidad, Action onDone)
+    // Anade un item al inventario LOCAL y lo persiste en el servidor.
+    // Si el item ya existe en la partida actualiza la cantidad; si no, lo crea.
+    public void AnadirItemConSync(ItemBase item, int cantidad, System.Action onDone)
     {
         if (item == null || cantidad <= 0) { onDone?.Invoke(); return; }
 
@@ -316,7 +318,7 @@ public class InventoryApiBridge
             return;
         }
 
-        // Si ya teniamos este item en la partida (esta en el dict), actualizamos cantidad
+        // Si ya teniamos este item en la partida, actualizamos cantidad
         if (_itemsJugador.TryGetValue(item.Name, out ItemJugador existente))
         {
             int nuevaCantidad = existente.cantidad + cantidad;
@@ -334,12 +336,16 @@ public class InventoryApiBridge
         ApiSetup.Catalogo.ListarItems(
             catalogo =>
             {
+                // Comparacion tolerante: ignora mayusculas, tildes y espacios
+                string nombreItemNorm = NormalizarTexto(item.Name);
                 ItemCatalogoResumen cat = catalogo.FirstOrDefault(c =>
-                    ObtenerNombreRecurso(c.nombre) == item.Name || c.nombre == item.Name);
+                    NormalizarTexto(c.nombre) == nombreItemNorm ||
+                    NormalizarTexto(ObtenerNombreRecurso(c.nombre)) == nombreItemNorm);
 
                 if (cat == null)
                 {
-                    Debug.LogWarning($"[InventoryApiBridge] Item '{item.Name}' no esta en el catalogo de la API");
+                    Debug.LogWarning($"[InventoryApiBridge] Item '{item.Name}' no esta en el catalogo de la API. " +
+                                     $"Nombres disponibles: {string.Join(", ", catalogo.Select(c => $"'{c.nombre}'"))}");
                     onDone?.Invoke();
                     return;
                 }
@@ -357,5 +363,22 @@ public class InventoryApiBridge
                     });
             },
             err => { onDone?.Invoke(); });
+    }
+
+    // Normaliza un texto: minusculas, sin tildes, sin espacios. Sirve para
+    // comparar nombres entre el inventario local y el catalogo de la API.
+    private static string NormalizarTexto(string texto)
+    {
+        if (string.IsNullOrEmpty(texto)) return "";
+
+        string sinTildes = texto.Normalize(System.Text.NormalizationForm.FormD);
+        var sb = new System.Text.StringBuilder();
+        foreach (char c in sinTildes)
+        {
+            if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c)
+                != System.Globalization.UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        }
+        return sb.ToString().ToLowerInvariant().Replace(" ", "");
     }
 }

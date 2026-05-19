@@ -473,11 +473,10 @@ public class BattleSystem : MonoBehaviour
         {
             yield return dialogBox.TypeDialog("¡Has ganado la batalla!");
 
-            //  dar 2 items aleatorios como recompensa por la victoria
+            // NUEVO: dar 2 items aleatorios como recompensa por la victoria
             bool recompensaDada = false;
             yield return RecompensaCombate.DarRecompensa(dialogBox, () => recompensaDada = true);
             yield return new WaitUntil(() => recompensaDada);
-            // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
             if (esTrainerBattle && !string.IsNullOrEmpty(BattleData.NombreEntrenador))
             {
