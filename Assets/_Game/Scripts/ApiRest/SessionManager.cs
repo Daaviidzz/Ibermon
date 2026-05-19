@@ -190,6 +190,21 @@ public class SessionManager : MonoBehaviour
             }
         }
 
+        bool refrescoTerminado = false;
+        ApiSetup.IbermonJugador.ObtenerEquipo(
+            PartidaId,
+            equipoActualizado =>
+            {
+                SetEquipoAPI(equipoActualizado);
+                refrescoTerminado = true;
+            },
+            err =>
+            {
+                Debug.LogWarning($"[SessionManager] Error refrescando EquipoAPI tras sync: {err}");
+                refrescoTerminado = true;
+            });
+        yield return new WaitUntil(() => refrescoTerminado);
+
         if (hubieronErrores) onError?.Invoke("Algunos ibermon no se pudieron sincronizar");
         else onDone?.Invoke();
     }

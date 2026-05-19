@@ -544,6 +544,7 @@ public class BattleSystem : MonoBehaviour
             Action onBack = () =>
             {
                 inventoryUI.gameObject.SetActive(false);
+                inventoryUI.ForceClosePartyScreen();
                 state = BattleState.ACTIONSELECTION;
             };
             Action<ItemBase> onItemUsed = (ItemBase usedItem) =>
@@ -761,6 +762,7 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.BUSY;
         inventoryUI.gameObject.SetActive(false);
+        inventoryUI.ForceClosePartyScreen();
 
         if (usedItem is PokeballItem)
         {

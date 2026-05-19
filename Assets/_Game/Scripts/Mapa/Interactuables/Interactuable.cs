@@ -189,6 +189,17 @@ public class Interactuable : MonoBehaviour
                 if (equipoPokemon != null)
                 {
                     equipoPokemon.HealAllPokemonsInParty();
+
+                    if (SessionManager.Instance != null && SessionManager.Instance.TienePartida &&
+                        CatalogoCache.Instance != null && CatalogoCache.Instance.EstaListo)
+                    {
+                        SessionManager.Instance.SincronizarEquipo(
+                            equipoPokemon.Pokemons,
+                            CatalogoCache.Instance,
+                            onDone: null,
+                            onError: err => Debug.LogWarning($"[Abuela] Error sincronizando equipo: {err}")
+                        );
+                    }
                 }
             }
 

@@ -133,6 +133,7 @@ public class PokemonParty : MonoBehaviour
         {
             p.ResetHealth();
             p.CureStatus();
+            p.Moves?.ForEach(m => m.IncreasePP(m.Base.PP));
         }
         // La sincronización con la API se hace explícitamente (SessionManager.SincronizarEquipo)
         // no aquí, para evitar llamadas duplicadas

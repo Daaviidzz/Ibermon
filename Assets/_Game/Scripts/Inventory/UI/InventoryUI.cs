@@ -267,6 +267,7 @@ public class InventoryUI : MonoBehaviour
                 cantidadRestante,
                 onFalloRecargar: () => CargarInventarioDesdeAPI());
 
+            ClosePartyScreen();
             OnItemUsed?.Invoke(usedItem);
         }
         else
@@ -660,6 +661,12 @@ public class InventoryUI : MonoBehaviour
             partyScreen.gameObject.SetActive(false);
         
     }
+
+    public void ForceClosePartyScreen()
+    {
+        ClosePartyScreen();
+    }
+
     bool InputConfirmar()
     {
         if (esMovil && ControlesMoviles.Instance != null)
