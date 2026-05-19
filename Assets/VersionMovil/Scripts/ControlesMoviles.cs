@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ControlesMoviles : MonoBehaviour
 {
@@ -11,12 +12,22 @@ public class ControlesMoviles : MonoBehaviour
     public ActivacionBoton botonCorrer;
     public ActivacionBoton botonMenuOpciones;
 
-    // CanvasGroup del objeto raíz para poder bloquear TODO de golpe
+    // CanvasGroup del objeto raiz para poder bloquear TODO de golpe
     private CanvasGroup canvasGroupPrincipal;
+
+    private static readonly string[] escenasSinControles =
+    {
+        "PortadaInicio",
+        "InicioCuenta",
+        "MenuPrincipal",
+        "Opciones",
+        "Creditos",
+        "Partidas"
+    };
 
     private void Awake()
     {
-        // Configuración de la Instancia (Singleton)
+        // Configuracion de la Instancia (Singleton)
         if (Instance == null)
         {
             Instance = this;
@@ -28,6 +39,9 @@ public class ControlesMoviles : MonoBehaviour
             {
                 canvasGroupPrincipal = gameObject.AddComponent<CanvasGroup>();
             }
+
+            SceneManager.sceneLoaded += AlCargarEscena;
+            AplicarVisibilidadPorEscena(SceneManager.GetActiveScene().name);
         }
         else
         {
@@ -36,13 +50,54 @@ public class ControlesMoviles : MonoBehaviour
         }
 
         // ESTO ES LO QUE QUITA LOS CONTROLES EN PC
-        // Solo se quedan activos si estamos en un móvil REAL
+        // Solo se quedan activos si estamos en un movil REAL
 #if !UNITY_ANDROID && !UNITY_IOS
         gameObject.SetActive(false);
 #endif
     }
 
-    // Método para mostrar solo el botón de interacción durante los diálogos
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= AlCargarEscena;
+        }
+    }
+
+    private void AlCargarEscena(Scene scene, LoadSceneMode mode)
+    {
+        LimpiarEstadoBotones();
+        AplicarVisibilidadPorEscena(scene.name);
+    }
+
+    private void AplicarVisibilidadPorEscena(string nombreEscena)
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        bool mostrar = !EsEscenaSinControles(nombreEscena);
+
+        if (canvasGroupPrincipal != null)
+        {
+            canvasGroupPrincipal.alpha = mostrar ? 1f : 0f;
+            canvasGroupPrincipal.interactable = mostrar;
+            canvasGroupPrincipal.blocksRaycasts = mostrar;
+        }
+#endif
+    }
+
+    private bool EsEscenaSinControles(string nombreEscena)
+    {
+        for (int i = 0; i < escenasSinControles.Length; i++)
+        {
+            if (escenasSinControles[i] == nombreEscena)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Metodo para mostrar solo el boton de interaccion durante los dialogos
     public void MostrarSoloInteraccion()
     {
         if (joystick != null) joystick.gameObject.SetActive(false);
@@ -51,7 +106,7 @@ public class ControlesMoviles : MonoBehaviour
         if (botonInteraccion != null) botonInteraccion.gameObject.SetActive(true);
     }
 
-    // Método para mostrar todos los controles cuando volvemos al juego normal
+    // Metodo para mostrar todos los controles cuando volvemos al juego normal
     public void MostrarTodosLosControles()
     {
         if (joystick != null) joystick.gameObject.SetActive(true);
@@ -60,8 +115,8 @@ public class ControlesMoviles : MonoBehaviour
         if (botonInteraccion != null) botonInteraccion.gameObject.SetActive(true);
     }
 
-    // Método para resetear el estado de todos los botones
-    // Muy útil cuando cambiamos de escena para evitar clicks fantasma
+    // Metodo para resetear el estado de todos los botones
+    // Muy util cuando cambiamos de escena para evitar clicks fantasma
     public void LimpiarEstadoBotones()
     {
         if (botonInteraccion != null) botonInteraccion.ResetearEstado();
@@ -72,7 +127,7 @@ public class ControlesMoviles : MonoBehaviour
     }
 
     // Bloquear TODOS los controles temporalmente
-    // Este método es más agresivo que simplemente resetear el estado
+    // Este metodo es mas agresivo que simplemente resetear el estado
     public void BloquearControlesTemporalmente(float duracion = 0.5f)
     {
         #if UNITY_ANDROID || UNITY_IOS
@@ -91,7 +146,7 @@ public class ControlesMoviles : MonoBehaviour
         if (botonCorrer != null) botonCorrer.Deshabilitar();
         if (botonMenuOpciones != null) botonMenuOpciones.Deshabilitar();
 
-        // Bloquear también el raycast del canvas principal por si acaso
+        // Bloquear tambien el raycast del canvas principal por si acaso
         if (canvasGroupPrincipal != null)
         {
             canvasGroupPrincipal.blocksRaycasts = false;
