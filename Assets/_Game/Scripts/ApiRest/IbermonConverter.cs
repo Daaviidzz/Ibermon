@@ -238,9 +238,43 @@ public static class IbermonConverter
             path = path["sprites/".Length..];
 
         path = path.TrimStart('/');
+        path = NormalizarUrlPokeApi(path);
         if (path.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase))
+            path = path[..^4];
+        if (path.EndsWith(".gif", System.StringComparison.OrdinalIgnoreCase))
             path = path[..^4];
 
         return path;
+    }
+
+    private static string NormalizarUrlPokeApi(string path)
+    {
+        const string pokemonSegment = "pokemon/";
+        int pokemonIndex = path.LastIndexOf(pokemonSegment, System.StringComparison.OrdinalIgnoreCase);
+        if (pokemonIndex < 0)
+            return path;
+
+        string[] partes = path[(pokemonIndex + pokemonSegment.Length)..].Split('/');
+        if (partes.Length == 0)
+            return path;
+
+        string archivo = partes[^1];
+        bool esBack = false;
+        for (int i = 0; i < partes.Length - 1; i++)
+        {
+            if (partes[i].Equals("back", System.StringComparison.OrdinalIgnoreCase))
+            {
+                esBack = true;
+                break;
+            }
+        }
+
+        string nombre = archivo;
+        if (nombre.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase))
+            nombre = nombre[..^4];
+        if (nombre.EndsWith(".gif", System.StringComparison.OrdinalIgnoreCase))
+            nombre = nombre[..^4];
+
+        return esBack ? $"back/{nombre}" : nombre;
     }
 }
