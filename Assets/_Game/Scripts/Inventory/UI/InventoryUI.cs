@@ -477,8 +477,8 @@ public class InventoryUI : MonoBehaviour
                 var rect = scrollRect.GetComponent<RectTransform>();
                 rect.localScale = Vector3.one;
                 rect.localRotation = Quaternion.identity;
-                rect.anchorMin = new Vector2(0.42f, 0.46f);
-                rect.anchorMax = new Vector2(0.88f, 0.88f);
+                rect.anchorMin = new Vector2(0.50f, 0.30f);
+                rect.anchorMax = new Vector2(0.92f, 0.78f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
                 rect.offsetMin = Vector2.zero;
                 rect.offsetMax = Vector2.zero;
