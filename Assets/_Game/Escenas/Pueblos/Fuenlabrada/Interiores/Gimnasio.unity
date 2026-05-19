@@ -453,22 +453,28 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - "\xA1Uy! Pero si es el Nini... Te veo muy alterado, \xBFno? Esa cara de ansiedad
-      solo puede significar una cosa: quieres salir del pueblo."
-    - "Pues tranquilo, porque te traigo malas noticias: todav\xEDa no vamos a combatir."
-    - "\xBFQue por qu\xE9? \xA1Porque no me da la vida, chaval! Suficiente tengo
-      ya con mi clase de 2\xBA de DAM."
-    - "\xBFT\xFA sabes lo que es eso? Es una sala llena de gente que no sabe ni d\xF3nde
-      tiene la mano derecha, entregando trabajos que dan verg\xFCenza ajena y quej\xE1ndose
-      por todo. \xA1Es un suplicio!"
-    - "As\xED que, hasta que no termine este trimestre y consiga quitarme de encima
-      a esa panda, no pienso perder ni un segundo contigo."
-    - "Hala, ya tienes tu respuesta. Ahora, \xA1fuera de mi vista! Solo de pensar
-      que esos seres son el \"brillante\" futuro que le espera a este pa\xEDs, se
-      me suben los niveles de cortisol por las nubes. "
+    - Uy. Pero si es el Nini.
+    - Te veo muy alterado. Esa cara solo puede significar una cosa.
+    - Quieres salir del pueblo.
+    - Pues venga, vamos a hacerlo facil.
+    - Si me ganas, dejo de bloquear la ruta y te llevas tu momento de gloria barato.
+    - Si pierdes, te vuelves a casa y le dices a tu madre que lo intentaste.
+    - No te pongas nervioso, que solo voy con Kotlin.
+    - Bueno. Solo con Kotlin... pero Kotlin tiene mas futuro que media clase de DAM
+      junta.
+    - Venga, combate.
+  - textosDeEstaFase:
+    - Vale, vale. Me has ganado.
+    - No hagas esa cara, que tampoco has descubierto la penicilina.
+    - La ruta queda abierta. Largate antes de que me arrepienta.
+    - Y cuida a ese Ibermon, que para algo te ha sacado del pueblo.
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
+  cambiarFaseSiEntrenadorDerrotado: 1
+  claveEntrenadorDerrotado: Entrenador_Paloma_Derrotado
+  faseSiEntrenadorDerrotado: 1
+  noLanzarCombateSiEntrenadorDerrotado: 1
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5
@@ -12653,10 +12659,15 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - zzzzzzzzz
+    - El gimnasio esta raro desde que Paloma trajo a Kotlin.
+    - Yo no me meteria en medio, pero tu sabras.
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
+  cambiarFaseSiEntrenadorDerrotado: 1
+  claveEntrenadorDerrotado: Entrenador_Paloma_Derrotado
+  faseSiEntrenadorDerrotado: 1
+  noLanzarCombateSiEntrenadorDerrotado: 1
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5
@@ -13036,10 +13047,15 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - zzzzzzzzz
+    - Paloma dice que Kotlin es el futuro.
+    - Yo solo se que cada vez que compila algo, aqui tiembla el suelo.
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
+  cambiarFaseSiEntrenadorDerrotado: 1
+  claveEntrenadorDerrotado: Entrenador_Paloma_Derrotado
+  faseSiEntrenadorDerrotado: 1
+  noLanzarCombateSiEntrenadorDerrotado: 1
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5
@@ -17263,10 +17279,15 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - zzzzzzzzz
+    - Si vienes a por la medalla, habla con Paloma.
+    - Y no mires demasiado a Kotlin. Se crece.
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
+  cambiarFaseSiEntrenadorDerrotado: 1
+  claveEntrenadorDerrotado: Entrenador_Paloma_Derrotado
+  faseSiEntrenadorDerrotado: 1
+  noLanzarCombateSiEntrenadorDerrotado: 1
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5
@@ -17638,10 +17659,15 @@ MonoBehaviour:
   triggerAnimacion: 
   fasesDialogo:
   - textosDeEstaFase:
-    - zzzzzzzzz
+    - Aqui antes habia normas normales.
+    - Ahora hay una profesora gritando cosas de DAM y un Pokemon llamado Kotlin.
   faseActual: 0
   cambiarFaseSegunPokemon: 0
   pokemonNecesariosParaFase1: 5
+  cambiarFaseSiEntrenadorDerrotado: 1
+  claveEntrenadorDerrotado: Entrenador_Paloma_Derrotado
+  faseSiEntrenadorDerrotado: 1
+  noLanzarCombateSiEntrenadorDerrotado: 1
   cambiarEscenaAlTerminarFase1: 0
   escenaDespuesDeFase1: SalidaRuta1
   segundosEnEscenaTransicion: 5

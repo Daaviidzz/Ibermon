@@ -53,6 +53,16 @@ public class Interactuable : MonoBehaviour
     [Tooltip("Número de Pokémon necesarios para cambiar a la fase 1")]
     public int pokemonNecesariosParaFase1 = 5;
 
+    [Header("Cambio de fase por entrenador derrotado")]
+    [Tooltip("Si está marcado, cambia de fase cuando exista una clave de entrenador derrotado en PlayerPrefs")]
+    public bool cambiarFaseSiEntrenadorDerrotado = false;
+    [Tooltip("Clave PlayerPrefs. Ej: Entrenador_Paloma_Derrotado")]
+    public string claveEntrenadorDerrotado = "Entrenador_Paloma_Derrotado";
+    [Tooltip("Fase que se muestra si la clave de entrenador derrotado existe")]
+    public int faseSiEntrenadorDerrotado = 1;
+    [Tooltip("Para NPC entrenador: si ya está derrotado, muestra la fase post y no lanza combate")]
+    public bool noLanzarCombateSiEntrenadorDerrotado = true;
+
     [Header("Cambio de escena al terminar fase 1")]
     [Tooltip("Si está marcado, al terminar la fase 1 cambia automáticamente a otra escena")]
     public bool cambiarEscenaAlTerminarFase1 = false;
@@ -167,6 +177,10 @@ public class Interactuable : MonoBehaviour
             if (cambiarFaseSegunPokemon && equipoPokemon != null)
             {
                 ActualizarFaseSegunPokemon();
+            }
+            if (cambiarFaseSiEntrenadorDerrotado)
+            {
+                ActualizarFaseSegunEntrenadorDerrotado();
             }
 
             // Si este objeto no tiene controladorTextosUI ni fasesDialogo, no hace nada con textos
@@ -310,7 +324,7 @@ public class Interactuable : MonoBehaviour
         }
 
         // Al terminar el diálogo del entrenador, lanzar la batalla
-        if (esEntrenador)
+        if (esEntrenador && PuedeLanzarCombateEntrenador())
         {
             LanzarBatallaEntrenador();
         }
@@ -387,11 +401,19 @@ public class Interactuable : MonoBehaviour
     // y TrainerController cuando el entrenador ve al jugador
     public void IniciarDialogoDesdeEntrenador()
     {
+        if (cambiarFaseSiEntrenadorDerrotado)
+        {
+            ActualizarFaseSegunEntrenadorDerrotado();
+        }
+
         // Si no hay controlador de textos ni fases configuradas no podemos mostrar nada
         // En ese caso si hay un entrenador asociado lanzamos la batalla directamente
         if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
         {
-            LanzarBatallaEntrenador();
+            if (PuedeLanzarCombateEntrenador())
+            {
+                LanzarBatallaEntrenador();
+            }
             return;
         }
 
@@ -444,6 +466,34 @@ public class Interactuable : MonoBehaviour
         {
             faseActual = nuevaFase;
         }
+    }
+
+    private void ActualizarFaseSegunEntrenadorDerrotado()
+    {
+        if (string.IsNullOrWhiteSpace(claveEntrenadorDerrotado)) return;
+        if (PlayerPrefs.GetInt(ObtenerClaveEntrenadorDerrotado(), 0) == 1)
+        {
+            CambiarFase(faseSiEntrenadorDerrotado);
+        }
+        else
+        {
+            CambiarFase(0);
+        }
+    }
+
+    private bool PuedeLanzarCombateEntrenador()
+    {
+        if (!noLanzarCombateSiEntrenadorDerrotado) return true;
+        if (string.IsNullOrWhiteSpace(claveEntrenadorDerrotado)) return true;
+        return PlayerPrefs.GetInt(ObtenerClaveEntrenadorDerrotado(), 0) != 1;
+    }
+
+    private string ObtenerClaveEntrenadorDerrotado()
+    {
+        string partidaId = SessionManager.Instance?.PartidaId;
+        return string.IsNullOrWhiteSpace(partidaId)
+            ? claveEntrenadorDerrotado
+            : $"{claveEntrenadorDerrotado}_{partidaId}";
     }
 
     // Parte movil inicial

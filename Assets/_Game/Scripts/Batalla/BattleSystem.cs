@@ -1,4 +1,5 @@
 using Assets.Scripts.Batalla;
+using ApiRest.Managers;
 using DG.Tweening;
 using System;
 using System.Collections;
@@ -480,7 +481,9 @@ public class BattleSystem : MonoBehaviour
 
             if (esTrainerBattle && !string.IsNullOrEmpty(BattleData.NombreEntrenador))
             {
-                string clave = $"Entrenador_{BattleData.NombreEntrenador}_Derrotado";
+                string claveBase = $"Entrenador_{BattleData.NombreEntrenador}_Derrotado";
+                string partidaId = SessionManager.Instance?.PartidaId;
+                string clave = string.IsNullOrWhiteSpace(partidaId) ? claveBase : $"{claveBase}_{partidaId}";
                 PlayerPrefs.SetInt(clave, 1);
                 PlayerPrefs.Save();
                 BattleData.NombreEntrenador = null;

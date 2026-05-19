@@ -1,0 +1,415 @@
+fileFormatVersion: 2
+guid: aee7e47409b89014eb13bde85b68c71a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 9183861127075254998
+    second: Miri_0
+  - first:
+      213: 2371971612778787914
+    second: Miri_1
+  - first:
+      213: -4397628038824511777
+    second: Miri_2
+  - first:
+      213: 7459414797101841710
+    second: Miri_3
+  - first:
+      213: 6738896195234193353
+    second: Miri_4
+  - first:
+      213: -4095848611288091328
+    second: Miri_5
+  - first:
+      213: -6149981572071108628
+    second: Miri_6
+  - first:
+      213: 2590867881390054610
+    second: Miri_7
+  - first:
+      213: -7510904709240820831
+    second: Miri_8
+  - first:
+      213: 4667688204033840650
+    second: Miri_9
+  - first:
+      213: 2872893362683752435
+    second: Miri_10
+  - first:
+      213: -3175651417067920016
+    second: Miri_11
+  - first:
+      213: 8519783638616164113
+    second: Miri_12
+  - first:
+      213: 268832999717820415
+    second: Miri_13
+  - first:
+      213: 4929058903217711176
+    second: Miri_14
+  - first:
+      213: -1952438108931991998
+    second: Miri_15
+  - first:
+      213: -8038341776341987487
+    second: Miri_16
+  - first:
+      213: 8182632677191936075
+    second: Miri_17
+  - first:
+      213: 7301897553016176190
+    second: Miri_18
+  - first:
+      213: 3313404778363629432
+    second: Miri_19
+  - first:
+      213: 1125281982220284066
+    second: Miri_20
+  - first:
+      213: 2916857056229858962
+    second: Miri_21
+  - first:
+      213: -5206905008551183113
+    second: Miri_22
+  - first:
+      213: 8875250485688987080
+    second: Miri_23
+  - first:
+      213: 2801715231943673665
+    second: Miri_24
+  - first:
+      213: -4102638729321448224
+    second: Miri_25
+  - first:
+      213: 712636836673785759
+    second: Miri_26
+  - first:
+      213: -8102199437559372563
+    second: Miri_27
+  - first:
+      213: 6461498607673486011
+    second: Miri_28
+  - first:
+      213: -3763039662082443772
+    second: Miri_29
+  - first:
+      213: 2420938105813515614
+    second: Miri_30
+  - first:
+      213: -6123182725452740738
+    second: Miri_31
+  - first:
+      213: -7748880485558898399
+    second: Miri_32
+  - first:
+      213: 6170366970644447316
+    second: Miri_33
+  - first:
+      213: 1623426252269045574
+    second: Miri_34
+  - first:
+      213: 7864593861260353346
+    second: Miri_35
+  - first:
+      213: 2272827275553270089
+    second: Miri_36
+  - first:
+      213: 7569993177326815050
+    second: Miri_37
+  - first:
+      213: 8156678889793609961
+    second: Miri_38
+  - first:
+      213: 2323303748107120056
+    second: Miri_39
+  - first:
+      213: 8986793924377629528
+    second: Miri_40
+  - first:
+      213: 8825404868975284115
+    second: Miri_41
+  - first:
+      213: 2299009934855954514
+    second: Miri_42
+  - first:
+      213: -5586608800049233363
+    second: Miri_43
+  - first:
+      213: -7467615923435814271
+    second: Miri_44
+  - first:
+      213: -3132332597898002535
+    second: Miri_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Miri_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 250
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d2d6d17901a37f70800000000000000
+      internalID: 9183861127075254998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Miri_1
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 250
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a447df45d9feae020800000000000000
+      internalID: 2371971612778787914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Miri_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd6319b299c78f2c0800000000000000
+      internalID: -4397628038824511777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Miri_3
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 0
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2d3c8d7c3a258760800000000000000
+      internalID: 7459414797101841710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Miri_0: 9183861127075254998
+      Miri_1: 2371971612778787914
+      Miri_10: 2872893362683752435
+      Miri_11: -3175651417067920016
+      Miri_12: 8519783638616164113
+      Miri_13: 268832999717820415
+      Miri_14: 4929058903217711176
+      Miri_15: -1952438108931991998
+      Miri_16: -8038341776341987487
+      Miri_17: 8182632677191936075
+      Miri_18: 7301897553016176190
+      Miri_19: 3313404778363629432
+      Miri_2: -4397628038824511777
+      Miri_20: 1125281982220284066
+      Miri_21: 2916857056229858962
+      Miri_22: -5206905008551183113
+      Miri_23: 8875250485688987080
+      Miri_24: 2801715231943673665
+      Miri_25: -4102638729321448224
+      Miri_26: 712636836673785759
+      Miri_27: -8102199437559372563
+      Miri_28: 6461498607673486011
+      Miri_29: -3763039662082443772
+      Miri_3: 7459414797101841710
+      Miri_30: 2420938105813515614
+      Miri_31: -6123182725452740738
+      Miri_32: -7748880485558898399
+      Miri_33: 6170366970644447316
+      Miri_34: 1623426252269045574
+      Miri_35: 7864593861260353346
+      Miri_36: 2272827275553270089
+      Miri_37: 7569993177326815050
+      Miri_38: 8156678889793609961
+      Miri_39: 2323303748107120056
+      Miri_4: 6738896195234193353
+      Miri_40: 8986793924377629528
+      Miri_41: 8825404868975284115
+      Miri_42: 2299009934855954514
+      Miri_43: -5586608800049233363
+      Miri_44: -7467615923435814271
+      Miri_45: -3132332597898002535
+      Miri_5: -4095848611288091328
+      Miri_6: -6149981572071108628
+      Miri_7: 2590867881390054610
+      Miri_8: -7510904709240820831
+      Miri_9: 4667688204033840650
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

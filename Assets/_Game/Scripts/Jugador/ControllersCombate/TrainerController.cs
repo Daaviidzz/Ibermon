@@ -31,7 +31,12 @@ public class TrainerController : MonoBehaviour
     {
         trainerParty = GetComponent<PokemonParty>();
         rb = GetComponent<Rigidbody2D>();
-        claveGuardado = $"Entrenador_{gameObject.name}_Derrotado";
+        string nombreClave = string.IsNullOrWhiteSpace(nombreEntrenadorApi)
+            ? NombreEntrenadorPorDefecto
+            : nombreEntrenadorApi;
+        string claveBase = $"Entrenador_{nombreClave}_Derrotado";
+        string partidaId = SessionManager.Instance?.PartidaId;
+        claveGuardado = string.IsNullOrWhiteSpace(partidaId) ? claveBase : $"{claveBase}_{partidaId}";
         yaDerotado = PlayerPrefs.GetInt(claveGuardado, 0) == 1;
     }
 

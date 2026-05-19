@@ -1,0 +1,491 @@
+fileFormatVersion: 2
+guid: f4704e65aa6d6524fb7beb079afc9d6d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7881491792393951584
+    second: AmigoB_Marcos_0
+  - first:
+      213: 236351577145748561
+    second: AmigoB_Marcos_1
+  - first:
+      213: 1576311475692560367
+    second: AmigoB_Marcos_2
+  - first:
+      213: 7672927995241853717
+    second: AmigoB_Marcos_3
+  - first:
+      213: -1213925956989157585
+    second: AmigoB_Marcos_4
+  - first:
+      213: 1255697921266482656
+    second: AmigoB_Marcos_5
+  - first:
+      213: -2977999245159450669
+    second: AmigoB_Marcos_6
+  - first:
+      213: 1059678756522951387
+    second: AmigoB_Marcos_7
+  - first:
+      213: -1248553067162746270
+    second: AmigoB_Marcos_8
+  - first:
+      213: -1036349110524485213
+    second: AmigoB_Marcos_9
+  - first:
+      213: 2389730683636480433
+    second: AmigoB_Marcos_10
+  - first:
+      213: 7725052420262626846
+    second: AmigoB_Marcos_11
+  - first:
+      213: -7989030791291701272
+    second: AmigoB_Marcos_12
+  - first:
+      213: -2359895482544107462
+    second: AmigoB_Marcos_13
+  - first:
+      213: -5786557110981553802
+    second: AmigoB_Marcos_14
+  - first:
+      213: -1068921627282213011
+    second: AmigoB_Marcos_15
+  - first:
+      213: -1999445886282075279
+    second: AmigoB_Marcos_16
+  - first:
+      213: 3948215506934432862
+    second: AmigoB_Marcos_17
+  - first:
+      213: 2409823657091295219
+    second: AmigoB_Marcos_18
+  - first:
+      213: -3702722721950675862
+    second: AmigoB_Marcos_19
+  - first:
+      213: -3518164910913234259
+    second: AmigoB_Marcos_20
+  - first:
+      213: 4049108595398854066
+    second: AmigoB_Marcos_21
+  - first:
+      213: -4937966477783736974
+    second: AmigoB_Marcos_22
+  - first:
+      213: -5040910337685804231
+    second: AmigoB_Marcos_23
+  - first:
+      213: -8156441508054646015
+    second: AmigoB_Marcos_24
+  - first:
+      213: -8567273092349804191
+    second: AmigoB_Marcos_25
+  - first:
+      213: -366300309554130886
+    second: AmigoB_Marcos_26
+  - first:
+      213: 8578096369896291365
+    second: AmigoB_Marcos_27
+  - first:
+      213: 5295755868853452932
+    second: AmigoB_Marcos_28
+  - first:
+      213: -7467050911093022742
+    second: AmigoB_Marcos_29
+  - first:
+      213: 8822971993806308096
+    second: AmigoB_Marcos_30
+  - first:
+      213: 5454263983008689828
+    second: AmigoB_Marcos_31
+  - first:
+      213: -5465133185673835151
+    second: AmigoB_Marcos_32
+  - first:
+      213: -1837761416324632437
+    second: AmigoB_Marcos_33
+  - first:
+      213: -2220118146586346345
+    second: AmigoB_Marcos_34
+  - first:
+      213: 2782455942085657846
+    second: AmigoB_Marcos_35
+  - first:
+      213: -3561268115923886825
+    second: AmigoB_Marcos_36
+  - first:
+      213: 7692409433942269321
+    second: AmigoB_Marcos_37
+  - first:
+      213: 7416243838980345789
+    second: AmigoB_Marcos_38
+  - first:
+      213: 8539044722176234130
+    second: AmigoB_Marcos_39
+  - first:
+      213: -7214657156702986694
+    second: AmigoB_Marcos_40
+  - first:
+      213: -5851435374637833933
+    second: AmigoB_Marcos_41
+  - first:
+      213: 1468971681321397572
+    second: AmigoB_Marcos_42
+  - first:
+      213: 7943697830024658929
+    second: AmigoB_Marcos_43
+  - first:
+      213: -7700450555487687925
+    second: AmigoB_Marcos_44
+  - first:
+      213: 6871483690066601647
+    second: AmigoB_Marcos_45
+  - first:
+      213: -7685685892467968955
+    second: AmigoB_Marcos_46
+  - first:
+      213: -702024947196240905
+    second: AmigoB_Marcos_47
+  - first:
+      213: 5391481050917864681
+    second: AmigoB_Marcos_48
+  - first:
+      213: 8718109504223498571
+    second: AmigoB_Marcos_49
+  - first:
+      213: 663574614735679576
+    second: AmigoB_Marcos_50
+  - first:
+      213: 358178470791081539
+    second: AmigoB_Marcos_51
+  - first:
+      213: 1667500926888757771
+    second: AmigoB_Marcos_52
+  - first:
+      213: -82204849227020241
+    second: AmigoB_Marcos_53
+  - first:
+      213: 4752487221226786326
+    second: AmigoB_Marcos_54
+  - first:
+      213: 3353278097834748524
+    second: AmigoB_Marcos_55
+  - first:
+      213: -9194178487228021598
+    second: AmigoB_Marcos_56
+  - first:
+      213: 7612176451225687234
+    second: AmigoB_Marcos_57
+  - first:
+      213: -7945073344255292651
+    second: AmigoB_Marcos_58
+  - first:
+      213: 6780886694689281940
+    second: AmigoB_Marcos_59
+  - first:
+      213: -8995205963847031112
+    second: AmigoB_Marcos_60
+  - first:
+      213: -3282813507158515499
+    second: AmigoB_Marcos_61
+  - first:
+      213: -1670717421816051591
+    second: AmigoB_Marcos_62
+  - first:
+      213: -3297182390795816455
+    second: AmigoB_Marcos_63
+  - first:
+      213: 8604903454174445309
+    second: AmigoB_Marcos_64
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AmigoB_Marcos_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 250
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0695cc9f60fa06d60800000000000000
+      internalID: 7881491792393951584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmigoB_Marcos_1
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 250
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15c20e5d180b74300800000000000000
+      internalID: 236351577145748561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmigoB_Marcos_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fefd60c7fee20e510800000000000000
+      internalID: 1576311475692560367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AmigoB_Marcos_3
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 0
+        width: 250
+        height: 250
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5137a87db57bb7a60800000000000000
+      internalID: 7672927995241853717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AmigoB_Marcos_0: 7881491792393951584
+      AmigoB_Marcos_1: 236351577145748561
+      AmigoB_Marcos_10: 2389730683636480433
+      AmigoB_Marcos_11: 7725052420262626846
+      AmigoB_Marcos_12: -7989030791291701272
+      AmigoB_Marcos_13: -2359895482544107462
+      AmigoB_Marcos_14: -5786557110981553802
+      AmigoB_Marcos_15: -1068921627282213011
+      AmigoB_Marcos_16: -1999445886282075279
+      AmigoB_Marcos_17: 3948215506934432862
+      AmigoB_Marcos_18: 2409823657091295219
+      AmigoB_Marcos_19: -3702722721950675862
+      AmigoB_Marcos_2: 1576311475692560367
+      AmigoB_Marcos_20: -3518164910913234259
+      AmigoB_Marcos_21: 4049108595398854066
+      AmigoB_Marcos_22: -4937966477783736974
+      AmigoB_Marcos_23: -5040910337685804231
+      AmigoB_Marcos_24: -8156441508054646015
+      AmigoB_Marcos_25: -8567273092349804191
+      AmigoB_Marcos_26: -366300309554130886
+      AmigoB_Marcos_27: 8578096369896291365
+      AmigoB_Marcos_28: 5295755868853452932
+      AmigoB_Marcos_29: -7467050911093022742
+      AmigoB_Marcos_3: 7672927995241853717
+      AmigoB_Marcos_30: 8822971993806308096
+      AmigoB_Marcos_31: 5454263983008689828
+      AmigoB_Marcos_32: -5465133185673835151
+      AmigoB_Marcos_33: -1837761416324632437
+      AmigoB_Marcos_34: -2220118146586346345
+      AmigoB_Marcos_35: 2782455942085657846
+      AmigoB_Marcos_36: -3561268115923886825
+      AmigoB_Marcos_37: 7692409433942269321
+      AmigoB_Marcos_38: 7416243838980345789
+      AmigoB_Marcos_39: 8539044722176234130
+      AmigoB_Marcos_4: -1213925956989157585
+      AmigoB_Marcos_40: -7214657156702986694
+      AmigoB_Marcos_41: -5851435374637833933
+      AmigoB_Marcos_42: 1468971681321397572
+      AmigoB_Marcos_43: 7943697830024658929
+      AmigoB_Marcos_44: -7700450555487687925
+      AmigoB_Marcos_45: 6871483690066601647
+      AmigoB_Marcos_46: -7685685892467968955
+      AmigoB_Marcos_47: -702024947196240905
+      AmigoB_Marcos_48: 5391481050917864681
+      AmigoB_Marcos_49: 8718109504223498571
+      AmigoB_Marcos_5: 1255697921266482656
+      AmigoB_Marcos_50: 663574614735679576
+      AmigoB_Marcos_51: 358178470791081539
+      AmigoB_Marcos_52: 1667500926888757771
+      AmigoB_Marcos_53: -82204849227020241
+      AmigoB_Marcos_54: 4752487221226786326
+      AmigoB_Marcos_55: 3353278097834748524
+      AmigoB_Marcos_56: -9194178487228021598
+      AmigoB_Marcos_57: 7612176451225687234
+      AmigoB_Marcos_58: -7945073344255292651
+      AmigoB_Marcos_59: 6780886694689281940
+      AmigoB_Marcos_6: -2977999245159450669
+      AmigoB_Marcos_60: -8995205963847031112
+      AmigoB_Marcos_61: -3282813507158515499
+      AmigoB_Marcos_62: -1670717421816051591
+      AmigoB_Marcos_63: -3297182390795816455
+      AmigoB_Marcos_64: 8604903454174445309
+      AmigoB_Marcos_7: 1059678756522951387
+      AmigoB_Marcos_8: -1248553067162746270
+      AmigoB_Marcos_9: -1036349110524485213
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
