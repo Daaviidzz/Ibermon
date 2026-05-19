@@ -251,6 +251,7 @@ public class Interactuable : MonoBehaviour
             // Si la posición es menor al total de la lista mostramos la siguiente frase
             if (indice < textos.Count)
             {
+                
                 controladorTextosUI.mostrarTextos(textos[indice]); // Llamamos al método de la UI para que muestre el texto
                 indice++; // Sumamos uno al contador
             }
@@ -266,6 +267,7 @@ public class Interactuable : MonoBehaviour
             TerminarDialogo();
         }
     }
+   
 
     // Método para limpiar estados y devolver el control al jugador correctamente
     private void TerminarDialogo()

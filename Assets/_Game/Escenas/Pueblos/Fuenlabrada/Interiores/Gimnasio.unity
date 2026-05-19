@@ -12552,6 +12552,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9194720922275282168, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9194720922275282168, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9194720922275282168, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9194720922275282168, guid: 8c55a3c2b9319794b89f4305189ca267, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -12652,6 +12664,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -13034,6 +13047,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -16934,15 +16948,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_MatchWidthOrHeight
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 480
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 320
+      value: 786
       objectReference: {fileID: 0}
     - target: {fileID: 5647769450730245297, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_Pivot.x
@@ -17266,6 +17280,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -17640,6 +17655,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 

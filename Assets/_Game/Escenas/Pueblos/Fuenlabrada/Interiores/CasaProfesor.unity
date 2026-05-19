@@ -593,7 +593,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4288438561
   m_fontColor: {r: 0.13, g: 0.38, b: 0.61, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -606,7 +606,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -4693,15 +4693,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_MatchWidthOrHeight
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_ReferenceResolution.x
-      value: 480
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 2932649878826610149, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_ReferenceResolution.y
-      value: 320
+      value: 786
       objectReference: {fileID: 0}
     - target: {fileID: 5647769450730245297, guid: 6569fcfbac5a4e14baa727aa6b377d22, type: 3}
       propertyPath: m_Pivot.x
@@ -4882,7 +4882,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -5056,6 +5056,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -5425,7 +5426,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4292267975
   m_fontColor: {r: 0.78, g: 0.81, b: 0.84, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5438,7 +5439,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -5562,7 +5563,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4292267975
   m_fontColor: {r: 0.78, g: 0.81, b: 0.84, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5575,7 +5576,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -5802,7 +5803,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4287901268
   m_fontColor: {r: 0.33, g: 0.18, b: 0.58, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5815,7 +5816,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6108,7 +6109,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6579,7 +6580,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4292604149
   m_fontColor: {r: 0.96, g: 0.94, b: 0.86, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6592,7 +6593,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6729,7 +6730,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6835,6 +6836,7 @@ MonoBehaviour:
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
   esEntrenador: 0
+  nombreEntrenadorApi: Paloma
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -6986,7 +6988,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4291938237
   m_fontColor: {r: 0.74, g: 0.78, b: 0.82, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6999,7 +7001,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -8000,7 +8002,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4280041656
   m_fontColor: {r: 0.72, g: 0.25, b: 0.11, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -8013,7 +8015,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -11934,7 +11936,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -12150,7 +12152,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -12362,7 +12364,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -12675,7 +12677,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4292267975
   m_fontColor: {r: 0.78, g: 0.81, b: 0.84, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -12688,7 +12690,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
