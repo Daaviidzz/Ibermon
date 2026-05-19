@@ -1,8 +1,11 @@
 using Assets.Scripts.Batalla;
 using System.Collections;
 using System.Collections.Generic;
+using ApiRest.Managers;
+using ApiRest.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 #pragma warning disable 0108
 
@@ -23,6 +26,7 @@ public class Interactuable : MonoBehaviour
 
     //Si es entrenador o no
     public bool esEntrenador = false;
+    [SerializeField] private string nombreEntrenadorApi = "Paloma";
 
     //Mensaje para la interacción
     public string mensaje = "Pulsa E para interactuar";
@@ -77,10 +81,16 @@ public class Interactuable : MonoBehaviour
 
     // Detectar si estamos en móvil o PC
     private bool esMovil;
+    private TrainerController trainerController;
 
     private void Awake()
     {
         comprobacionInicialParteMovil();
+        trainerController = GetComponentInParent<TrainerController>();
+        if (trainerController != null)
+        {
+            esEntrenador = true;
+        }
 
         if (GameObject.FindWithTag("Player") != null)
         {
@@ -130,24 +140,27 @@ public class Interactuable : MonoBehaviour
         // Solo procesar input si NO estamos ya en diálogo y el jugador está dentro del collider
         if (jugadorDentro && !dialogoActivo && DetectarInteraccion())
         {
-            // Comprobamos si este GameObject tiene un ProfesorController
-            // Si lo tiene le delegamos la decision de mostrar el starter o el dialogo
-            // Es importante que este check sea el primero para que el profesor
-            // pueda interceptar la interaccion antes de que Interactuable haga nada
-            // Buscamos ProfesorController en este objeto o en su padre
-            // por si la estructura del NPC tiene el Interactuable en un hijo
-            var profesor = GetComponent<ProfesorController>();
-            if (profesor == null)
+            if (!esEntrenador)
             {
-                profesor = GetComponentInParent<ProfesorController>();
-            }
+                // Comprobamos si este GameObject tiene un ProfesorController
+                // Si lo tiene le delegamos la decision de mostrar el starter o el dialogo
+                // Es importante que este check sea el primero para que el profesor
+                // pueda interceptar la interaccion antes de que Interactuable haga nada
+                // Buscamos ProfesorController en este objeto o en su padre
+                // por si la estructura del NPC tiene el Interactuable en un hijo
+                var profesor = GetComponent<ProfesorController>();
+                if (profesor == null)
+                {
+                    profesor = GetComponentInParent<ProfesorController>();
+                }
 
-            Debug.Log($"[Interactuable] ProfesorController encontrado: {profesor != null}");
+                Debug.Log($"[Interactuable] ProfesorController encontrado: {profesor != null}");
 
-            if (profesor != null)
-            {
-                profesor.OnInteraccion();
-                return;
+                if (profesor != null)
+                {
+                    profesor.OnInteraccion();
+                    return;
+                }
             }
 
             // Antes de mostrar el diálogo, comprobar si hay que cambiar de fase automáticamente
@@ -162,6 +175,10 @@ public class Interactuable : MonoBehaviour
             {
                 if (archivoAudio != null) archivoAudio.PlayOneShot(audio);
                 if (animacion != null) animacion.SetTrigger(triggerAnimacion);
+                if (esEntrenador)
+                {
+                    LanzarBatallaEntrenador();
+                }
                 return; // Sale y no intenta abrir diálogo
             }
 
@@ -280,13 +297,76 @@ public class Interactuable : MonoBehaviour
         }
 
         // Al terminar el diálogo del entrenador, lanzar la batalla
-        // Subimos al padre a buscar el TrainerController
-        var trainer = GetComponentInParent<TrainerController>();
-        if (trainer != null)
+        if (esEntrenador)
         {
-            var jugador = GameObject.FindWithTag("Player").transform;
-            trainer.IniciarBatallaEntrenador(jugador);
+            LanzarBatallaEntrenador();
         }
+    }
+
+    private void LanzarBatallaEntrenador()
+    {
+        if (trainerController == null)
+        {
+            trainerController = GetComponentInParent<TrainerController>();
+        }
+
+        if (trainerController != null)
+        {
+            GameObject jugadorConTrainer = GameObject.FindWithTag("Player");
+            if (jugadorConTrainer == null)
+            {
+                Debug.LogError("[Interactuable] No se encontro Player para iniciar combate de entrenador.");
+                return;
+            }
+
+            Debug.Log($"[Interactuable] Dialogo de entrenador terminado. Iniciando combate con {trainerController.name}.");
+            trainerController.IniciarBatallaEntrenador(jugadorConTrainer.transform);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(nombreEntrenadorApi))
+        {
+            Debug.LogError($"[Interactuable] '{gameObject.name}' esta marcado como entrenador pero no tiene nombre de API.");
+            return;
+        }
+
+        GameObject jugador = GameObject.FindWithTag("Player");
+        if (jugador == null)
+        {
+            Debug.LogError("[Interactuable] No se encontro Player para iniciar combate de entrenador.");
+            return;
+        }
+
+        JugadorSpawn.posicion = jugador.transform.position;
+        JugadorSpawn.escenaAnterior = SceneManager.GetActiveScene().name;
+        BattleData.NombreEntrenador = nombreEntrenadorApi;
+
+        if (ApiSetup.Entrenador == null || CatalogoCache.Instance == null || !CatalogoCache.Instance.EstaListo)
+        {
+            Debug.LogError("[Interactuable] No se puede iniciar combate: API o CatalogoCache no disponibles.");
+            return;
+        }
+
+        Debug.Log($"[Interactuable] Dialogo de entrenador terminado. Cargando '{nombreEntrenadorApi}' desde API.");
+        ApiSetup.Entrenador.ObtenerPorNombre(nombreEntrenadorApi, LanzarBatallaConEntrenadorApi,
+            error => Debug.LogError($"[Interactuable] No se pudo cargar entrenador '{nombreEntrenadorApi}': {error}"));
+    }
+
+    private void LanzarBatallaConEntrenadorApi(EntrenadorCatalogoDetalle detalle)
+    {
+        List<Pokemon> equipo = IbermonConverter.ToPokemonsFromEntrenador(detalle.equipo, CatalogoCache.Instance);
+        if (equipo == null || equipo.Count == 0)
+        {
+            Debug.LogError($"[Interactuable] Entrenador '{detalle.nombre}' sin equipo valido tras convertir la API.");
+            return;
+        }
+
+        Debug.Log($"[Interactuable] Equipo de '{detalle.nombre}' cargado desde API ({equipo.Count} ibermon).");
+        BattleData.TrainerPokemons = equipo;
+        BattleData.EsEntrenador = true;
+        BattleData.WildPokemon = null;
+        BattleData.NombreEntrenador = detalle.nombre;
+        SceneManager.LoadScene("Combate");
     }
 
     // Inicia el diálogo directamente sin esperar input del jugador
@@ -298,9 +378,7 @@ public class Interactuable : MonoBehaviour
         // En ese caso si hay un entrenador asociado lanzamos la batalla directamente
         if (controladorTextosUI == null || fasesDialogo == null || fasesDialogo.Count == 0)
         {
-            var trainer = GetComponentInParent<TrainerController>();
-            if (trainer != null)
-                trainer.IniciarBatallaEntrenador(GameObject.FindWithTag("Player").transform);
+            LanzarBatallaEntrenador();
             return;
         }
 

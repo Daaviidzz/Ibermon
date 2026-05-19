@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PokemonBase
   name: Kal-Noel
   description: Vino en una nave igual que su hermano, pero cayó en un volcán en lugar de en una granja. Habilidad: Coraza Ígnea - impide el daño por contacto y puede quemar al atacante.
-  frontSprite: {fileID: 21300000, guid: 48b4ebf6483447c49b44a845c6f5515e, type: 3}
-  backSprite: {fileID: 21300000, guid: f303ff1900cd40b6bff51d0cb886e933, type: 3}
+  frontSprite: {fileID: -2986480522433596089, guid: 48b4ebf6483447c49b44a845c6f5515e, type: 3}
+  backSprite: {fileID: -5120750272631010729, guid: ff465079704338e4a8c2848cc370e005, type: 3}
   type1: 2
   type2: 13
   maxHp: 95

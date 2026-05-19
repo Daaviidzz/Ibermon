@@ -184,7 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactuable
   archivoAudio: {fileID: 0}
   audio: {fileID: 0}
-  esEntrenador: 0
+  esEntrenador: 1
   mensaje: Pulsa E para interactuar
   animacion: {fileID: 0}
   triggerAnimacion: 
@@ -440,6 +440,7 @@ MonoBehaviour:
   direccion: 1
   exclamacion: {fileID: 430575989462065859}
   velocidadMovimiento: 3
+  nombreEntrenadorApi: Paloma
 --- !u!114 &4354220085790584796
 MonoBehaviour:
   m_ObjectHideFlags: 0

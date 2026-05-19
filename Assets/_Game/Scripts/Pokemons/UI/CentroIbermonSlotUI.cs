@@ -159,9 +159,9 @@ public class CentroIbermonSlotUI : MonoBehaviour
 
     private static Sprite CargarDesdeResources(string path)
     {
-        if (string.IsNullOrEmpty(path)) return null;
+        string sinExt = NormalizarPathSprite(path);
+        if (string.IsNullOrEmpty(sinExt)) return null;
 
-        string sinExt = path.EndsWith(".png") ? path[..^4] : path;
         string resourcesPath = $"Sprites/Pokemon/{sinExt}";
 
         Sprite sprite = Resources.Load<Sprite>(resourcesPath);
@@ -169,5 +169,29 @@ public class CentroIbermonSlotUI : MonoBehaviour
 
         Sprite[] sprites = Resources.LoadAll<Sprite>(resourcesPath);
         return sprites != null && sprites.Length > 0 ? sprites[0] : null;
+    }
+
+    private static string NormalizarPathSprite(string apiPath)
+    {
+        if (string.IsNullOrWhiteSpace(apiPath))
+            return null;
+
+        string path = apiPath.Trim().Replace('\\', '/');
+        int queryIndex = path.IndexOf('?');
+        if (queryIndex >= 0)
+            path = path[..queryIndex];
+
+        const string spritesSegment = "/sprites/";
+        int spritesIndex = path.IndexOf(spritesSegment, System.StringComparison.OrdinalIgnoreCase);
+        if (spritesIndex >= 0)
+            path = path[(spritesIndex + spritesSegment.Length)..];
+        else if (path.StartsWith("sprites/", System.StringComparison.OrdinalIgnoreCase))
+            path = path["sprites/".Length..];
+
+        path = path.TrimStart('/');
+        if (path.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase))
+            path = path[..^4];
+
+        return path;
     }
 }

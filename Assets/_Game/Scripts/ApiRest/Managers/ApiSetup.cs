@@ -20,6 +20,7 @@ namespace ApiRest.Managers
         public static IbermonJugadorService IbermonJugador { get; private set; }
         public static ItemJugadorService ItemJugador { get; private set; }
         public static CatalogoService Catalogo { get; private set; }
+        public static EntrenadorCatalogoService Entrenador { get; private set; }
 
         private void Awake()
         {
@@ -58,6 +59,7 @@ namespace ApiRest.Managers
             IbermonJugador = contenedorServicios.AddComponent<IbermonJugadorService>();
             ItemJugador = contenedorServicios.AddComponent<ItemJugadorService>();
             Catalogo = contenedorServicios.AddComponent<CatalogoService>();
+            Entrenador = contenedorServicios.AddComponent<EntrenadorCatalogoService>();
 
             // Anadimos tambien el gestor de sesion y el cache de catalogos
             contenedorServicios.AddComponent<SessionManager>();

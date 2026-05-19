@@ -118,6 +118,57 @@ public static class IbermonConverter
         return result;
     }
 
+    public static List<Pokemon> ToPokemonsFromEntrenador(
+        List<EquipoEntrenadorEntrada> equipoApi, CatalogoCache catalogo)
+    {
+        EnsureResourcesLoaded();
+
+        List<Pokemon> result = new List<Pokemon>();
+        if (equipoApi == null) return result;
+
+        foreach (EquipoEntrenadorEntrada entrada in equipoApi)
+        {
+            string nombreIbermon = catalogo.GetIbermonNombre(entrada.numero);
+            if (string.IsNullOrEmpty(nombreIbermon))
+            {
+                Debug.LogWarning($"[IbermonConverter] Ibermon #{entrada.numero} del entrenador no esta en el catalogo.");
+                continue;
+            }
+
+            if (!_pokemonBases.TryGetValue(nombreIbermon, out PokemonBase pBase))
+            {
+                Debug.LogWarning($"[IbermonConverter] No existe el PokemonBase '{nombreIbermon}' en Resources.");
+                continue;
+            }
+
+            Pokemon pokemon = new Pokemon(pBase, entrada.nivel);
+            pokemon.Init();
+
+            pokemon.FrontSprite = CargarSpriteDesdePath(catalogo.GetSpriteFrontal(entrada.numero));
+            pokemon.BackSprite = CargarSpriteDesdePath(catalogo.GetSpriteTrasero(entrada.numero));
+
+            if (entrada.movs != null && entrada.movs.Count > 0)
+            {
+                List<Move> movesPersonalizados = new List<Move>();
+                foreach (int numeroMov in entrada.movs)
+                {
+                    string nombreMov = catalogo.GetMovimientoNombre(numeroMov);
+                    if (nombreMov == null) continue;
+
+                    if (_moveBases.TryGetValue(nombreMov, out MoveBase mb))
+                        movesPersonalizados.Add(new Move(mb));
+                }
+
+                if (movesPersonalizados.Count > 0)
+                    pokemon.Moves = movesPersonalizados;
+            }
+
+            result.Add(pokemon);
+        }
+
+        return result;
+    }
+
     // Unity : API: prepara el request para sincronizar un pokemon después de un combate
     public static IbermonJugadorActualizarRequest ToActualizarRequest(Pokemon pokemon, CatalogoCache catalogo)
     {
@@ -147,17 +198,18 @@ public static class IbermonConverter
     }
 
     // Carga un Sprite desde Resources/Sprites/Pokemon/ usando el path de la API.
-    // Los PNG están en modo Multiple (sprite-sheet), por eso usamos LoadAll y
-    // cogemos el primer sub-sprite. Devuelve null si no se encuentra.
+    // Acepta rutas relativas ("Kotlin/Kotlin.png") y rutas servidas desde /sprites/.
     private static Sprite CargarSpriteDesdePath(string apiPath)
     {
-        if (string.IsNullOrEmpty(apiPath)) return null;
-        if (apiPath.StartsWith("http://") || apiPath.StartsWith("https://"))
+        string sinExt = NormalizarPathSprite(apiPath);
+        if (string.IsNullOrEmpty(sinExt))
             return null;
 
-        // "1.png"  "1"   |   "back/1.png"  "back/1"
-        string sinExt = apiPath.EndsWith(".png") ? apiPath[..^4] : apiPath;
         string resourcesPath = $"Sprites/Pokemon/{sinExt}";
+
+        Sprite sprite = Resources.Load<Sprite>(resourcesPath);
+        if (sprite != null)
+            return sprite;
 
         var sprites = Resources.LoadAll<Sprite>(resourcesPath);
         if (sprites == null || sprites.Length == 0)
@@ -166,5 +218,29 @@ public static class IbermonConverter
             return null;
         }
         return sprites[0];
+    }
+
+    private static string NormalizarPathSprite(string apiPath)
+    {
+        if (string.IsNullOrWhiteSpace(apiPath))
+            return null;
+
+        string path = apiPath.Trim().Replace('\\', '/');
+        int queryIndex = path.IndexOf('?');
+        if (queryIndex >= 0)
+            path = path[..queryIndex];
+
+        const string spritesSegment = "/sprites/";
+        int spritesIndex = path.IndexOf(spritesSegment, System.StringComparison.OrdinalIgnoreCase);
+        if (spritesIndex >= 0)
+            path = path[(spritesIndex + spritesSegment.Length)..];
+        else if (path.StartsWith("sprites/", System.StringComparison.OrdinalIgnoreCase))
+            path = path["sprites/".Length..];
+
+        path = path.TrimStart('/');
+        if (path.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase))
+            path = path[..^4];
+
+        return path;
     }
 }
